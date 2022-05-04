@@ -1,6 +1,10 @@
 import React, {useState} from 'react';
-import Schedule_of_Values from './Schedule_of_Values.js'; 
+import Schedule_of_Values from './Job_setup/Schedule_of_Values.js'; 
+import Owner_Info from './Job_setup/Owner_Info.js'; 
+import Project_Info from './Job_setup/Project_Info.js'; 
+import Billing_Details from './Job_setup/Billing_Details.js'; 
 
+//Stepper
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -30,7 +34,24 @@ import TableRow from '@mui/material/TableRow';
 function Job_setup() {
     const [current_step, set_current_step] = useState(0); 
     const [sov_data, set_sov_data] = useState([]); 
-    
+    const [project_info, set_project_info] = useState({
+        owner_name: "", 
+        owner_address_01: "", 
+        owner_address_02: "",
+        owner_city:"",
+        owner_state:"",
+        owner_zip:"",
+        project_name:"",
+        project_address_01:"",
+        project_address_02:"",
+        project_city:"",
+        project_state:"",
+        project_zip:"",
+        contract_number:"",
+        contract_date: ""
+    }
+
+    ); 
     
     const update_sov = (replacement) => {
         set_sov_data(replacement); 
@@ -42,11 +63,10 @@ function Job_setup() {
 
      
     const steps = [
-        {lable: 'Owner Information', content: <></>},
-        {lable: 'Project Info', content: <></>},
-        {lable: 'Project Location', content: <></>},
+        {lable: 'Owner Information', content: <Owner_Info/>},
+        {lable: 'Project Info', content: <Project_Info/>},
         {lable: 'Schedule of Values', content: <Schedule_of_Values sov_data={sov_data} update_sov={update_sov}/>},
-        {lable: 'Billing Details', content: <></>}
+        {lable: 'Billing Details', content: <Billing_Details/>}
     ];
 
 
@@ -66,6 +86,11 @@ function Job_setup() {
         )
 
     }
+
+
+    
+
+    
 
 
     const build_steps = (item,index) => {

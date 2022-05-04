@@ -34,6 +34,7 @@ import TableRow from '@mui/material/TableRow';
 function Schedule_of_Values(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
     const [update, set_update] = useState(1); 
+    const [total, set_total] = useState(0); 
 
     const ref_cost_code = useRef(); 
     const ref_description = useRef(); 
@@ -72,20 +73,25 @@ function Schedule_of_Values(props) {
         //props.update_sov(temp_data); 
         set_table_content(temp_data); 
         props.update_sov(temp_data); 
-        set_update(update*-1)
+        //set_update(update*-1)
+        set_total(Number(total)+Number(ref_value.current.value)); 
         console.log("Added :" + temp_data[0]);
         
     }
 
     const remove_table_item = (i) => {
         let temp_data = table_content;
+        let temp_val = table_content[i].value
         temp_data.splice(i,1); 
         set_table_content(temp_data); 
         props.update_sov(temp_data); 
-        set_update(update*-1); 
+        //set_update(update*-1); 
+        set_total(Number(total)-Number(temp_val));
 
 
     }
+
+   
 
 
     return (
@@ -142,6 +148,8 @@ function Schedule_of_Values(props) {
             </Table>
 
         </TableContainer>
+        
+        Contract Total: $ {total}
 
        
 
