@@ -70,10 +70,9 @@ function Schedule_of_Values(props) {
             value:ref_value.current.value
             }
             ); 
-        //props.update_sov(temp_data); 
+   
         set_table_content(temp_data); 
         props.update_sov(temp_data); 
-        //set_update(update*-1)
         set_total(Number(total)+Number(ref_value.current.value)); 
         console.log("Added :" + temp_data[0]);
         

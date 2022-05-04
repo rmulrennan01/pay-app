@@ -7,7 +7,10 @@ import MenuItem from '@mui/material/MenuItem';
 
 
 
-function Billing_Details() {
+function Billing_Details(props) {
+    
+    const [project_info, set_project_info] = useState(props.project_info);
+    
     const [due_date, set_due_date] = useState("20th");
     const due_date_options = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th",
         "13th","14th", "15th", "16th", "17th", "18th", "19th", "20th", "21st", "22nd", "23rd", "24th", "25th", "26th",
@@ -27,13 +30,15 @@ function Billing_Details() {
     return (
         <div>
             What percentage of your draw requests will be allocated towards retainage each period? 
+            <br/> <br/> <br/> 
             <Slider 
                 defaultValue={5} 
                 min={0} 
                 max={30} 
                 aria-label="Default" 
-                valueLabelDisplay="auto" 
+                valueLabelDisplay="on" 
                 valueLabelFormat={(val)=>val+'%'}
+                
             />
             <br/><br/>
             Draw requests for this project are due on the <span>

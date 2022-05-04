@@ -48,7 +48,19 @@ function Job_setup() {
         project_state:"",
         project_zip:"",
         contract_number:"",
-        contract_date: ""
+        contract_date: "",
+        contract_due_date:"",
+        retention:""
+    }
+    ) ;
+
+    const [owner_info, set_owner_info] = useState({
+        owner_name: "", 
+        owner_address_01: "", 
+        owner_address_02: "",
+        owner_city:"",
+        owner_state:"",
+        owner_zip:"",
     }
 
     ); 
@@ -58,15 +70,23 @@ function Job_setup() {
 
     }
 
+    const update_project_info = (replacement) => {
+        set_project_info(replacement); 
+    }
+
+    const update_owner_info = (replacement) => {
+        set_owner_info(replacement); 
+    }
+
     
 
 
      
     const steps = [
-        {lable: 'Owner Information', content: <Owner_Info/>},
-        {lable: 'Project Info', content: <Project_Info/>},
+        {lable: 'Owner Information', content: <Owner_Info owner_info={owner_info} update_owner_info={update_owner_info}/> },
+        {lable: 'Project Info', content: <Project_Info project_info={project_info} update_project_info={update_project_info} />},
         {lable: 'Schedule of Values', content: <Schedule_of_Values sov_data={sov_data} update_sov={update_sov}/>},
-        {lable: 'Billing Details', content: <Billing_Details/>}
+        {lable: 'Billing Details', content: <Billing_Details project_info={project_info} update_project_info={update_project_info}/>}
     ];
 
 
@@ -94,6 +114,43 @@ function Job_setup() {
 
 
     const build_steps = (item,index) => {
+        const button_builder = () => {
+            if (index==0){
+                return(
+                    <Button onClick={()=>set_current_step(current_step+1)}> 
+                        Continue
+                    </Button> 
+
+                );
+            }
+            else if (index==steps.length-1){
+                return(
+                    <>
+                    <Button onClick={()=>alert("Submitting")}> 
+                        Submit
+                    </Button> 
+                    <Button onClick={()=>set_current_step(current_step-1)}> 
+                        Back
+                    </Button> 
+                    </>
+                );
+            }
+            else{
+                return(
+                    <>
+                    <Button onClick={()=>set_current_step(current_step+1)}> 
+                        Continue
+                    </Button> 
+                    <Button onClick={()=>set_current_step(current_step-1)}> 
+                        Back
+                    </Button> 
+                    </>
+
+                )
+            }
+
+        };
+
         return(
             
             <Step key={index}> 
@@ -107,12 +164,7 @@ function Job_setup() {
                         {item.content}
                     </div>
                     <div>
-                        <Button onClick={()=>set_current_step(current_step+1)}> 
-                            Continue
-                        </Button> 
-                        <Button onClick={()=>set_current_step(0)}> 
-                            Back
-                        </Button> 
+                        {button_builder()}
 
                     </div>
                 </StepContent>
