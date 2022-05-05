@@ -34,25 +34,6 @@ import TableRow from '@mui/material/TableRow';
 function Job_setup() {
     const [current_step, set_current_step] = useState(0); 
     const [sov_data, set_sov_data] = useState([]); 
-    const [project_info, set_project_info] = useState({
-        owner_name: "", 
-        owner_address_01: "", 
-        owner_address_02: "",
-        owner_city:"",
-        owner_state:"",
-        owner_zip:"",
-        project_name:"",
-        project_address_01:"",
-        project_address_02:"",
-        project_city:"",
-        project_state:"",
-        project_zip:"",
-        contract_number:"",
-        contract_date: "",
-        contract_due_date:"",
-        retention:""
-    }
-    ) ;
 
     const [owner_info, set_owner_info] = useState({
         owner_name: "", 
@@ -62,12 +43,24 @@ function Job_setup() {
         owner_state:"",
         owner_zip:"",
     }
-
     ); 
+
+    const [project_info, set_project_info] = useState({
+        project_name: "", 
+        project_address_01: "", 
+        project_address_02: "",
+        project_city:"",
+        project_state:"",
+        project_zip:"",
+        project_number:"", 
+        project_date:"" 
+    }
+    ); 
+
+    const [billing_info, set_billing_info] = useState({retention: 5, due_date: "20th"});
     
     const update_sov = (replacement) => {
         set_sov_data(replacement); 
-
     }
 
     const update_project_info = (replacement) => {
@@ -78,6 +71,10 @@ function Job_setup() {
         set_owner_info(replacement); 
     }
 
+    const update_billing_info = (replacement) => {
+        set_billing_info(replacement); 
+    }
+
     
 
 
@@ -86,7 +83,7 @@ function Job_setup() {
         {lable: 'Owner Information', content: <Owner_Info owner_info={owner_info} update_owner_info={update_owner_info}/> },
         {lable: 'Project Info', content: <Project_Info project_info={project_info} update_project_info={update_project_info} />},
         {lable: 'Schedule of Values', content: <Schedule_of_Values sov_data={sov_data} update_sov={update_sov}/>},
-        {lable: 'Billing Details', content: <Billing_Details project_info={project_info} update_project_info={update_project_info}/>}
+        {lable: 'Billing Details', content: <Billing_Details billing_info={billing_info} update_billing_info={update_billing_info}/>}
     ];
 
 

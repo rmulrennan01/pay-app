@@ -52,12 +52,43 @@ function Owner_Info(props) {
                 required 
                 inputRef={ref_address_01} 
                 id="outlined-required" 
-                label="Address" />
-            <TextField required inputRef={ref_address_02} id="outlined-required" label="Suite or Unit #" />
+                label="Address" 
+                onChange={()=>update_data()}
+                defaultValue={owner_data.owner_address_01}
+            />
+            <TextField 
+                required 
+                inputRef={ref_address_02} 
+                id="outlined-required" 
+                label="Suite or Unit #" 
+                onChange={()=>update_data()}
+                defaultValue={owner_data.owner_address_02}
+            />
             <br/><br/>
-            <TextField required inputRef={ref_city} id="outlined-required" label="City" />
-            <TextField required inputRef={ref_state} id="outlined-required" label="State" />
-            <TextField required inputRef={ref_zip} id="outlined-required" label="Zip" />
+            <TextField 
+                required 
+                inputRef={ref_city} 
+                id="outlined-required" 
+                label="City" 
+                onChange={()=>update_data()}
+                defaultValue={owner_data.owner_city}
+            />
+            <TextField 
+                required 
+                inputRef={ref_state} 
+                id="outlined-required" 
+                label="State" 
+                onChange={()=>update_data()}
+                defaultValue={owner_data.owner_state}
+            />
+            <TextField 
+                required 
+                inputRef={ref_zip} 
+                id="outlined-required" 
+                label="Zip" 
+                onChange={()=>update_data()}
+                defaultValue={owner_data.owner_zip}
+            />
             
         </div>
     )
