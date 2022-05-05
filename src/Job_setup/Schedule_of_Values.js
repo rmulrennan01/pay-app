@@ -9,8 +9,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
-//modal
-import Modal from '@mui/material/Modal'; 
+
 
 //Forms
 import FormControl from '@mui/material/FormControl';

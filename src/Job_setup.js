@@ -3,6 +3,10 @@ import Schedule_of_Values from './Job_setup/Schedule_of_Values.js';
 import Owner_Info from './Job_setup/Owner_Info.js'; 
 import Project_Info from './Job_setup/Project_Info.js'; 
 import Billing_Details from './Job_setup/Billing_Details.js'; 
+import Confirmation_Modal from './Job_setup/Confirmation_Modal.js'; 
+
+import Modal from '@mui/material/Modal';
+
 
 //Stepper
 import Stepper from '@mui/material/Stepper';
@@ -18,22 +22,13 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import Input from '@mui/material/Input';
 
-//Tables
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-
-
-
 
 
 
 function Job_setup() {
     const [current_step, set_current_step] = useState(0); 
     const [sov_data, set_sov_data] = useState([]); 
+    const [modal_open, set_modal_open] = useState(false); 
 
     const [owner_info, set_owner_info] = useState({
         owner_name: "", 
@@ -123,7 +118,7 @@ function Job_setup() {
             else if (index==steps.length-1){
                 return(
                     <>
-                    <Button onClick={()=>alert("Submitting")}> 
+                    <Button onClick={()=>set_modal_open(true)}> 
                         Submit
                     </Button> 
                     <Button onClick={()=>set_current_step(current_step-1)}> 
@@ -174,15 +169,20 @@ function Job_setup() {
     }
 
     return (
-        <Paper>
-            <h1> Setup a new contract</h1>
-            <Stepper activeStep={current_step} orientation="vertical">
-                {steps.map(build_steps)}
-                
+        <div> 
+            <Modal open={modal_open} onClose={()=>set_modal_open(false)} >
+                <Confirmation_Modal sov={sov_data} owner={owner_info} project={project_info} billing={billing_info}/> 
+            </Modal>
+            <Paper>
+                <h1> Setup a new contract</h1>
+                <Stepper activeStep={current_step} orientation="vertical">
+                    {steps.map(build_steps)}
+                    
 
-            </Stepper>
-            
-        </Paper>
+                </Stepper>
+                
+            </Paper>
+        </div> 
     )
 }
 
