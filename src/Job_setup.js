@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Schedule_of_Values from './Job_setup/Schedule_of_Values.js'; 
 import Owner_Info from './Job_setup/Owner_Info.js'; 
 import Project_Info from './Job_setup/Project_Info.js'; 
@@ -6,6 +6,8 @@ import Billing_Details from './Job_setup/Billing_Details.js';
 import Confirmation_Modal from './Job_setup/Confirmation_Modal.js'; 
 
 import Modal from '@mui/material/Modal';
+
+import firebase from "./Firebase.js"; 
 
 
 //Stepper
@@ -26,6 +28,10 @@ import Input from '@mui/material/Input';
 
 
 function Job_setup() {
+    const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
+    const [list,setList] = useState([]); 
+    const [loading, setLoading] = useState([]); 
+
     const [current_step, set_current_step] = useState(0); 
     const [sov_data, set_sov_data] = useState([]); 
     const [modal_open, set_modal_open] = useState(false); 
@@ -75,10 +81,10 @@ function Job_setup() {
 
      
     const steps = [
-        {lable: 'Owner Information', content: <Owner_Info owner_info={owner_info} update_owner_info={update_owner_info}/> },
-        {lable: 'Project Info', content: <Project_Info project_info={project_info} update_project_info={update_project_info} />},
-        {lable: 'Schedule of Values', content: <Schedule_of_Values sov_data={sov_data} update_sov={update_sov}/>},
-        {lable: 'Billing Details', content: <Billing_Details billing_info={billing_info} update_billing_info={update_billing_info}/>}
+        {label: 'Owner Information', content: <Owner_Info owner_info={owner_info} update_owner_info={update_owner_info}/> },
+        {label: 'Project Info', content: <Project_Info project_info={project_info} update_project_info={update_project_info} />},
+        {label: 'Schedule of Values', content: <Schedule_of_Values sov_data={sov_data} update_sov={update_sov}/>},
+        {label: 'Billing Details', content: <Billing_Details billing_info={billing_info} update_billing_info={update_billing_info}/>}
     ];
 
 
@@ -97,6 +103,36 @@ function Job_setup() {
 
         )
 
+    }
+
+    React.useEffect( () => {
+        const fetchData = async () =>{
+        const dataList = await firestoreDB.collection("owners").get(); //updated
+        setList(dataList.docs.map(doc=>doc.data())); 
+        setLoading(false); 
+        }
+        fetchData(); 
+    }, []);
+
+
+    const addFirebase = (n, collectionID) =>{
+        firestoreDB.collection(collectionID).add({
+            name_first: n.name_first,
+            name_last: n.name_last,
+            phone: n.phone,
+            email: n.email,
+            address_1: n.address_1,
+            address_2: n.address_2,
+            city: n.city,
+            state: n.state,
+            zip: n.zip
+        })
+        .then((docRef) => {
+            alert("Data Successfully Submitted");
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
     }
 
 
@@ -147,7 +183,7 @@ function Job_setup() {
             
             <Step key={index}> 
                 <StepLabel onClick={()=>set_current_step(index)}> 
-                    {item.lable}
+                    {item.label}
                 </StepLabel>
 
                 <StepContent> 
@@ -181,6 +217,9 @@ function Job_setup() {
 
                 </Stepper>
                 
+            </Paper>
+            <Paper> 
+                {console.log(list)}
             </Paper>
         </div> 
     )

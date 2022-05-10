@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
@@ -13,6 +13,11 @@ import TableRow from '@mui/material/TableRow';
 //sov={sov_data} owner={owner_info} project={project_info} billing={billing_info}
 
 function Confirmation_Modal(props) {
+    const get_total = () => {
+        let total = Number(0); 
+        props.sov.map((item)=>total+=Number(item.value)); 
+        return total; 
+    }
     
     const build_table_body = (item,index) => {
       
@@ -89,6 +94,8 @@ function Confirmation_Modal(props) {
                         </TableBody>
                     </Table> 
                 </TableContainer> 
+
+                The Total Contract amount is: ${get_total()}
             </Paper>
 
             <Button> Submit </Button> 
