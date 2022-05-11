@@ -23,12 +23,12 @@ function Owner_Info(props) {
     const update_data = () => {
         let temp_data=
             {
-                owner_name: ref_company_name.current.value, 
-                owner_address_01: ref_address_01.current.value, 
-                owner_address_02: ref_address_02.current.value,
-                owner_city:ref_city.current.value,
-                owner_state:ref_state.current.value,
-                owner_zip:ref_zip.current.value
+                name: ref_company_name.current.value, 
+                address_01: ref_address_01.current.value, 
+                address_02: ref_address_02.current.value,
+                city:ref_city.current.value,
+                state:ref_state.current.value,
+                zip:ref_zip.current.value
             }; 
         
         set_owner_data(temp_data); 
@@ -45,7 +45,7 @@ function Owner_Info(props) {
                 id="outlined-required" 
                 label="Company Name" 
                 onChange={()=>update_data()}
-                defaultValue={owner_data.owner_name}
+                defaultValue={owner_data.name}
             />
             <br/><br/>
             <TextField 
@@ -54,7 +54,7 @@ function Owner_Info(props) {
                 id="outlined-required" 
                 label="Address" 
                 onChange={()=>update_data()}
-                defaultValue={owner_data.owner_address_01}
+                defaultValue={owner_data.address_01}
             />
             <TextField 
                 required 
@@ -62,7 +62,7 @@ function Owner_Info(props) {
                 id="outlined-required" 
                 label="Suite or Unit #" 
                 onChange={()=>update_data()}
-                defaultValue={owner_data.owner_address_02}
+                defaultValue={owner_data.address_02}
             />
             <br/><br/>
             <TextField 
@@ -71,7 +71,7 @@ function Owner_Info(props) {
                 id="outlined-required" 
                 label="City" 
                 onChange={()=>update_data()}
-                defaultValue={owner_data.owner_city}
+                defaultValue={owner_data.city}
             />
             <TextField 
                 required 
@@ -79,7 +79,7 @@ function Owner_Info(props) {
                 id="outlined-required" 
                 label="State" 
                 onChange={()=>update_data()}
-                defaultValue={owner_data.owner_state}
+                defaultValue={owner_data.state}
             />
             <TextField 
                 required 
@@ -87,7 +87,7 @@ function Owner_Info(props) {
                 id="outlined-required" 
                 label="Zip" 
                 onChange={()=>update_data()}
-                defaultValue={owner_data.owner_zip}
+                defaultValue={owner_data.zip}
             />
             
         </div>

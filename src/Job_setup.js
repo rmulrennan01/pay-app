@@ -37,24 +37,24 @@ function Job_setup() {
     const [modal_open, set_modal_open] = useState(false); 
 
     const [owner_info, set_owner_info] = useState({
-        owner_name: "", 
-        owner_address_01: "", 
-        owner_address_02: "",
-        owner_city:"",
-        owner_state:"",
-        owner_zip:"",
+        name: "", 
+        address_01: "", 
+        address_02: "",
+        city:"",
+        state:"",
+        zip:"",
     }
     ); 
 
     const [project_info, set_project_info] = useState({
-        project_name: "", 
-        project_address_01: "", 
-        project_address_02: "",
-        project_city:"",
-        project_state:"",
-        project_zip:"",
-        project_number:"", 
-        project_date:"" 
+        name: "", 
+        address_01: "", 
+        address_02: "",
+        city:"",
+        state:"",
+        zip:"",
+        number:"", 
+        date:"" 
     }
     ); 
 
@@ -89,25 +89,10 @@ function Job_setup() {
 
 
 
-
-    const owner_form = () => {
-        return(
-            <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                <InputLabel htmlFor="standard-adornment-amount">Amount</InputLabel>
-                <Input
-                id="standard-adornment-amount"
-             
-                startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                />
-          </FormControl>
-
-        )
-
-    }
-
+    
     React.useEffect( () => {
         const fetchData = async () =>{
-        const dataList = await firestoreDB.collection("owners").get(); //updated
+        const dataList = await firestoreDB.collection("contracts").get(); //updated
         setList(dataList.docs.map(doc=>doc.data())); 
         setLoading(false); 
         }
@@ -115,17 +100,17 @@ function Job_setup() {
     }, []);
 
 
-    const addFirebase = (n, collectionID) =>{
-        firestoreDB.collection(collectionID).add({
-            name_first: n.name_first,
-            name_last: n.name_last,
-            phone: n.phone,
-            email: n.email,
-            address_1: n.address_1,
-            address_2: n.address_2,
-            city: n.city,
-            state: n.state,
-            zip: n.zip
+    /*
+    const add_owner = () =>{
+        firestoreDB.collection("owners").add({
+            name: owner_info.name,
+            address_01: owner_info.address_01,
+            address_02: owner_info.address_02,
+            city:owner_info.city,
+            state: owner_info.state,
+            zip: owner_info.zip
+
+
         })
         .then((docRef) => {
             alert("Data Successfully Submitted");
@@ -134,6 +119,33 @@ function Job_setup() {
             console.error("Error adding document: ", error);
         });
     }
+    */
+
+   const submit_db = () =>{
+    let temp_project = project_info;
+    temp_project["sov"] = sov_data; 
+    //console.log(temp_project); 
+
+    
+    
+    firestoreDB.collection("owners").add(owner_info)
+    .then((docRef) => {
+        console.log("Owner Submission Successful");
+        firestoreDB.collection("contracts").add(temp_project)
+        .then((docRef) => {
+            console.log("Project Submission Successful");
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+    })
+    .catch((error) => {
+        console.error("Error adding document: ", error);
+    });
+
+}
+
+    
 
 
     
@@ -207,7 +219,7 @@ function Job_setup() {
     return (
         <div> 
             <Modal open={modal_open} onClose={()=>set_modal_open(false)} >
-                <Confirmation_Modal sov={sov_data} owner={owner_info} project={project_info} billing={billing_info}/> 
+                <Confirmation_Modal sov={sov_data} owner_info={owner_info} project_info={project_info} billing={billing_info} submit_db={submit_db}/> 
             </Modal>
             <Paper>
                 <h1> Setup a new contract</h1>

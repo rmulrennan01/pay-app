@@ -47,19 +47,20 @@ function Confirmation_Modal(props) {
             <Paper> 
                 <h4> Draw Requests will be submitted to: </h4>
                 
-                {props.owner.owner_name}<br/> 
+                {props.owner_info.name}<br/> 
                 
-                {props.owner.owner_address_01} {props.owner.owner_address_02}<br/>
-                {props.owner.owner_city}, {props.owner.owner_state} {props.owner.owner_zip} <br/>
+                {props.owner_info.address_01} {props.owner_info.address_02}<br/>
+                {props.owner_info.city}, {props.owner_info.state} {props.owner_info.zip} <br/>
                 
             </Paper>
             <br/> 
             <Paper> 
                 <h4> For this project: </h4>
-                {props.project.project_name} <br/> 
-                Contract #: {props.project.project_number}<br/> 
-                {props.project.project_address_01} {props.project.project_address_02} <br/>
-                {props.project.project_city}, {props.project.project_address_state} {props.project.project_address_zip}
+                {props.project_info.name} <br/> 
+                Contract #: {props.project_info.number}<br/> 
+                {props.project_info.address_01} {props.project_info.address_02} <br/>
+                {props.project_info.city}, {props.project_info.state} {props.project_info.zip}
+               
 
             </Paper>
             <br/> 
@@ -98,7 +99,7 @@ function Confirmation_Modal(props) {
                 The Total Contract amount is: ${get_total()}
             </Paper>
 
-            <Button> Submit </Button> 
+            <Button onClick={()=>props.submit_db()}> Submit </Button> 
         </Paper>
     )
 }
