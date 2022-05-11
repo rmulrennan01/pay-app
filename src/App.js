@@ -7,6 +7,7 @@ import Navbar from './Navbar.js';
 import Job_setup from './Job_setup.js'; 
 import Pay_app from './Pay_app.js'; 
 import Home from './Home.js'; 
+import Contract_browser from './Contract_browser.js'; 
 
 
 
@@ -71,6 +72,7 @@ function App() {
       <BrowserRouter> 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/contract_browser" element={<Contract_browser /> } /> 
         <Route path="/job_setup" element={<Job_setup />} />
         <Route path="/pay_app" element={<Pay_app /> } /> 
         <Route path="*" element={<Job_setup />} /> 

@@ -18,7 +18,8 @@ function Navbar() {
                 <Hidden xsDown>
                     
                         <Link className='Navbar__Button' href="/" underline="none">Home</Link> 
-                        <Link className='Navbar__Button' href="/job_setup"  underline="none">Projects</Link> 
+                        <Link className='Navbar__Button' href="/contract_browser" underline="none"> Contracts </Link> 
+                        <Link className='Navbar__Button' href="/job_setup"  underline="none">New Job</Link> 
                         <Link className='Navbar__Button' href="/pay_app" underline="none">Pay Apps</Link> 
                         <Link className='Navbar__Button'  underline="none">About</Link> 
                     
@@ -39,6 +40,9 @@ function Navbar() {
                         <Link className='Navbar__Button' href="/" underline="none">Home</Link> 
                         
                     </ListItem>
+                    <ListItem> 
+                        <Link className='Navbar_Button' href="/contract_browser" underline="none"> Contracts </Link> 
+                    </ListItem> 
                     <ListItem>
                         <Link className='Navbar__Button' href="/job_setup"  underline="none">Job Setup</Link> 
                     </ListItem>

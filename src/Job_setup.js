@@ -121,19 +121,22 @@ function Job_setup() {
     }
     */
 
-   const submit_db = () =>{
-    let temp_project = project_info;
-    temp_project["sov"] = sov_data; 
+    const submit_db = () =>{
+        let temp_project = project_info;
+        temp_project["sov"] = sov_data; 
+        
     //console.log(temp_project); 
-
-    
+  
     
     firestoreDB.collection("owners").add(owner_info)
     .then((docRef) => {
         console.log("Owner Submission Successful");
+        console.log("Owner Info is here: " + docRef.id)
+        temp_project["owner_id"] = docRef.id;
         firestoreDB.collection("contracts").add(temp_project)
         .then((docRef) => {
             console.log("Project Submission Successful");
+            console.log("Project Info is here: " + docRef.id)
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
@@ -142,6 +145,8 @@ function Job_setup() {
     .catch((error) => {
         console.error("Error adding document: ", error);
     });
+
+    
 
 }
 
