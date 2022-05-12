@@ -9,6 +9,8 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import TablePagination from '@mui/material/TablePagination';
 
 import Paper from '@mui/material/Paper';
 
@@ -21,6 +23,8 @@ function Contract_browser() {
     const [contracts, set_contracts] = useState([]); 
     const [loading, set_loading] = useState([]); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
+    const [page, set_page] = useState(0); 
+    const [row_count, set_row_count] = useState(5); 
 
 
 
@@ -36,6 +40,7 @@ function Contract_browser() {
 
 
     const build_table_body = (item,index) => {
+        if(index >= row_count*page && index <= row_count*page+row_count-1){
         return(
             <TableRow key={index}> 
                 <TableCell>
@@ -43,15 +48,31 @@ function Contract_browser() {
                 </TableCell>
                 <TableCell>
                     {item.address_01}
-                    
                 </TableCell>
                 <TableCell>
-                    {item.value}
+                    {item.city}
+                </TableCell>
+                <TableCell>
+                    {item.state}
+                </TableCell>
+                <TableCell>
+                    {item.owner.name}
                 </TableCell>
 
             </TableRow>
         );
-}
+        }
+    }
+
+    const change_page = (event: unknown, new_page: number) => {
+        set_page(new_page); 
+    }
+
+    const change_row_count = (event: React.ChangeEvent<HTMLInputElement>) => {
+        set_row_count(parseInt(event.target.value, 10)); 
+        set_page(0); 
+
+    }
 
 
 
@@ -61,6 +82,7 @@ function Contract_browser() {
 
 
     return (
+        <Paper>
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead> 
@@ -72,7 +94,13 @@ function Contract_browser() {
                             Address
                         </TableCell>
                         <TableCell>
-                            Value ($)
+                            City
+                        </TableCell>
+                        <TableCell>
+                            State
+                        </TableCell>
+                        <TableCell>
+                            Owner
                         </TableCell>
   
                     </TableRow>
@@ -84,6 +112,16 @@ function Contract_browser() {
             </Table>
 
         </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 15, 20]}
+                component="div"
+                count={contracts.length}
+                rowsPerPage={row_count}
+                page={page}
+                onPageChange={change_page}
+                onRowsPerPageChange={change_row_count}
+            />
+        </Paper>
     )
 }
 

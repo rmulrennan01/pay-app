@@ -100,39 +100,23 @@ function Job_setup() {
     }, []);
 
 
-    /*
-    const add_owner = () =>{
-        firestoreDB.collection("owners").add({
-            name: owner_info.name,
-            address_01: owner_info.address_01,
-            address_02: owner_info.address_02,
-            city:owner_info.city,
-            state: owner_info.state,
-            zip: owner_info.zip
 
-
-        })
-        .then((docRef) => {
-            alert("Data Successfully Submitted");
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-        });
-    }
-    */
-
+    //We will keep two copies of the owner data. One is for an owner directory, so we can reuse the same owner.
+    //Another copy will be stored inside the project document, so we only have to do one request to access all information
     const submit_db = () =>{
         let temp_project = project_info;
         temp_project["sov"] = sov_data; 
+        temp_project["owner"] = owner_info; 
+
         
-    //console.log(temp_project); 
+    
   
     
     firestoreDB.collection("owners").add(owner_info)
     .then((docRef) => {
         console.log("Owner Submission Successful");
         console.log("Owner Info is here: " + docRef.id)
-        temp_project["owner_id"] = docRef.id;
+        temp_project["owner_id"] = docRef.id; //need to add the id of the owner document, so we can easily retrieve owner info
         firestoreDB.collection("contracts").add(temp_project)
         .then((docRef) => {
             console.log("Project Submission Successful");
