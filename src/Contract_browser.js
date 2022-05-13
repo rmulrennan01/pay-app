@@ -12,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
 
+import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
 import CircularProgress from '@mui/material/CircularProgress';
@@ -72,6 +73,7 @@ function Contract_browser() {
         if(index >= row_count*page && index <= row_count*page+row_count-1){
         return(
             <TableRow key={index} onClick={()=>window.location='/contract/'+ String(item.id)} > 
+            
                 <TableCell>
                     {item.name}
                 </TableCell>
@@ -119,25 +121,28 @@ function Contract_browser() {
 
     return (
         <Paper>
+            <br/> 
+        <Button variant="contained" href="/job_setup"> + Contract </Button> 
+        <br/> <br/> 
         
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table" size={'small'}>
                 <TableHead> 
                     <TableRow>
                         <TableCell>
-                            Project
+                           <h3>  Project </h3> 
                         </TableCell>
                         <TableCell>
-                            Address
+                            <h3> Address </h3> 
                         </TableCell>
                         <TableCell>
-                            City
+                            <h3> City </h3> 
                         </TableCell>
                         <TableCell>
-                            State
+                            <h3> State </h3> 
                         </TableCell>
                         <TableCell>
-                            Owner
+                            <h3> Owner </h3> 
                         </TableCell>
   
                     </TableRow>

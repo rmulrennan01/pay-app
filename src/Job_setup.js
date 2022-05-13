@@ -151,7 +151,7 @@ function Job_setup() {
         const button_builder = () => {
             if (index==0){
                 return(
-                    <Button onClick={()=>set_current_step(current_step+1)}> 
+                    <Button variant="contained" onClick={()=>set_current_step(current_step+1)}> 
                         Continue
                     </Button> 
 
@@ -160,7 +160,7 @@ function Job_setup() {
             else if (index==steps.length-1){
                 return(
                     <>
-                    <Button onClick={()=>set_modal_open(true)}> 
+                    <Button variant="contained" onClick={()=>set_modal_open(true)}> 
                         Submit
                     </Button> 
                     <Button onClick={()=>set_current_step(current_step-1)}> 
@@ -172,7 +172,7 @@ function Job_setup() {
             else{
                 return(
                     <>
-                    <Button onClick={()=>set_current_step(current_step+1)}> 
+                    <Button variant="contained" onClick={()=>set_current_step(current_step+1)}> 
                         Continue
                     </Button> 
                     <Button onClick={()=>set_current_step(current_step-1)}> 
