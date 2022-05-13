@@ -29,7 +29,8 @@ import Input from '@mui/material/Input';
 
 function Job_setup() {
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
-    const [list,setList] = useState([]); 
+    const [list,set_list] = useState([]); 
+     
     const [loading, setLoading] = useState([]); 
 
     const [current_step, set_current_step] = useState(0); 
@@ -93,10 +94,12 @@ function Job_setup() {
     React.useEffect( () => {
         const fetchData = async () =>{
         const dataList = await firestoreDB.collection("contracts").get(); //updated
-        setList(dataList.docs.map(doc=>doc.data())); 
+        set_list(dataList.docs.map(doc=>doc.data())); 
+        
         setLoading(false); 
         }
         fetchData(); 
+        
     }, []);
 
 
@@ -105,6 +108,8 @@ function Job_setup() {
     //Another copy will be stored inside the project document, so we only have to do one request to access all information
     const submit_db = () =>{
         let temp_project = project_info;
+        let sum = 0; 
+
         temp_project["sov"] = sov_data; 
         temp_project["owner"] = owner_info; 
 

@@ -8,6 +8,7 @@ import Job_setup from './Job_setup.js';
 import Pay_app from './Pay_app.js'; 
 import Home from './Home.js'; 
 import Contract_browser from './Contract_browser.js'; 
+import Contract_page from './Contract_page.js'; 
 
 
 
@@ -76,6 +77,7 @@ function App() {
         <Route path="/job_setup" element={<Job_setup />} />
         <Route path="/pay_app" element={<Pay_app /> } /> 
         <Route path="*" element={<Job_setup />} /> 
+        <Route path='contract/:id' element={<Contract_page />} />
         
 
       </Routes>
