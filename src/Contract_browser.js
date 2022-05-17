@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import firebase from "./Firebase.js"; 
+import "./Contract_browser.css"; 
 
 //Tables
 import Table from '@mui/material/Table';
@@ -72,7 +73,7 @@ function Contract_browser() {
     const build_table_body = (item,index) => {
         if(index >= row_count*page && index <= row_count*page+row_count-1){
         return(
-            <TableRow key={index} onClick={()=>window.location='/contract/'+ String(item.id)} > 
+            <TableRow className="Contract_browser__row" key={index} onClick={()=>window.location='/contract/'+ String(item.id)} > 
             
                 <TableCell>
                     {item.name}
@@ -128,20 +129,21 @@ function Contract_browser() {
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table" size={'small'}>
                 <TableHead> 
-                    <TableRow>
-                        <TableCell>
+                    <TableRow className="Contract_browser__header">
+                        <TableCell className="Contract_browser__header_text">
                            <h3>  Project </h3> 
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="Contract_browser__header_text">
                             <h3> Address </h3> 
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="Contract_browser__header_text">
                             <h3> City </h3> 
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="Contract_browser__header_text">
                             <h3> State </h3> 
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="Contract_browser__header_text">
+                        
                             <h3> Owner </h3> 
                         </TableCell>
   

@@ -1,0 +1,79 @@
+import React, {useState, useRef} from 'react'
+import Paper from '@mui/material/Paper';
+
+import TextField from '@mui/material/TextField';
+import Slider from '@mui/material/Slider';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+
+
+function Change_order_modal(props) {
+  const [cost_codes, set_cost_codes] = useState(props.sov_data); 
+  const [cost_code_selection, set_cost_code_selection] = useState(""); 
+
+  const selectionRef= useRef(); 
+  const valueRef = useRef(); 
+  const descripRef= useRef(); 
+
+
+  const update_cost_code = (event: SelectChangeEvent) =>{
+    set_cost_code_selection(event.target.value); 
+
+  }
+
+  const buildList = (item) => {
+    return(
+        <MenuItem value={item.cost_code}>{item.cost_code + " " + item.description}</MenuItem>
+    )
+
+}
+
+  return (
+    <Paper> 
+      <h3> Add a Change Order</h3>
+      <br/> 
+      What's the net change in contract value?<br/> 
+      <br/> 
+      <TextField 
+                required 
+                inputRef={valueRef} 
+                id="outlined-required" 
+                label="Amount ($)" 
+                onChange={console.log(valueRef.value)}
+                defaultValue={0}
+      />
+      <br/> <br/> 
+      Apply the change order to this cost item:<br/> 
+      <br/> 
+      <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                defaultValue= "-----"
+                value={cost_code_selection}
+                onChange={update_cost_code}
+                ref={selectionRef}
+            >
+                {cost_codes.map(buildList)}
+      </Select>
+      <br/> 
+      What's the breif description for this change order?<br/> 
+      <br/> 
+      <TextField 
+                required 
+                inputRef={descripRef} 
+                id="outlined-required" 
+                label="" 
+                onChange={console.log(valueRef.value)}
+                defaultValue={""}
+      />
+      <br/> <br/> 
+      <Button variant="contained">Add to Contract</Button> <Button variant="outlined" onClick={()=>props.close_modal()}>Cancel</Button> 
+
+
+
+    </Paper>
+  )
+}
+
+export default Change_order_modal

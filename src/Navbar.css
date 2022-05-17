@@ -1,22 +1,23 @@
 .Navbar__Logo{
     margin-right: 20px !important;
-    color:black !important;
+    color:white !important;
     font-variant-caps: normal !important;
     font-size: 12px !important; 
+    ;
     
   }
   
   
   .Navbar__Button{
     margin-right: 20px !important;
-    color:black !important;
+    color:white !important;
     font-variant-caps: normal !important;
     
   }
   
   
   .Navbar__Button:hover{
-      background-color: lightgrey !important;
+    
       font-weight: bold;
   
   }
@@ -24,6 +25,7 @@
   
   
   .Navbar__AppBar{
-      background-color: white !important; 
+      background-color: #1976d2 !important; 
+      
       
   }

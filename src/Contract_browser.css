@@ -1,0 +1,17 @@
+.Contract_browser__row:hover{
+
+    background-color: lightgray;
+    cursor: pointer; 
+
+}
+
+.Contract_browser__header{
+    background-color: #1976d2;
+    
+    
+}
+
+.Contract_browser__header_text{
+    color: white !important; 
+
+}

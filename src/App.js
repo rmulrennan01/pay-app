@@ -19,51 +19,7 @@ function App() {
   <Route path='Furniture/:id' element={<Product_page />} />
   */
 
-  /*Data Structure
-
-  contracts [id]
-  ->name
-  ->address_01
-  ->address_02
-  ->city
-  ->state
-  ->zip
-  ->retention
-  ->due_date
-  ->contract_date
-  ->owner_id //for reference
-  ->pay_apps //array of id's
-  ->sov
-  -->cost_code
-  -->description
-  -->value
-  -->change_orders
-
-
-  owners [id]
-  ->name
-  ->address_01
-  ->address_02
-  ->city
-  ->state
-  ->zip
-
-  pay_apps
-  ->submission_date
-  ->period_ending
-  ->previous_app //id of previous app
-  ->number
-  ->draws
-  -->value
-  -->sov_id
-  ->change_orders
-  -->description
-  -->value
-  -->sov_id
-  -->note
-
-
-  */
+ 
 
 
   return (
