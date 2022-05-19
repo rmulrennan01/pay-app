@@ -10,9 +10,12 @@ import Modal from '@mui/material/Modal';
 
 import Contract_sov from "./Contract_page/Contract_sov.js"; 
 import Change_order_modal from './Contract_page/Change_order_modal.js';
+import { getScopedCssBaselineUtilityClass } from '@mui/material';
 
 function Contract_page(props) {
     const [contract_info, set_contract_info] = useState(); 
+    const [owner_info, set_owner_info] = useState(); 
+    const [sov, set_sov] = useState(); 
     const [loading, set_loading] = useState(true); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const {id} = useParams(); 
@@ -24,16 +27,52 @@ function Contract_page(props) {
     //fetch the document from firebase
     React.useEffect( () => {
         const fetchData = async () =>{
-        const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
-        //set_contract_info(dataList.docs.map(doc=>doc.data())); 
-        set_contract_info(dataList.data()); 
-        set_loading(false); 
-       
+            const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
+            set_contract_info(dataList.data()); 
+        
+            const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+            set_owner_info(dataList2.data()); 
+
+            const tempList = []; 
+
+            /*
+            firestoreDB.collection("contracts").doc(id).collection("sov").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    if(doc.data() != null){ tempList.push(doc.data());};  
+                });
+            });
+            
+`           */
+
+            const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
+            dataList3.forEach((doc) => {
+                tempList.push(doc.data()); 
+                console.log(doc.data()); 
+            });
+
+            console.log(tempList); 
+            set_sov(tempList); 
+            set_loading(false); 
+            
         }
         fetchData(); 
-        console.log(contract_info); 
+
         
     }, []);  
+
+
+
+    const submit_db = (cost_code) =>{
+        firestoreDB.collection("contracts").document(id).collection("sov").add(owner_info)
+        .then((docRef) => {
+            console.log("Owner Submission Successful");
+            
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+    }
+    
 
 
     const job_info = () => {
@@ -52,15 +91,16 @@ function Contract_page(props) {
                     <h3>  Contract: </h3>  
                     {contract_info.name} <br/>
                     {contract_info.address_01} <br/>
-                    {contract_info.address_02} <br/>
+                    {contract_info.address_02!=""? <>{contract_info.address_02} <br/> </>:<></>}
                     {contract_info.city}, {contract_info.state} {contract_info.zip}
                     <br/> <br/> 
                     
                     <h3> Owner: </h3> 
-                    {contract_info.owner.name} <br/>
-                    {contract_info.owner.address_01} <br/>
-                    {contract_info.owner.address_02} <br/>
-                    {contract_info.owner.city}, {contract_info.owner.state} {contract_info.owner.zip}
+                    {owner_info.name} <br/>
+                    {owner_info.address_01} <br/>
+                    {owner_info.address_02!=""? <>{owner_info.address_02} <br/> </>:<></>}
+                    
+                    {owner_info.city}, {owner_info.state} {owner_info.zip}
 
                 </Paper>
             ); 
@@ -81,7 +121,7 @@ function Contract_page(props) {
             return(
                 <Paper>
                     
-                    <Contract_sov sov_data={contract_info} /> 
+                    <Contract_sov sov_data={sov} /> 
 
                 </Paper>
             ); 
@@ -108,7 +148,7 @@ function Contract_page(props) {
 
 
             <Modal open={modal_open} onClose={()=>set_modal_open(false)} >
-                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal sov_data={contract_info.sov} close_modal={()=>set_modal_open(false)}/> }
+                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal sov_data={sov} close_modal={()=>set_modal_open(false)}/> }
             </Modal>
         </>
   

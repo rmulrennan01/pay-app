@@ -63,7 +63,8 @@ function Schedule_of_Values(props) {
             {
             cost_code:ref_cost_code.current.value, 
             description:ref_description.current.value,
-            value:ref_value.current.value
+            value:Number(ref_value.current.value),
+            change_orders:0
             }
             ); 
    

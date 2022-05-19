@@ -1,5 +1,6 @@
 import React, {useState, useRef} from 'react'
 import Paper from '@mui/material/Paper';
+import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 
 import TextField from '@mui/material/TextField';
 import Slider from '@mui/material/Slider';
@@ -11,6 +12,7 @@ import Button from '@mui/material/Button';
 function Change_order_modal(props) {
   const [cost_codes, set_cost_codes] = useState(props.sov_data); 
   const [cost_code_selection, set_cost_code_selection] = useState(""); 
+  const [value, set_value] = useState(0); 
 
   const selectionRef= useRef(); 
   const valueRef = useRef(); 
@@ -21,6 +23,8 @@ function Change_order_modal(props) {
     set_cost_code_selection(event.target.value); 
 
   }
+
+  
 
   const buildList = (item) => {
     return(
@@ -35,14 +39,20 @@ function Change_order_modal(props) {
       <br/> 
       What's the net change in contract value?<br/> 
       <br/> 
-      <TextField 
-                required 
-                inputRef={valueRef} 
-                id="outlined-required" 
-                label="Amount ($)" 
-                onChange={console.log(valueRef.value)}
-                defaultValue={0}
+      <CurrencyTextField
+        label="Amount"
+        variant="outlined"
+        value={value}
+        currencySymbol="$"
+        //minimumValue="0"
+        outputFormat="string"
+        decimalCharacter="."
+        digitGroupSeparator=","
+        
+        leadingZero={"deny"}
+        ref={valueRef}
       />
+
       <br/> <br/> 
       Apply the change order to this cost item:<br/> 
       <br/> 
@@ -57,18 +67,18 @@ function Change_order_modal(props) {
                 {cost_codes.map(buildList)}
       </Select>
       <br/> 
-      What's the breif description for this change order?<br/> 
+      What's the brief description for this change order?<br/> 
       <br/> 
       <TextField 
                 required 
                 inputRef={descripRef} 
                 id="outlined-required" 
                 label="" 
-                onChange={console.log(valueRef.value)}
+                
                 defaultValue={""}
       />
       <br/> <br/> 
-      <Button variant="contained">Add to Contract</Button> <Button variant="outlined" onClick={()=>props.close_modal()}>Cancel</Button> 
+      <Button variant="contained" onClick={()=>console.log(valueRef.current.getValue())}>Add to Contract</Button> <Button variant="outlined" onClick={()=>props.close_modal()}>Cancel</Button> 
 
 
 

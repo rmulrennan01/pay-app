@@ -5,6 +5,8 @@ import React, {useState} from 'react';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
+import CurrencyFormat from 'react-currency-format';
+
 
 
 
@@ -37,7 +39,8 @@ function Contract_sov(props) {
                         
                     </TableCell>
                     <TableCell>
-                        {item.value}
+                        <CurrencyFormat value={item.value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+                       
                     </TableCell>
          
                 </TableRow>
@@ -68,7 +71,8 @@ function Contract_sov(props) {
                 </TableHead>
                 <TableBody>
 
-                    {(table_content.length == 0) ? null : table_content.sov.map(build_table_body)}
+                    {(table_content.length == 0) ? console.log("it's here") : table_content.map(build_table_body)}
+                    {console.log(table_content)}
 
                 </TableBody>
             </Table>

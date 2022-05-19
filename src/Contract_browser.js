@@ -24,6 +24,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 function Contract_browser() {
 
     const [contracts, set_contracts] = useState([]); 
+   
     const [loading, set_loading] = useState([]); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const [contract_id, set_contract_id] = useState([]); 
@@ -35,37 +36,27 @@ function Contract_browser() {
     //fetch the contracts
     React.useEffect( () => {
 
+        
+
         //map document id's with the local data -> needed for creating links
-        const build_id = (item, index) =>{
-            let temp_list = contracts; 
-            temp_list[index]['id']=item.id; 
-            set_contracts(temp_list); 
-
-        }
-
         const build_data = (item, index) => {
             let temp_dict = item.data();
             temp_dict['id'] = item.id; 
+            
             let temp_array = contracts; 
             temp_array.push(temp_dict); 
-             
             set_contracts(temp_array); 
-
-        
         }
+        
+    
 
         const fetchData = async () =>{
-        const dataList = await firestoreDB.collection("contracts").get(); //updated
-        
-        //set_contracts(dataList.docs.map(doc=>doc.data())); 
-       // dataList.docs.map(build_id); 
-        dataList.docs.map(build_data); 
-        set_loading(false); 
-        //console.log(dataList); 
-        
+            const dataList = await firestoreDB.collection("contracts").get(); //updated
+
+            dataList.docs.map(build_data);
+            set_loading(false); 
         }
         fetchData(); 
-        console.log(contracts); 
         
     }, []);
 
@@ -88,7 +79,7 @@ function Contract_browser() {
                     {item.state}
                 </TableCell>
                 <TableCell>
-                    {item.owner.name}
+                   {item.owner_name}
                 </TableCell>
 
             </TableRow>

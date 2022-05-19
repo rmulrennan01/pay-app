@@ -106,46 +106,103 @@ function Job_setup() {
 
     //We will keep two copies of the owner data. One is for an owner directory, so we can reuse the same owner.
     //Another copy will be stored inside the project document, so we only have to do one request to access all information
+
+    
     const submit_db = () =>{
         let temp_project = project_info;
-        let sum = 0; 
-
-        temp_project["sov"] = sov_data; 
-        temp_project["owner"] = owner_info; 
-
-        
-    
   
-    
-    firestoreDB.collection("owners").add(owner_info)
-    .then((docRef) => {
-        console.log("Owner Submission Successful");
-        console.log("Owner Info is here: " + docRef.id)
-        temp_project["owner_id"] = docRef.id; //need to add the id of the owner document, so we can easily retrieve owner info
-        firestoreDB.collection("contracts").add(temp_project)
+
+        //temp_project["sov"] = sov_data; 
+        //temp_project["owner"] = owner_info; 
+        firestoreDB.collection("owners").add(owner_info)
         .then((docRef) => {
-            console.log("Project Submission Successful");
-            console.log("Project Info is here: " + docRef.id)
+            console.log("Owner Submission Successful");
+            console.log("Owner Info is here: " + docRef.id)
+            temp_project["owner_id"] = docRef.id; //need to add the id of the owner document, so we can easily retrieve owner info
+            temp_project["owner_name"] = owner_info.name; 
+            firestoreDB.collection("contracts").add(temp_project)
+            .then((docRef2) => {
+                console.log("Project Submission Successful");
+                console.log("Project Info is here: " + docRef.id)
+
+                let batch = firestoreDB.batch(); 
+                sov_data.forEach((doc) => {
+                    let docRef = firestoreDB.collection("contracts").doc(docRef2.id).collection("sov").doc(); 
+                    batch.set(docRef,doc); 
+                })
+
+                batch.commit()
+                .then((docRef3)=>{
+                    console.log("submission of sov data complete")
+                })
+                .catch((error) => {
+                    console.error("Error adding sov"); 
+                }) ; 
+
+                firestoreDB.collection("contracts").doc(docRef2.id).collection("pay_apps").add({"Hello":"World"})
+                .then((docRef5)=>{
+                    console.log("submission of pay app data complete")
+                })
+                .catch((error) => {
+                    console.error("Error adding pay apps"); 
+                }) ; 
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            });
+ 
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
         });
-    })
-    .catch((error) => {
-        console.error("Error adding document: ", error);
-    });
+
+        
+
+    }
+    
+
+    /*
+    const submit_db = () =>{
+        let temp_project = project_info;
+        temp_project["sov"] = sov_data; 
+
+        firestoreDB.collection("contracts").add(temp_project)
+            .then((docRef)=>{
+                
+                console.log("submission of contract complete"); 
+                firestoreDB.collection("owners").doc(docRef.id).set(owner_info)
+                .then((docRef2)=>{
+                    console.log("submission of owner data complete")
+                })
+                .catch((error) => {
+                    console.error("Error adding owner"); 
+                }) ; 
+                 
+                firestoreDB.collection("change_orders").doc(docRef.id).set({})
+                .then((docRef3)=>{
+                    console.log("submission of change order data complete")
+                })
+                .catch((error) => {
+                    console.error("Error adding change order"); 
+                }) ; 
+                firestoreDB.collection("pay_apps").doc(docRef.id).set({})
+                .then((docRef3)=>{
+                    console.log("submission of pay app data complete")
+                })
+                .catch((error) => {
+                    console.error("Error adding pay apps"); 
+                }) ; 
+                
+
+            })
+            .catch((error) => {
+                console.error("Error adding contract info"); 
+            }); 
 
     
 
-}
-
-    
-
-
-    
-
-    
-
+    }
+    */ 
 
     const build_steps = (item,index) => {
         const button_builder = () => {
