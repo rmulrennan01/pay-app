@@ -6,10 +6,14 @@ import Paper from '@mui/material/Paper';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import AppBar from '@mui/material/AppBar';
 
 
 import Contract_sov from "./Contract_page/Contract_sov.js"; 
 import Change_order_modal from './Contract_page/Change_order_modal.js';
+import Change_order_table from './Contract_page/Change_order_table.js'; 
 import { getScopedCssBaselineUtilityClass } from '@mui/material';
 
 function Contract_page(props) {
@@ -20,6 +24,7 @@ function Contract_page(props) {
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const {id} = useParams(); 
     const [modal_open, set_modal_open] = useState(false); 
+    const [tab, set_tab] = useState(0);   
    
 
 
@@ -46,8 +51,10 @@ function Contract_page(props) {
 
             const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
             dataList3.forEach((doc) => {
-                tempList.push(doc.data()); 
-                console.log(doc.data()); 
+                let tempDict = doc.data(); 
+                tempDict["id"] = doc.id; 
+                tempList.push(tempDict); 
+                //console.log(doc.data()); 
             });
 
             console.log(tempList); 
@@ -109,7 +116,6 @@ function Contract_page(props) {
     }
 
     const job_sov = () => {
-
         if(loading){
             return(
                 <Paper>
@@ -120,12 +126,26 @@ function Contract_page(props) {
         else {
             return(
                 <Paper>
-                    
                     <Contract_sov sov_data={sov} /> 
-
                 </Paper>
             ); 
+        }
+    }
 
+    const change_orders = () => {
+        if(loading){
+            return(
+                <Paper>
+                 <CircularProgress/> 
+                </Paper>
+                ); 
+        }
+        else {
+            return(
+                <Paper>
+                    <Change_order_table co_data={sov} /> 
+                </Paper>
+            ); 
         }
     }
 
@@ -134,18 +154,23 @@ function Contract_page(props) {
 
     
 
-
+    
     return (
         <>
             {job_info()}
             <br/> 
-            <h3> Schedule of Values </h3> 
-            {job_sov()}
-            <br/> 
-            <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_modal_open(true)}> Add Change Order </Button>
-            <br/> 
-            <h3> Payment Applications </h3> 
+            <Tabs value={tab}  centered>
+                <Tab label="Schedule of Values" onClick={()=>set_tab(0)}/>
+                <Tab label="Change Orders" onClick={()=>set_tab(1)}/>
+                <Tab label="Payment Applictions" onClick={()=>set_tab(2)}/>
+            </Tabs>
 
+            {true ? <Paper>  <h3> Schedule of Values </h3> {job_sov()}<br/> </Paper>  : <></>  }
+            {true ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
+            {false ? <Paper>  <h3> Payment Applications </h3> {job_sov()}<br/> </Paper>  : <></>  }
+            
+
+    
 
             <Modal open={modal_open} onClose={()=>set_modal_open(false)} >
                 {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal sov_data={sov} close_modal={()=>set_modal_open(false)}/> }
