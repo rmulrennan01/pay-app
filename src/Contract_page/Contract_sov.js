@@ -25,9 +25,21 @@ function Contract_sov(props) {
     const [update, set_update] = useState(1); 
     const [total, set_total] = useState(0); 
 
+    
+    const get_co_total = (co) => {
+        let sum = 0; 
+        if(co.length >0){
+            co.map(item=>sum = Number(sum) + Number(item.value)); 
+            return sum; 
+        }; 
+        return 0; 
+
+    }
+
 
 
     const build_table_body = (item,index) => {
+        const temp_co_total = get_co_total(item.change_orders); 
       
             return(
                 <TableRow key={index}> 
@@ -40,6 +52,21 @@ function Contract_sov(props) {
                     </TableCell>
                     <TableCell>
                         <CurrencyFormat value={item.value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+                       
+                    </TableCell>
+                    <TableCell>
+                        <CurrencyFormat 
+                            value={temp_co_total} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />
+                       
+                    </TableCell>
+                    <TableCell>
+                        <CurrencyFormat value={Number(item.value)+Number(temp_co_total)} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
                        
                     </TableCell>
          
@@ -64,7 +91,13 @@ function Contract_sov(props) {
                             Description
                         </TableCell>
                         <TableCell>
-                            Value ($)
+                            Base Value ($)
+                        </TableCell>
+                        <TableCell>
+                            Change Orders  ($)
+                        </TableCell>
+                        <TableCell>
+                            Revised Value ($)
                         </TableCell>
 
                     </TableRow>

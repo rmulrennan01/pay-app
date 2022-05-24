@@ -103,16 +103,25 @@ function Job_setup() {
     }, []);
 
 
+    
+    const get_job_total = (job_sov) => {
+        let temp_sum = 0; 
+        if(job_sov.length>0){
+            job_sov.map(item=>temp_sum = Number(temp_sum) + Number(item.value)); 
+            return temp_sum
+        };
+        return 0; 
 
+    }
+    
+    
     //We will keep two copies of the owner data. One is for an owner directory, so we can reuse the same owner.
     //Another copy will be stored inside the project document, so we only have to do one request to access all information
-
+    
     
     const submit_db = () =>{
         let temp_project = project_info;
-  
-
-        //temp_project["sov"] = sov_data; 
+          //temp_project["sov"] = sov_data; 
         //temp_project["owner"] = owner_info; 
         firestoreDB.collection("owners").add(owner_info)
         .then((docRef) => {
@@ -120,6 +129,10 @@ function Job_setup() {
             console.log("Owner Info is here: " + docRef.id)
             temp_project["owner_id"] = docRef.id; //need to add the id of the owner document, so we can easily retrieve owner info
             temp_project["owner_name"] = owner_info.name; 
+            temp_project["base_contract_value"] = get_job_total(sov_data); 
+            temp_project["co_count"] = 0; 
+            temp_project["co_value"] = 0; 
+
             firestoreDB.collection("contracts").add(temp_project)
             .then((docRef2) => {
                 console.log("Project Submission Successful");

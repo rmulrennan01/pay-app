@@ -65,6 +65,7 @@ function Schedule_of_Values(props) {
             description:ref_description.current.value,
             value:Number(ref_value.current.value),
             change_orders:0
+            
             }
             ); 
    

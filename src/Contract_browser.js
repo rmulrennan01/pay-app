@@ -18,6 +18,7 @@ import Paper from '@mui/material/Paper';
 
 import CircularProgress from '@mui/material/CircularProgress';
 
+import CurrencyFormat from 'react-currency-format';
 
 
 
@@ -81,6 +82,17 @@ function Contract_browser() {
                 <TableCell>
                    {item.owner_name}
                 </TableCell>
+                <TableCell>
+                   <CurrencyFormat value={item.base_contract_value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat value={item.co_value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+                
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat value={Number(item.co_value)+Number(item.base_contract_value)} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+                
+                </TableCell>
 
             </TableRow>
         );
@@ -137,6 +149,19 @@ function Contract_browser() {
                         
                             <h3> Owner </h3> 
                         </TableCell>
+                        <TableCell className="Contract_browser__header_text">
+                        
+                            <h3> Base Contract ($) </h3> 
+                        </TableCell>
+                        <TableCell className="Contract_browser__header_text">
+                        
+                            <h3> Change Orders ($) </h3> 
+                        </TableCell>
+                        <TableCell className="Contract_browser__header_text">
+                        
+                            <h3> Revised Contract ($) </h3> 
+                        </TableCell>
+
   
                     </TableRow>
                 </TableHead>

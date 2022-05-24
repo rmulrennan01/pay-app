@@ -21,7 +21,7 @@ function Change_order_modal(props) {
 
   const update_cost_code = (event: SelectChangeEvent) =>{
     set_cost_code_selection(event.target.value); 
-    alert(event.target.value); 
+    //alert(event.target.value); 
 
   }
 

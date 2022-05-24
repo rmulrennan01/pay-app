@@ -34,27 +34,21 @@ function Contract_page(props) {
         const fetchData = async () =>{
             const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             set_contract_info(dataList.data()); 
+            console.log(dataList.data()); 
         
             const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
             set_owner_info(dataList2.data()); 
 
             const tempList = []; 
 
-            /*
-            firestoreDB.collection("contracts").doc(id).collection("sov").get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    if(doc.data() != null){ tempList.push(doc.data());};  
-                });
-            });
-            
-`           */
 
             const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
             dataList3.forEach((doc) => {
                 let tempDict = doc.data(); 
                 tempDict["id"] = doc.id; 
+                //tempDict["parent"] = doc.ref.parent.path.slice(0,-4); 
                 tempList.push(tempDict); 
-                //console.log(doc.data()); 
+                //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
             });
 
             console.log(tempList); 
@@ -82,6 +76,7 @@ function Contract_page(props) {
     */
 
     const submit_co = (sov_id, data) => {
+        //add the change order to the appropriate sov data item
         firestoreDB.collection("contracts").doc(id).collection("sov").doc(sov_id).update({
             "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value})
         })
@@ -91,14 +86,20 @@ function Contract_page(props) {
         .catch((error) => {
             console.error("Error adding change order info", error); 
         });
+        //update the change order quantitiy count and change order dollar total
+        const delta = firebase.firestore.FieldValue.increment(data.value); 
+        firestoreDB.collection("contracts").doc(id).update({
+            "co_value": delta
+        })
+        .then((docRef) => {
+            console.log("updated co total successfully"); 
+        })
+        .catch((error) => {
+            console.error("Error updating change order total", error); 
+        });
     } 
 
 
-
-
-
-    
-    
 
 
     const job_info = () => {
