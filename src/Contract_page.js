@@ -68,7 +68,7 @@ function Contract_page(props) {
     }, []);  
 
 
-
+    /*
     const submit_db = (cost_code) =>{
         firestoreDB.collection("contracts").document(id).collection("sov").add(owner_info)
         .then((docRef) => {
@@ -79,6 +79,25 @@ function Contract_page(props) {
             console.error("Error adding document: ", error);
         });
     }
+    */
+
+    const submit_co = (sov_id, data) => {
+        firestoreDB.collection("contracts").doc(id).collection("sov").doc(sov_id).update({
+            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value})
+        })
+        .then((docRef) => {
+            console.log("added CO successfully"); 
+        })
+        .catch((error) => {
+            console.error("Error adding change order info", error); 
+        });
+    } 
+
+
+
+
+
+    
     
 
 
@@ -172,8 +191,8 @@ function Contract_page(props) {
 
     
 
-            <Modal open={modal_open} onClose={()=>set_modal_open(false)} >
-                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal sov_data={sov} close_modal={()=>set_modal_open(false)}/> }
+            <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
+                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal sov_data={sov} close_modal={()=>set_modal_open(false)} submit={submit_co}/> }
             </Modal>
         </>
   

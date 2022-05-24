@@ -1,4 +1,4 @@
-import React, {useState} from 'react'; 
+import React, {useState, useRef} from 'react'; 
 
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
@@ -11,12 +11,19 @@ import TextField from '@mui/material/TextField';
 function Change_orders(props) {
     const [modal_open, set_modal_open] = useState(false); 
     const [cost_item, set_cost_item] = useState(""); 
+    const description_ref = useRef(); 
+    const value_ref = useRef(); 
+
+
     const buildList = (item) => {
         return(
             <MenuItem value={item.description}>{item.description}</MenuItem>
         )
 
     }
+
+ 
+
     return (
         <div>
             <Modal open={modal_open} onClose={()=>set_modal_open(false)} >

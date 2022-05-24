@@ -21,14 +21,24 @@ function Change_order_modal(props) {
 
   const update_cost_code = (event: SelectChangeEvent) =>{
     set_cost_code_selection(event.target.value); 
+    alert(event.target.value); 
 
   }
+
+  const submit_change_order = () => {
+   //console.log({description:descripRef.current.value, value: value})
+   let tempData = {description:descripRef.current.value, value: value}; 
+
+   props.submit(cost_code_selection, tempData); 
+
+  }
+
 
   
 
   const buildList = (item) => {
     return(
-        <MenuItem value={item.cost_code}>{item.cost_code + " " + item.description}</MenuItem>
+        <MenuItem value={item.id}>{item.cost_code + " " + item.description}</MenuItem>
     )
 
 }
@@ -51,6 +61,8 @@ function Change_order_modal(props) {
         
         leadingZero={"deny"}
         ref={valueRef}
+        onChange={(event, value)=> set_value(value)}
+
       />
 
       <br/> <br/> 
@@ -78,7 +90,7 @@ function Change_order_modal(props) {
                 defaultValue={""}
       />
       <br/> <br/> 
-      <Button variant="contained" onClick={()=>console.log(valueRef.current.getValue())}>Add to Contract</Button> <Button variant="outlined" onClick={()=>props.close_modal()}>Cancel</Button> 
+      <Button variant="contained" onClick={()=>submit_change_order()}>Add to Contract</Button> <Button variant="outlined" onClick={()=>props.close_modal()}>Cancel</Button> 
 
 
 
