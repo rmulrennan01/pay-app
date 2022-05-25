@@ -85,19 +85,19 @@ function Contract_sov(props) {
                 <TableHead> 
                     <TableRow>
                         <TableCell>
-                            Cost Code
+                            <h3> Cost Code </h3> 
                         </TableCell>
                         <TableCell>
-                            Description
+                            <h3> Description </h3> 
                         </TableCell>
                         <TableCell>
-                            Base Value ($)
+                            <h3> Base Value ($) </h3> 
                         </TableCell>
                         <TableCell>
-                            Change Orders  ($)
+                            <h3> Change Orders  ($) </h3> 
                         </TableCell>
                         <TableCell>
-                            Revised Value ($)
+                            <h3> Revised Value ($) </h3> 
                         </TableCell>
 
                     </TableRow>

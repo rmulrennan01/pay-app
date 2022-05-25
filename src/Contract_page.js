@@ -93,6 +93,9 @@ function Contract_page(props) {
         })
         .then((docRef) => {
             console.log("updated co total successfully"); 
+            alert("Change Order Added Successfully"); 
+            window.location.reload(false);
+            
         })
         .catch((error) => {
             console.error("Error updating change order total", error); 
@@ -180,14 +183,15 @@ function Contract_page(props) {
             {job_info()}
             <br/> 
             <Tabs value={tab}  centered>
-                <Tab label="Schedule of Values" onClick={()=>set_tab(0)}/>
-                <Tab label="Change Orders" onClick={()=>set_tab(1)}/>
-                <Tab label="Payment Applictions" onClick={()=>set_tab(2)}/>
+                <Tab label={<h3>Schedule of Values</h3>} onClick={()=>set_tab(0)}/>
+                <Tab label={<h3>Change Orders</h3>} onClick={()=>set_tab(1)}/>
+                <Tab label={<h3>Payment Applictions</h3>} onClick={()=>set_tab(2)}/>
             </Tabs>
+            {console.log(tab)}
 
-            {true ? <Paper>  <h3> Schedule of Values </h3> {job_sov()}<br/> </Paper>  : <></>  }
-            {true ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
-            {false ? <Paper>  <h3> Payment Applications </h3> {job_sov()}<br/> </Paper>  : <></>  }
+            {tab==0 ? <Paper>  <h3> Schedule of Values </h3> {job_sov()}<br/> </Paper>  : <></>  }
+            {tab==1 ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
+            {tab==2 ? <Paper>  <h3> Payment Applications </h3> {job_sov()}<br/> </Paper>  : <></>  }
             
 
     

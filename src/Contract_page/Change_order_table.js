@@ -66,16 +66,16 @@ function Change_order_table(props) {
                 <TableHead> 
                     <TableRow>
                         <TableCell> 
-                            ID #
+                            <h3> ID # </h3> 
                         </TableCell> 
                         <TableCell>
-                            Cost Code
+                            <h3> Cost Code </h3> 
                         </TableCell>
                         <TableCell>
-                            Description
+                            <h3> Description </h3> 
                         </TableCell>
                         <TableCell>
-                            Value ($)
+                            <h3> Value ($) </h3> 
                         </TableCell>
 
                     </TableRow>
