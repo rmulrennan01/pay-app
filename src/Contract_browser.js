@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 
 import firebase from "./Firebase.js"; 
 import "./Contract_browser.css"; 
@@ -16,6 +16,9 @@ import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
+import TextField from '@mui/material/TextField';
+
+
 import CircularProgress from '@mui/material/CircularProgress';
 
 import CurrencyFormat from 'react-currency-format';
@@ -25,10 +28,10 @@ import CurrencyFormat from 'react-currency-format';
 function Contract_browser() {
 
     const [contracts, set_contracts] = useState([]); 
+    const [filtered_contracts, set_filtered_contracts] = useState([]); 
    
     const [loading, set_loading] = useState([]); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
-    const [contract_id, set_contract_id] = useState([]); 
     const [page, set_page] = useState(0); 
     const [row_count, set_row_count] = useState(5); 
 
@@ -36,9 +39,6 @@ function Contract_browser() {
 
     //fetch the contracts
     React.useEffect( () => {
-
-        
-
         //map document id's with the local data -> needed for creating links
         const build_data = (item, index) => {
             let temp_dict = item.data();
@@ -47,13 +47,11 @@ function Contract_browser() {
             let temp_array = contracts; 
             temp_array.push(temp_dict); 
             set_contracts(temp_array); 
+            set_filtered_contracts(temp_array); 
         }
-        
-    
 
         const fetchData = async () =>{
             const dataList = await firestoreDB.collection("contracts").get(); //updated
-
             dataList.docs.map(build_data);
             set_loading(false); 
         }
@@ -117,6 +115,38 @@ function Contract_browser() {
                 <CircularProgress /> 
             )
         }
+    }
+
+
+    const filterRef = useRef(); 
+
+    const filter = (search_str) => {
+        let temp_array = []; 
+        let str = search_str.toLowerCase(); 
+        console.log(str); 
+        
+        
+        contracts.map((item)=>{
+            console.log(item.name); 
+
+            
+            if(
+                item.name.toLowerCase().includes(str) || 
+                item.address_01.toLowerCase().includes(str) || 
+                item.address_02.toLowerCase().includes(str) ||
+                item.owner_name.toLowerCase().includes(str) ||
+                item.city.toLowerCase().includes(str) ||
+                item.state.toLowerCase().includes(str)
+            )
+                {
+                    temp_array.push(item); 
+                }; 
+            
+
+        }); 
+        set_filtered_contracts(temp_array); 
+        
+
 
     }
     
@@ -126,9 +156,16 @@ function Contract_browser() {
     return (
         <Paper>
             <br/> 
-        <Button variant="contained" href="/job_setup"> + Contract </Button> 
+        <Button variant="contained" href="/job_setup"> + Add a Contract </Button> 
         <br/> <br/> 
-        
+        <TextField 
+                id="outlined-required" 
+                label="Search" 
+                inputRef={filterRef}
+                defaultValue={""}
+        />
+        <Button variant="contained" onClick={()=>filter(filterRef.current.value)}> Go </Button> 
+        <br/> <br/>
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table" size={'small'}>
                 <TableHead> 
@@ -167,7 +204,7 @@ function Contract_browser() {
                 </TableHead>
                 <TableBody>
                     {loading_indicator()}
-                    {contracts.map(build_table_body)}
+                    {filtered_contracts.map(build_table_body)}
         
                 </TableBody>
             </Table>

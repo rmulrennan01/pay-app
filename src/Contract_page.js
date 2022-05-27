@@ -185,11 +185,11 @@ function Contract_page(props) {
             <Tabs value={tab}  centered>
                 <Tab label={<h3>Schedule of Values</h3>} onClick={()=>set_tab(0)}/>
                 <Tab label={<h3>Change Orders</h3>} onClick={()=>set_tab(1)}/>
-                <Tab label={<h3>Payment Applictions</h3>} onClick={()=>set_tab(2)}/>
+                <Tab label={<h3>Payment Applications</h3>} onClick={()=>set_tab(2)}/>
             </Tabs>
             {console.log(tab)}
 
-            {tab==0 ? <Paper>  <h3> Schedule of Values </h3> {job_sov()}<br/> </Paper>  : <></>  }
+            {tab==0 ? <Paper>  <h3> Contract Summary </h3> {job_sov()}<br/> </Paper>  : <></>  }
             {tab==1 ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
             {tab==2 ? <Paper>  <h3> Payment Applications </h3> {job_sov()}<br/> </Paper>  : <></>  }
             

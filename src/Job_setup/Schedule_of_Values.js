@@ -23,6 +23,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 
+import CurrencyTextField from '@unicef/material-ui-currency-textfield'
+import CurrencyFormat from 'react-currency-format';
 
 
 
@@ -31,6 +33,8 @@ function Schedule_of_Values(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
     const [update, set_update] = useState(1); 
     const [total, set_total] = useState(0); 
+    const [value, set_value] = useState(0); 
+
 
     const ref_cost_code = useRef(); 
     const ref_description = useRef(); 
@@ -48,7 +52,15 @@ function Schedule_of_Values(props) {
                         
                     </TableCell>
                     <TableCell>
-                        {item.value}
+                        
+                        <CurrencyFormat 
+                            value={item.value}
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />
                     </TableCell>
                     <TableCell>
                         <Button onClick={()=>remove_table_item(index)}> Remove </Button>
@@ -63,7 +75,7 @@ function Schedule_of_Values(props) {
             {
             cost_code:ref_cost_code.current.value, 
             description:ref_description.current.value,
-            value:Number(ref_value.current.value),
+            value:Number(value),
             change_orders:0
             
             }
@@ -71,7 +83,7 @@ function Schedule_of_Values(props) {
    
         set_table_content(temp_data); 
         props.update_sov(temp_data); 
-        set_total(Number(total)+Number(ref_value.current.value)); 
+        set_total(Number(total)+Number(value)); 
         console.log("Added :" + temp_data[0]);
         
     }
@@ -132,9 +144,20 @@ function Schedule_of_Values(props) {
                             </TextField>    
                         </TableCell>
                         <TableCell> 
-                            <TextField required inputRef={ref_value} id="outlined-required" label="Cost" type="number">
+                            <CurrencyTextField
+                                label="Amount"
+                                variant="outlined"
+                                value={value}
+                                currencySymbol="$"
+                                //minimumValue="0"
+                                outputFormat="string"
+                                decimalCharacter="."
+                                digitGroupSeparator=","
                                 
-                            </TextField>   
+                                leadingZero={"deny"}
+                                onChange={(event, value)=> set_value(value)}
+
+                            />  
                         </TableCell>
                         <TableCell>
                             <Button onClick={()=>update_table()}>Add</Button> 

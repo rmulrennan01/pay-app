@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import CurrencyFormat from 'react-currency-format';
+
 
 //Tables
 import Table from '@mui/material/Table';
@@ -31,7 +33,15 @@ function Confirmation_Modal(props) {
                     
                 </TableCell>
                 <TableCell>
-                    {item.value}
+                    <CurrencyFormat 
+                        value={item.value}
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                    
                 </TableCell>
 
             </TableRow>
@@ -96,7 +106,15 @@ function Confirmation_Modal(props) {
                     </Table> 
                 </TableContainer> 
 
-                The Total Contract amount is: ${get_total()}
+                The Total Contract amount is:  
+                    {<CurrencyFormat 
+                        value={get_total()}
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />}
             </Paper>
 
             <Button onClick={()=>props.submit_db()}> Submit </Button> 
