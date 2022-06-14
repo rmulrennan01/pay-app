@@ -33,7 +33,7 @@ function Contract_browser() {
     const [loading, set_loading] = useState([]); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const [page, set_page] = useState(0); 
-    const [row_count, set_row_count] = useState(5); 
+    const [row_count, set_row_count] = useState(20); 
 
 
 
@@ -66,6 +66,12 @@ function Contract_browser() {
             <TableRow className="Contract_browser__row" key={index} onClick={()=>window.location='/contract/'+ String(item.id)} > 
             
                 <TableCell>
+                    <TableSortLabel
+                      
+                        
+                        >
+                        
+                    </TableSortLabel>
                     {item.name}
                 </TableCell>
                 <TableCell>

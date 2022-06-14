@@ -23,7 +23,9 @@ import TableRow from '@mui/material/TableRow';
 function Contract_sov(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
     const [update, set_update] = useState(1); 
-    const [total, set_total] = useState(0); 
+    const total = 0; 
+
+
 
     
     const get_co_total = (co) => {
@@ -36,10 +38,29 @@ function Contract_sov(props) {
 
     }
 
+    
+    
+    const get_totals = () => {
+        let sum = 0;
+        if(table_content.length >0){
+            table_content.map(item=>sum=Number(sum)+Number(item.value)+Number(get_co_total(item.change_orders)))
+            return sum; 
+
+        }
+        return sum; 
+
+    }
+    
+
+
+ 
+
 
 
     const build_table_body = (item,index) => {
         const temp_co_total = get_co_total(item.change_orders); 
+
+
       
             return(
                 <TableRow key={index}> 
@@ -69,6 +90,7 @@ function Contract_sov(props) {
                         <CurrencyFormat value={Number(item.value)+Number(temp_co_total)} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
                        
                     </TableCell>
+                   
          
                 </TableRow>
             );
@@ -105,14 +127,21 @@ function Contract_sov(props) {
                 <TableBody>
 
                     {(table_content.length == 0) ? console.log("it's here") : table_content.map(build_table_body)}
-                    {console.log(table_content)}
+                    
 
                 </TableBody>
             </Table>
 
         </TableContainer>
         
-        Contract Total: $ {total}
+            Contract Total: <CurrencyFormat 
+                value={get_totals()} 
+                displayType={'text'} 
+                thousandSeparator={true} 
+                prefix={'$'} 
+                fixedDecimalScale={true} 
+                decimalScale={2}
+            />
 
        
 

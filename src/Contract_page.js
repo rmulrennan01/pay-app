@@ -10,11 +10,16 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import AppBar from '@mui/material/AppBar';
 
+import Grid from '@mui/material/Grid';
+
 
 import Contract_sov from "./Contract_page/Contract_sov.js"; 
 import Change_order_modal from './Contract_page/Change_order_modal.js';
 import Change_order_table from './Contract_page/Change_order_table.js'; 
 import { getScopedCssBaselineUtilityClass } from '@mui/material';
+
+import CurrencyFormat from 'react-currency-format';
+
 
 function Contract_page(props) {
     const [contract_info, set_contract_info] = useState(); 
@@ -138,6 +143,59 @@ function Contract_page(props) {
         }
     }
 
+
+    const job_summary = () =>{
+        if(loading){
+            return(
+                <Paper>
+                    <CircularProgress/> 
+                </Paper>
+                );
+        }
+        else{
+        
+        return(
+            <Paper>
+                <h3>Base Contract: <span> 
+                    <CurrencyFormat 
+                        value={contract_info.base_contract_value} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    /> 
+                </span> 
+                </h3> 
+                <h3>Change Orders: <span> 
+                    <CurrencyFormat 
+                        value={contract_info.co_value} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    /> 
+                </span> 
+                
+                </h3> 
+                <h3>Contract Total: <span> 
+                    <CurrencyFormat 
+                        value={Number(contract_info.base_contract_value)+Number(contract_info.co_value)} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    /> 
+                </span> 
+                
+                </h3> 
+            </Paper>
+        )
+        }
+    }
+
     const job_sov = () => {
         if(loading){
             return(
@@ -180,8 +238,18 @@ function Contract_page(props) {
     
     return (
         <>
-            {job_info()}
+            <Grid container spacing={2}>
+                <Grid item xs = {6}>
+                    {job_info()}
+                </Grid>
+                <Grid item xs = {6}>
+                    {job_summary()}
+
+                </Grid>
+
+            </Grid>
             <br/> 
+            <br/>
             <Tabs value={tab}  centered>
                 <Tab label={<h3>Schedule of Values</h3>} onClick={()=>set_tab(0)}/>
                 <Tab label={<h3>Change Orders</h3>} onClick={()=>set_tab(1)}/>
