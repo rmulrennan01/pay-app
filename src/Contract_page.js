@@ -16,6 +16,7 @@ import Grid from '@mui/material/Grid';
 import Contract_sov from "./Contract_page/Contract_sov.js"; 
 import Change_order_modal from './Contract_page/Change_order_modal.js';
 import Change_order_table from './Contract_page/Change_order_table.js'; 
+import Pay_app_table from './Contract_page/Pay_app_table.js'; 
 import { getScopedCssBaselineUtilityClass } from '@mui/material';
 
 import CurrencyFormat from 'react-currency-format';
@@ -230,6 +231,23 @@ function Contract_page(props) {
         }
     }
 
+    const pay_apps = () => {
+        if(loading){
+            return(
+                <Paper>
+                 <CircularProgress/> 
+                </Paper>
+                ); 
+        }
+        else {
+            return(
+                <Paper>
+                    <Pay_app_table id={id}/> 
+                </Paper>
+            ); 
+        }
+    }
+
   
 
 
@@ -259,7 +277,7 @@ function Contract_page(props) {
 
             {tab==0 ? <Paper>  <h3> Contract Summary </h3> {job_sov()}<br/> </Paper>  : <></>  }
             {tab==1 ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
-            {tab==2 ? <Paper>  <h3> Payment Applications </h3> {job_sov()}<br/> </Paper>  : <></>  }
+            {tab==2 ? <Paper>  <h3> Payment Applications </h3> {pay_apps()}<br/> </Paper>  : <></>  }
             
 
     
