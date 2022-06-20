@@ -119,7 +119,7 @@ function Pay_app() {
                 </StepLabel>
                 <StepContent> 
                     <div> 
-                        {item.content}
+                        {loading ? null : item.content }
                     </div>
                     <div>
                         {button_builder()}

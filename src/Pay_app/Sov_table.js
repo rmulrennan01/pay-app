@@ -1,5 +1,5 @@
 
-import React, {useState,useRef} from 'react';
+import React, {useState,useRef,useEffect} from 'react';
 
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -25,6 +25,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
+import CurrencyTextField from '@unicef/material-ui-currency-textfield'
+import CurrencyFormat from 'react-currency-format';
 
 
 
@@ -34,15 +36,76 @@ function Sov_table(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
     const [update, set_update] = useState(1); 
     const [total, set_total] = useState(0); 
+    const rows = useRef([]); 
+    const co_totals = useRef([]); 
+    const inputs = useRef([]); 
+    const [co_sums, set_co_sums] = useState([]); 
+    const [prev_draws, set_prev_draws] = useState([]); 
+  
 
-    const ref_cost_code = useRef(); 
-    const ref_description = useRef(); 
-    const ref_value = useRef(); 
+ 
+    /*
+    useEffect(() => {
+        if (co_totals.current){
+            co_totals.current = 0; 
+        }
+    }, []); 
+   */
+
+
+    const get_co_sums = () =>{
+        let temp_sums = []; 
+        let sum = 0; 
+        for (var i = 0; i<table_content.length; i++){
+            if(table_content[i].change_orders.length >0){
+                table_content[i].change_orders.map(item=>sum = Number(sum) + Number(item.value)); 
+                temp_sums[i] = sum; 
+            } 
+            else{
+                temp_sums[i] = 0; 
+            }
+            sum = 0; 
+        }
+        set_co_sums(temp_sums);  
+    }
+
+    const get_previous_draws = () =>{
+        let temp_sums = []; 
+        let sum = 0; 
+        for (var i = 0; i<table_content.length; i++){
+            if(table_content[i].hasOwnProperty('pay_apps')){
+                if(table_content[i].pay_apps.length >0){
+                    table_content[i].pay_apps.map(item=>sum = Number(sum) + Number(item.value)); 
+                    temp_sums[i] = sum; 
+                } 
+                else{
+                    temp_sums[i] = 0; 
+                }
+            }
+            else{
+                temp_sums[i] = 0; 
+            }
+            sum = 0; 
+        }
+        set_prev_draws(temp_sums);  
+    }
+
+    useEffect(() => {
+        //need to build the co_sums within a function call inside useEffect. Otherwise, inside the body we get too many renders.
+        get_co_sums();
+        get_previous_draws(); 
+    }, [])
+
+    const update_balance = () => {
+
+    }
+
+ 
 
     const build_table_body = (item,index) => {
       
             return(
-                <TableRow> 
+                <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
                     <TableCell>
                         {item.cost_code}
                     </TableCell>
@@ -50,55 +113,98 @@ function Sov_table(props) {
                         {item.description}
                         
                     </TableCell>
-                    <TableCell>
-                        {item.value}
+                    <TableCell >
+                        <CurrencyFormat 
+                            
+                            value={item.value} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />
+                        
                     </TableCell>
                     <TableCell>
-                        <Button onClick={()=>remove_table_item(index)}> Remove </Button>
+                        <CurrencyFormat 
+                                //ref={(val) => (co_totals.current[index] = val)}
+                               
+                                value={co_sums[index]} 
+                                
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                        />
+                        
                     </TableCell>
+                    <TableCell>
+                        <CurrencyFormat 
+                            value={Number(item.value)+Number(co_sums[index])} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />
+                    </TableCell>
+                    <TableCell>
+                        <CurrencyFormat 
+                                value={prev_draws[index]} 
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />                    
+                    </TableCell>
+                    <TableCell >
+                        <CurrencyTextField
+                            label="Amount"
+                            variant="outlined"
+                            value={0}
+                            currencySymbol="$"
+                            //minimumValue="0"
+                            outputFormat="string"
+                            decimalCharacter="."
+                            digitGroupSeparator=","
+                            
+                            leadingZero={"deny"}
+                            ref={(val) => (inputs.current[index] = val)}
+                            onChange={()=>console.log(inputs.current[index].getValue())}
+                        />  
+                    </TableCell>
+                    <TableCell>
+                        <CurrencyFormat 
+                            value={12} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />
+                    </TableCell>
+       
                 </TableRow>
             );
     }
 
-    const update_table = () => {
-        let temp_data = table_content;
-        temp_data.push(
-            {
-            cost_code:ref_cost_code.current.value, 
-            description:ref_description.current.value,
-            value:ref_value.current.value
-            }
-            ); 
-   
-        set_table_content(temp_data); 
-        props.update_sov(temp_data); 
-        set_total(Number(total)+Number(ref_value.current.value)); 
-        console.log("Added :" + temp_data[0]);
-        
-    }
+  
 
-    const remove_table_item = (i) => {
-        let temp_data = table_content;
-        let temp_val = table_content[i].value
-        temp_data.splice(i,1); 
-        set_table_content(temp_data); 
-        props.update_sov(temp_data); 
-        //set_update(update*-1); 
-        set_total(Number(total)-Number(temp_val));
-
-
-    }
-
+  
    
 
 
     return (
+        
         <div> 
-        Define the cost categories for how you will bill your project. 
-        The total cost for these items should match your total contract amount.
-        You must include at least one cost item. All future adjustments to your contract
-        will be through change orders that you can append to one of these cost items. Cost codes do not need to be
-        unique. 
+         
+            
+            
+        
+            
+        Please provide the dollar amounts for each cost item that you intend to draw on for this pay period.  
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead> 
@@ -113,34 +219,26 @@ function Sov_table(props) {
                             Value ($)
                         </TableCell>
                         <TableCell>
+                            Change Orders ($) 
 
+                        </TableCell>
+                        <TableCell>
+                            Revised Value ($) 
+
+                        </TableCell>
+                        <TableCell>
+                            Work Complete in Previous Periods ($)
+                        </TableCell>
+                        <TableCell>
+                            Work Complete this Period ($)
+                        </TableCell>
+                        <TableCell>
+                            Balance to finish ($)
                         </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {(table_content.length == 0) ? null : table_content.map(build_table_body)}
-                    <TableRow> 
-                        
-                        <TableCell> 
-                            <TextField required inputRef={ref_cost_code} id="outlined-required" label="Cost Code" inputProps={{maxLength:15}}>
-
-                            </TextField>
-                        </TableCell>
-    
-                        <TableCell> 
-                            <TextField required inputRef={ref_description} id="outlined-required" label="Description" inputProps={{maxLength:35}}>
-                                
-                            </TextField>    
-                        </TableCell>
-                        <TableCell> 
-                            <TextField required inputRef={ref_value} id="outlined-required" label="Cost" type="number">
-                                
-                            </TextField>   
-                        </TableCell>
-                        <TableCell>
-                            <Button onClick={()=>update_table()}>Add</Button> 
-                        </TableCell>
-                    </TableRow>
         
                 </TableBody>
             </Table>
