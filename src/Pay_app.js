@@ -20,6 +20,7 @@ function Pay_app() {
     const [owner_info, set_owner_info] = useState(); 
     const [sov, set_sov] = useState(); 
     const [loading, set_loading] = useState(true); 
+    const [saved_inputs, set_saved_inputs] = useState([]); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     /*const [sov, set_sov] =useState([{value: 25000, change_orders: 0, description: "Asphalt Roof Labor"}, 
         {value: 30000,change_orders: 0,description: "Asphalt Roof Material"}, 
@@ -31,7 +32,7 @@ function Pay_app() {
     const steps = [
         
         
-        {label: 'Work Completed', content: <Sov_table sov_data={sov}/>},
+        {label: 'Work Completed', content: <Sov_table sov_data={sov} saved_inputs={saved_inputs} update_inputs={(item)=>set_saved_inputs(item)}/>},
         {label: 'Billing Details', content: <div></div>},
         {label: 'Recap', content: <div></div>}
     ];

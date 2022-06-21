@@ -41,6 +41,8 @@ function Sov_table(props) {
     const [prev_draws, set_prev_draws] = useState([]); 
     const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
+    //const [saved_inputs, set_saved_inputs] = useState(props.saved_inputs); 
+
   
 
  
@@ -91,6 +93,7 @@ function Sov_table(props) {
        
         }
         set_balances(temp_list); 
+        backup_inputs(); 
     }
 
     //calculates balance for just one cost item for onChange event. This avoids having to recalculate all cost items.
@@ -117,22 +120,23 @@ function Sov_table(props) {
     useEffect(() => {
         get_co_sums();
         get_previous_draws(); 
-        
-        
-
-        
-
     }, [])
 
     //update the balances column in the table. This needs to wait until the previous draws state is populated.
     useEffect(()=>{
         build_balance(); 
         build_max_input(); //TODO FIX!!!
-        
     }, [prev_draws])
     
    
-
+    const backup_inputs = () => {
+        let temp_arry = []; 
+        for (var i = 0; i<table_content.length; i++){
+            temp_arry[i] = inputs.current[i].getValue()
+        }
+        //set_saved_inputs(temp_arry); 
+        props.update_inputs(temp_arry); 
+    }
  
 
     const build_table_body = (item,index) => {
@@ -197,7 +201,7 @@ function Sov_table(props) {
                         <CurrencyTextField
                             label="Amount"
                             variant="outlined"
-                            value={0}
+                            value={(props.saved_inputs === []) ? 0 : props.saved_inputs[index]}
                             currencySymbol="$"
                             minimumValue="0"
                             maximumValue = {max_input[index]} 
@@ -235,7 +239,7 @@ function Sov_table(props) {
     return (
         
         <div> 
-         
+         {console.log("here: ", props.saved_inputs)}
             
             
         
