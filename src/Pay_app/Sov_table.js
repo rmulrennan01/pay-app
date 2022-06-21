@@ -34,23 +34,16 @@ import CurrencyFormat from 'react-currency-format';
 
 function Sov_table(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
-    const [update, set_update] = useState(1); 
     const [total, set_total] = useState(0); 
     const rows = useRef([]); 
-    const co_totals = useRef([]); 
     const inputs = useRef([]); 
     const [co_sums, set_co_sums] = useState([]); 
     const [prev_draws, set_prev_draws] = useState([]); 
+    const [balances, set_balances] = useState([]); 
+    const [max_input, set_max_input] = useState([]); 
   
 
  
-    /*
-    useEffect(() => {
-        if (co_totals.current){
-            co_totals.current = 0; 
-        }
-    }, []); 
-   */
 
 
     const get_co_sums = () =>{
@@ -90,15 +83,55 @@ function Sov_table(props) {
         set_prev_draws(temp_sums);  
     }
 
+    //calculated balances for all cost items
+    const build_balance = () => {
+        let temp_list = []; 
+        for (var i = 0; i<table_content.length; i++){
+            temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(prev_draws[i]) - inputs.current[i].getValue(); 
+       
+        }
+        set_balances(temp_list); 
+    }
+
+    //calculates balance for just one cost item for onChange event. This avoids having to recalculate all cost items.
+    const adjust_balance = (i) => {
+        let temp_list = balances; 
+        temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(prev_draws[i]) - inputs.current[i].getValue();
+        set_balances(temp_list); 
+        console.log(temp_list); 
+    }
+
+    const build_max_input = () => {
+        let temp_list = []; 
+        for (var i = 0; i<table_content.length; i++){
+            temp_list[i] = String(Number(table_content[i].value)+Number(co_sums[i])-Number(prev_draws[i])); 
+        }
+        set_max_input(temp_list); 
+        console.log(max_input); 
+    }
+
+
+
+
+    //need to build the co_sums & prev draws within a function call inside useEffect. Otherwise, inside the body we get too many renders.
     useEffect(() => {
-        //need to build the co_sums within a function call inside useEffect. Otherwise, inside the body we get too many renders.
         get_co_sums();
         get_previous_draws(); 
+        
+        
+
+        
+
     }, [])
 
-    const update_balance = () => {
-
-    }
+    //update the balances column in the table. This needs to wait until the previous draws state is populated.
+    useEffect(()=>{
+        build_balance(); 
+        build_max_input(); //TODO FIX!!!
+        
+    }, [prev_draws])
+    
+   
 
  
 
@@ -160,24 +193,27 @@ function Sov_table(props) {
                             />                    
                     </TableCell>
                     <TableCell >
+                        {console.log(max_input[index])}
                         <CurrencyTextField
                             label="Amount"
                             variant="outlined"
                             value={0}
                             currencySymbol="$"
-                            //minimumValue="0"
+                            minimumValue="0"
+                            maximumValue = {max_input[index]} 
+                            //maximumValue = "12"
                             outputFormat="string"
                             decimalCharacter="."
                             digitGroupSeparator=","
                             
                             leadingZero={"deny"}
                             ref={(val) => (inputs.current[index] = val)}
-                            onChange={()=>console.log(inputs.current[index].getValue())}
+                            onChange={()=>build_balance()}
                         />  
                     </TableCell>
                     <TableCell>
                         <CurrencyFormat 
-                            value={12} 
+                            value={balances[index]} 
                             displayType={'text'} 
                             thousandSeparator={true} 
                             prefix={'$'} 
@@ -202,6 +238,7 @@ function Sov_table(props) {
          
             
             
+        
         
             
         Please provide the dollar amounts for each cost item that you intend to draw on for this pay period.  
@@ -233,7 +270,7 @@ function Sov_table(props) {
                             Work Complete this Period ($)
                         </TableCell>
                         <TableCell>
-                            Balance to finish ($)
+                            Balance to Finish ($)
                         </TableCell>
                     </TableRow>
                 </TableHead>
