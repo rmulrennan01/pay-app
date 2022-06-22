@@ -24,6 +24,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TableFooter from '@mui/material/TableFooter';
 
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 import CurrencyFormat from 'react-currency-format';
@@ -35,10 +36,13 @@ import CurrencyFormat from 'react-currency-format';
 function Sov_table(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
     const [total, set_total] = useState(0); 
+    const [co_total, set_co_total] = useState(0); 
     const rows = useRef([]); 
     const inputs = useRef([]); 
-    const [co_sums, set_co_sums] = useState([]); 
-    const [prev_draws, set_prev_draws] = useState([]); 
+    //const [co_sums, set_co_sums] = useState([]); 
+    //const [prev_draws, set_prev_draws] = useState([]); 
+    const [co_sums, set_co_sums] = useState(props.co_sums); 
+    const [prev_draws, set_prev_draws] = useState(props.prev_draws); 
     const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
     //const [saved_inputs, set_saved_inputs] = useState(props.saved_inputs); 
@@ -47,7 +51,7 @@ function Sov_table(props) {
 
  
 
-
+/*
     const get_co_sums = () =>{
         let temp_sums = []; 
         let sum = 0; 
@@ -84,6 +88,16 @@ function Sov_table(props) {
         }
         set_prev_draws(temp_sums);  
     }
+    */
+
+    const get_total = () =>{
+        let sum = 0; 
+        
+        for (var i =0; i<table_content.length; i++){
+            sum += Number(table_content[i].value); 
+        }
+        set_total(sum); 
+    }
 
     //calculated balances for all cost items
     const build_balance = () => {
@@ -101,7 +115,7 @@ function Sov_table(props) {
         let temp_list = balances; 
         temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(prev_draws[i]) - inputs.current[i].getValue();
         set_balances(temp_list); 
-        console.log(temp_list); 
+        //console.log(temp_list); 
     }
 
     const build_max_input = () => {
@@ -110,7 +124,7 @@ function Sov_table(props) {
             temp_list[i] = String(Number(table_content[i].value)+Number(co_sums[i])-Number(prev_draws[i])); 
         }
         set_max_input(temp_list); 
-        console.log(max_input); 
+        //console.log(max_input); 
     }
 
 
@@ -118,15 +132,18 @@ function Sov_table(props) {
 
     //need to build the co_sums & prev draws within a function call inside useEffect. Otherwise, inside the body we get too many renders.
     useEffect(() => {
-        get_co_sums();
-        get_previous_draws(); 
+        //get_co_sums();
+        {console.log("prev: ", prev_draws)}
+        //get_previous_draws(); 
     }, [])
 
     //update the balances column in the table. This needs to wait until the previous draws state is populated.
     useEffect(()=>{
         build_balance(); 
         build_max_input(); //TODO FIX!!!
-    }, [prev_draws])
+        get_total(); 
+        set_co_total(co_sums.reduce((prev,cur)=>prev+cur)); 
+    }, [co_sums])
     
    
     const backup_inputs = () => {
@@ -137,7 +154,47 @@ function Sov_table(props) {
         //set_saved_inputs(temp_arry); 
         props.update_inputs(temp_arry); 
     }
- 
+    
+    const input_total = () => {
+        let sum = 0; 
+        for (var i = 0; i<props.saved_inputs.length; i++){
+            if(props.saved_inputs[i] == ""){
+                sum+= Number(0); 
+            }
+            else{
+                sum+=Number(props.saved_inputs[i]); 
+            }
+        }
+        return sum; 
+    }
+
+    const balance_total = () => {
+        console.log(balances); 
+        if(balances.length ==0){
+            return 0; 
+        }
+        /*for (var i = 0; i<balances.length; i++){
+            if(balances[i] == []){
+                sum+= Number(0); 
+            }
+            else{
+                sum+=Number(balances[i]); 
+            }
+        */
+        return balances.reduce((prev,cur)=>prev+cur); 
+    }
+
+
+       // console.log("inputs: ", props.saved_inputs)
+        //if(props.saved_input === [] ){
+          // return props.saved_inputs.reduce((prev,cur)=>prev+cur)
+          // return 1; 
+
+        //}
+        //return 0; 
+        //return props.saved_inputs === [] ? 0 : props.saved_inputs.reduce((prev,cur)=>prev+cur); 
+   // }
+
 
     const build_table_body = (item,index) => {
       
@@ -197,7 +254,7 @@ function Sov_table(props) {
                             />                    
                     </TableCell>
                     <TableCell >
-                        {console.log(max_input[index])}
+                        
                         <CurrencyTextField
                             label="Amount"
                             variant="outlined"
@@ -239,7 +296,6 @@ function Sov_table(props) {
     return (
         
         <div> 
-         {console.log("here: ", props.saved_inputs)}
             
             
         
@@ -251,30 +307,30 @@ function Sov_table(props) {
                 <TableHead> 
                     <TableRow>
                         <TableCell>
-                            Cost Code
+                            <h4> Cost Code </h4> 
                         </TableCell>
                         <TableCell>
-                            Description
+                            <h4>Description</h4> 
                         </TableCell>
                         <TableCell>
-                            Value ($)
+                            <h4> Value ($) </h4> 
                         </TableCell>
                         <TableCell>
-                            Change Orders ($) 
+                            <h4> Change Orders ($) </h4>
 
                         </TableCell>
                         <TableCell>
-                            Revised Value ($) 
+                            <h4>Revised Value ($)</h4> 
 
                         </TableCell>
                         <TableCell>
-                            Work Complete in Previous Periods ($)
+                            <h4> Work Complete in Previous Periods ($) </h4> 
                         </TableCell>
                         <TableCell>
-                            Work Complete this Period ($)
+                            <h4>Work Complete this Period ($) </h4>
                         </TableCell>
                         <TableCell>
-                            Balance to Finish ($)
+                            <h4>Balance to Finish ($) </h4>
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -282,11 +338,101 @@ function Sov_table(props) {
                     {(table_content.length == 0) ? null : table_content.map(build_table_body)}
         
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell>
+                            <h3>Totals</h3>
+                        </TableCell>
+                        <TableCell>
+                            -
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                    value={total} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
+                            </h3> 
+                    
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                    value={co_total} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
+                            </h3> 
+                    
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                    value={Number(total)+Number(co_total)} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
+                            </h3> 
+                    
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                    value={prev_draws.reduce((prev,cur)=>prev+cur)} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
+                            </h3> 
+                    
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                    value={input_total()} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
+                            </h3> 
+                    
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                {console.log("balances :", balances)}
+                                <CurrencyFormat 
+                                    value={balance_total()} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
+                            </h3> 
+                    
+                        </TableCell>
+
+                    </TableRow>
+                </TableFooter>
             </Table>
 
         </TableContainer>
         
-        Contract Total: $ {total}
+      
 
        
 
