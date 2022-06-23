@@ -29,13 +29,16 @@ function Pay_app() {
     const [contract_total, set_contract_total] = useState(0); 
     const [co_total, set_co_total] = useState(0); 
     const [balance, set_balance] = useState(0); 
+    const [bill_retention, set_bill_retention] = useState(false); 
+
+
     
     const [current_step, set_current_step] = useState(0); 
     const steps = [       
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
             content: <Sov_table sov_data={sov} prev_draws={prev_draws} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={(item)=>set_saved_inputs(item)} balance={(item)=>set_balance(item)}/>},
-        {label: 'Billing Details', content: <Billing_details contract_total={contract_total} co_sum={co_total} prev_draws={prev_draws} co_sums={co_sums} balance={balance}/>},
+        {label: 'Billing Details', content: <Billing_details  balance={balance} bill_retention={bill_retention} update_bill_retention={(item)=>set_bill_retention(item)}/>},
         {label: 'Recap', content: <div></div>}
     ];
     const [modal_open, set_modal_open] = useState(false); 
@@ -140,7 +143,7 @@ function Pay_app() {
                     <>
                     <div> By clicking the generate application button below, the user acknolwdges responsiblity in verfiying the accuracy
                         of the content. </div>
-                    <Button onClick={()=>set_modal_open(true)}> 
+                    <Button onClick={()=>window.location='/pay_app/G702'}> 
                         Generate Application
                     </Button> 
                     <Button onClick={()=>set_current_step(current_step-1)}> 

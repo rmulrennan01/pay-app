@@ -18,7 +18,7 @@ function Billing_details(props) {
      const ref_due_date = useRef(); 
      const ref_retention = useRef(); 
     // const [retention, set_retention] = useState(); 
-     const [retention, set_retention] = useState(); 
+     const [retention, set_retention] = useState(props.bill_retention); 
 
      const full_draw_check = () =>{
         
@@ -35,10 +35,10 @@ function Billing_details(props) {
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
                             name="row-radio-buttons-group"
-                            defaultValue={false}
+                            defaultValue={retention}
                         >
-                            <FormControlLabel value={true} control={<Radio />} label="Yes" onChange={()=>alert("hey")}/>
-                            <FormControlLabel value={false} control={<Radio />} label="No" />
+                            <FormControlLabel value={true} control={<Radio />} label="Yes" onChange={()=>props.update_bill_retention(true)}/>
+                            <FormControlLabel value={false} control={<Radio />} label="No" onChange={()=>props.update_bill_retention(false)}/>
             
                         </RadioGroup>
                     </FormControl>
@@ -49,7 +49,7 @@ function Billing_details(props) {
         }
         else{
             return(
-                <>Hey spongebob</>
+                <>There is still an open balance on this job.</>
             )
 
         }

@@ -1,0 +1,10 @@
+.page_G702__top{
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.page_G702__top__child{
+    width: 400px; 
+}
+

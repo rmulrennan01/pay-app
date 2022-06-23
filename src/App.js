@@ -9,7 +9,7 @@ import Pay_app from './Pay_app.js';
 import Home from './Home.js'; 
 import Contract_browser from './Contract_browser.js'; 
 import Contract_page from './Contract_page.js'; 
-
+import Page_G702 from './Pay_app/Page_G702.js'; 
 
 
 function App() {
@@ -75,10 +75,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/contract_browser" element={<Contract_browser /> } /> 
         <Route path="/job_setup" element={<Job_setup />} />
-        <Route path="/pay_app" element={<Pay_app /> } /> 
         <Route path="*" element={<Job_setup />} /> 
         <Route path='/contract/:id' element={<Contract_page />} />
         <Route path='/pay_app/:id' element={<Pay_app />} />
+        <Route path='/pay_app/G702' element={<Page_G702 />} />
         
 
       </Routes>
