@@ -154,6 +154,47 @@ function Sov_table(props) {
         //set_saved_inputs(temp_arry); 
         props.update_inputs(temp_arry); 
     }
+
+    const zero_inputs = () => {
+        let temp_arry = []; 
+        for (var i = 0; i<table_content.length; i++){
+            temp_arry[i] = 0;
+        }
+        //set_saved_inputs(temp_arry); 
+        props.update_inputs(temp_arry); 
+
+        let temp_list = []; 
+        for (var i = 0; i<table_content.length; i++){
+            temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(prev_draws[i]); 
+       
+        }
+        set_balances(temp_list); 
+        
+        //build_balance(); 
+    }
+
+    const bill_full = () =>{
+        let temp_list = []; 
+        for (var i = 0; i<table_content.length; i++){
+            temp_list[i] = Number(table_content[i].value)+Number(co_sums[i])-Number(prev_draws[i]); 
+        }
+        props.update_inputs(temp_list); 
+
+        let temp_list2 = []; 
+        for (var i = 0; i<table_content.length; i++){
+            temp_list2[i] = 0;  
+       
+        }
+        set_balances(temp_list2); 
+
+
+        //build_balance(); 
+
+    }
+
+
+
+    
     
     const input_total = () => {
         let sum = 0; 
@@ -302,6 +343,11 @@ function Sov_table(props) {
         
             
         Please provide the dollar amounts for each cost item that you intend to draw on for this pay period.  
+        <br/>
+        <br/> 
+        <Button variant="contained" onClick={()=>bill_full()}> Bill in Full </Button> <Button variant="contained" onClick={()=>zero_inputs()}> Clear All </Button> 
+        <br/> 
+
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead> 

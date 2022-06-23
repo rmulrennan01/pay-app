@@ -35,9 +35,10 @@ function Billing_details(props) {
                             row
                             aria-labelledby="demo-row-radio-buttons-group-label"
                             name="row-radio-buttons-group"
+                            defaultValue={false}
                         >
-                            <FormControlLabel value={false} control={<Radio />} label="Yes" onChange={()=>alert("hey")}/>
-                            <FormControlLabel value={true} control={<Radio />} label="No" />
+                            <FormControlLabel value={true} control={<Radio />} label="Yes" onChange={()=>alert("hey")}/>
+                            <FormControlLabel value={false} control={<Radio />} label="No" />
             
                         </RadioGroup>
                     </FormControl>
