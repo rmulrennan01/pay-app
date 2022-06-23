@@ -22,9 +22,9 @@ function Billing_details(props) {
 
      const full_draw_check = () =>{
         
-        let draws = props.prev_draws.reduce((prev,cur)=>prev+cur); 
-        let balance = Number(props.contract_total)+Number(props.co_sum)-Number(draws); 
-        if (balance !=0){
+        
+         
+        if (Number(props.balance) == 0){
             return(
                 <div>
                     You are currently billing the remaining balance on this project. Do you want to bill for retainage as well?

@@ -34,8 +34,8 @@ function Pay_app() {
     const steps = [       
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
-            content: <Sov_table sov_data={sov} prev_draws={prev_draws} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={(item)=>set_saved_inputs(item)}/>},
-        {label: 'Billing Details', content: <Billing_details contract_total={contract_total} co_sum={co_total} prev_draws={prev_draws} co_sums={co_sums}/>},
+            content: <Sov_table sov_data={sov} prev_draws={prev_draws} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={(item)=>set_saved_inputs(item)} balance={(item)=>set_balance(item)}/>},
+        {label: 'Billing Details', content: <Billing_details contract_total={contract_total} co_sum={co_total} prev_draws={prev_draws} co_sums={co_sums} balance={balance}/>},
         {label: 'Recap', content: <div></div>}
     ];
     const [modal_open, set_modal_open] = useState(false); 

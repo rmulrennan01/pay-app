@@ -108,6 +108,7 @@ function Sov_table(props) {
         }
         set_balances(temp_list); 
         backup_inputs(); 
+       
     }
 
     //calculates balance for just one cost item for onChange event. This avoids having to recalculate all cost items.
@@ -222,7 +223,9 @@ function Sov_table(props) {
                 sum+=Number(balances[i]); 
             }
         */
-        return balances.reduce((prev,cur)=>prev+cur); 
+        let temp_balance = balances.reduce((prev,cur)=>prev+cur); 
+        props.balance(temp_balance);
+        return temp_balance; 
     }
 
 
