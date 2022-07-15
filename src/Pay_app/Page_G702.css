@@ -1,10 +1,37 @@
+.page_G702{
+    overflow: scroll;
+}
+
 .page_G702__top{
     display: flex; 
     flex-direction: row;
     flex-wrap: nowrap;
+
+
 }
 
 .page_G702__top__child{
     width: 400px; 
+    flex-grow: 0;
+    flex-shrink:0; 
+}
+
+
+.page_G702__middle{
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: nowrap;
+    border: solid 4px; 
+    border-color: black; 
+    
+
+}
+
+.page_G702__middle__child{
+    
+    width: 800px; 
+    flex-grow: 0;
+    flex-shrink:0; 
+    
 }
 
