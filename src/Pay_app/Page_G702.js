@@ -13,6 +13,9 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
 
+import Button from '@mui/material/Button';
+
+
 
 function Page_G702(props) {
     const [content, setContent] = useState(
@@ -175,7 +178,8 @@ function Page_G702(props) {
                     </Paper> 
                 </div> 
             </div>
-            
+            <Button variant="contained" onClick={()=>window.location='/pay_app/G703'}> Go to G703 </Button> 
+
         </div>
     )
 }

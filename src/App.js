@@ -10,6 +10,7 @@ import Home from './Home.js';
 import Contract_browser from './Contract_browser.js'; 
 import Contract_page from './Contract_page.js'; 
 import Page_G702 from './Pay_app/Page_G702.js'; 
+import Page_G703 from "./Pay_app/Page_G703.js";
 
 
 function App() {
@@ -79,6 +80,9 @@ function App() {
         <Route path='/contract/:id' element={<Contract_page />} />
         <Route path='/pay_app/:id' element={<Pay_app />} />
         <Route path='/pay_app/G702' element={<Page_G702 />} />
+        <Route path='/pay_app/G703' element={<Page_G703 />} />
+
+
         
 
       </Routes>

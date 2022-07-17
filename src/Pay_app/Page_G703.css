@@ -1,0 +1,13 @@
+.page_G703__top{
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+
+}
+
+.page_G703__top__child{
+    width: 600px; 
+    flex-grow: 0;
+    flex-shrink:0; 
+}
