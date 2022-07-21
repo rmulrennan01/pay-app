@@ -178,7 +178,6 @@ function Page_G702(props) {
                     </Paper> 
                 </div> 
             </div>
-            <Button variant="contained" onClick={()=>window.location='/pay_app/G703'}> Go to G703 </Button> 
 
         </div>
     )

@@ -4,7 +4,16 @@ import firebase from "./Firebase.js";
 
 import Sov_table from './Pay_app/Sov_table.js'; 
 import Billing_details from './Pay_app/Billing_details.js'; 
+import Page_G702 from './Pay_app/Page_G702.js'; 
+import Page_G703 from './Pay_app/Page_G703.js'; 
 import Change_orders from './Pay_app/Change_orders.js'; 
+
+//For pay app review modal
+import Modal from '@mui/material/Modal';
+import AppBar from '@mui/material/AppBar';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+
 
 ////Stepper
 import Stepper from '@mui/material/Stepper';
@@ -30,7 +39,8 @@ function Pay_app() {
     const [co_total, set_co_total] = useState(0); 
     const [balance, set_balance] = useState(0); 
     const [bill_retention, set_bill_retention] = useState(false); 
-
+    
+    
 
     
     const [current_step, set_current_step] = useState(0); 
@@ -41,7 +51,10 @@ function Pay_app() {
         {label: 'Billing Details', content: <Billing_details  balance={balance} bill_retention={bill_retention} update_bill_retention={(item)=>set_bill_retention(item)}/>},
         {label: 'Recap', content: <div></div>}
     ];
+    
     const [modal_open, set_modal_open] = useState(false); 
+    const [modal_index, set_modal_index] = useState(0); 
+    
 
 
         //fetch the document from firebase
@@ -143,7 +156,7 @@ function Pay_app() {
                     <>
                     <div> By clicking the generate application button below, the user acknolwdges responsiblity in verfiying the accuracy
                         of the content. </div>
-                    <Button onClick={()=>window.location='/pay_app/G702'}> 
+                    <Button onClick={()=>set_modal_open(true)}> 
                         Generate Application
                     </Button> 
                     <Button onClick={()=>set_current_step(current_step-1)}> 
@@ -193,6 +206,26 @@ function Pay_app() {
                 
 
             </Stepper>
+
+
+
+            <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
+   
+                <Paper> 
+
+                <Tabs value={modal_index}  centered>
+                    <Tab label={<h3>G702</h3>} onClick={()=>set_modal_index(0)}/>
+                    <Tab label={<h3>G703</h3>} onClick={()=>set_modal_index(1)}/>
+                    
+                </Tabs>
+            
+
+                {modal_index==0 ? <Paper>  <Page_G702 />  </Paper>  : <></>  }
+                {modal_index==1 ? <Paper>  <Page_G703 /> </Paper>  : <></>  }
+               </Paper> 
+                    
+                
+            </Modal>
         </div>
     )
 }
