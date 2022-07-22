@@ -51,7 +51,7 @@ function Page_G702(props) {
             "3. Contract Sum to Date",
             "4. Total Completed & Stored to date (Column G)",
             "5. Retainage:",
-            "    a. 5% of Completed Work: ____TODO____ ",
+            "-------> 5% of Completed Work:",
             "6. Total Earned Less Retainage",
             "7. Less Previous Certificates for Payment (Line 6 from prior Certificate)",
             "8. Current Payment Due",
@@ -113,16 +113,21 @@ function Page_G702(props) {
     //contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} balance={balance}
     return (
         <div className="page_G702">
-            {console.log(props.balance)}
+            {console.log(props.sov)}
             <div className="page_G702__top">
                 <Paper className="page_G702__top__child">
                     <h4>To Owner:</h4>
-
+                    {props.owner_info.address_01+" "+props.owner_info.address_02}<br/>
+                    {props.owner_info.city + ", " + props.owner_info.state + " " + props.owner_info.zip}
                     <h4>From Contractor:</h4>
-                    
+                    {props.owner_info.address_01+" "+props.owner_info.address_02}<br/>
+                    {props.owner_info.city + ", " + props.owner_info.state + " " + props.owner_info.zip}
                 </Paper>
                 <Paper className="page_G702__top__child">
                     <h4>Project:</h4>
+                    {props.contract_info.name}<br/>
+                    {props.contract_info.address_01+" "+props.contract_info.address_02}<br/>
+                    {props.contract_info.city + ", " + props.contract_info.state + " " + props.contract_info.zip}
                     
                 </Paper>
                 <Paper className="page_G702__top__child">
