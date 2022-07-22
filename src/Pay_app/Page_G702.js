@@ -14,25 +14,28 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
 
 import Button from '@mui/material/Button';
+import CurrencyFormat from 'react-currency-format';
 
 
 
 function Page_G702(props) {
     const [content, setContent] = useState(
-       [{ 
-           base_contract:0,
-           co_total:0, 
-           total_contract:0,
+       { 
+           base_contract:props.contract_info.base_contract_value,
+           co_total:props.contract_info.co_value, 
+           total_contract:Number(props.contract_info.base_contract_value)+Number(props.contract_info.co_value),
            completed:0, 
-           space:"",
+           space:null,
            retention:0, 
            earned:0,
            prev_pay:0,
            due:0,
-           balance:0
+           balance:props.balance
 
-        }]
+        }
     );
+
+    const content_keys = ["base_contract","co_total","total_contract", "completed", "space", "retention", "earned", "prev_pay", "due","balance"]
 
     const table_rows =
         [
@@ -40,6 +43,19 @@ function Page_G702(props) {
             "Total approved this Month", 
             "Totals", 
             "Net Changes by Change Order"
+        ]; 
+
+    const summary_rows = 
+        [   "1. Original Contract Sum:", 
+            "2. Net Change by Change Orders",
+            "3. Contract Sum to Date",
+            "4. Total Completed & Stored to date (Column G)",
+            "5. Retainage:",
+            "    a. 5% of Completed Work: ____TODO____ ",
+            "6. Total Earned Less Retainage",
+            "7. Less Previous Certificates for Payment (Line 6 from prior Certificate)",
+            "8. Current Payment Due",
+            "9. Balance to Finish including Retaingage ",
         ]; 
 
     const table_headers = ["CHANGE ORDER SUMMARY", "ADDITIONS", "DEDUCTIONS"]; 
@@ -65,10 +81,39 @@ function Page_G702(props) {
 
     }
 
+    const build_table_cell = (item,index) =>{
+        if(content[item]==null){
+            return(
+                <TableRow>
+                    <TableCell>
+                        {summary_rows[index]}
+                    </TableCell>
+                    <TableCell>
+                        
+                    </TableCell>
+                </TableRow>
+    
+            )
+        }
+
+        return(
+            <TableRow>
+                <TableCell>
+                    {summary_rows[index]}
+                </TableCell>
+                <TableCell align='right'>
+                    <CurrencyFormat value={content[item]} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+                </TableCell>
+            </TableRow>
+        )
+
+    }
 
 
+    //contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} balance={balance}
     return (
         <div className="page_G702">
+            {console.log(props.balance)}
             <div className="page_G702__top">
                 <Paper className="page_G702__top__child">
                     <h4>To Owner:</h4>
@@ -108,23 +153,20 @@ function Page_G702(props) {
                             <h4>Application is made for payment, as shown below, in connection with the Contract. <br/> 
                                 Continuation Sheet G703 is attached. 
                             </h4> 
-                            1. Original Contract Sum <br/>
-                            2. Net Change by Change Orders <br/> 
-                            3. Contract Sum to Date <br/> 
-                            4. Total Completed & Stored to date (Column G) <br/>
-                            5. Retainage: <br/>
-                                <div style={{ color: 'blue', marginLeft: 25 }}> a. 5% of Completed Work: ____TODO____ </div> 
-                                
-                            6. Total Earned Less Retainage <br/> 
-                            7. Less Previous Certificates for Payment (Line 6 from prior Certificate) <br/>
-                            8. Current Payment Due <br/>
-                            9. Balance to Finish including Retaingage <br/><br/><br/><br/>
+
                         </div>
                         <div>
-                            <Table>
-                                {/*content.map((item)=><TableRow><TableCell>item</TableCell></TableRow>)*/}
+                            <Table size='small'>
+                                {content_keys.map(build_table_cell)}
                             </Table>
                         </div>
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+
+                                </TableRow>
+                            </TableBody>
+                        </Table>
 
 
                     </Paper>
