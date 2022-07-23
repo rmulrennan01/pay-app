@@ -42,7 +42,7 @@ function Sov_table(props) {
     //const [co_sums, set_co_sums] = useState([]); 
     //const [prev_draws, set_prev_draws] = useState([]); 
     const [co_sums, set_co_sums] = useState(props.co_sums); 
-    const [prev_draws, set_prev_draws] = useState(props.prev_draws); 
+    const [prev_draws, set_prev_draws] = useState([0]); 
     const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
     //const [saved_inputs, set_saved_inputs] = useState(props.saved_inputs); 
@@ -99,6 +99,20 @@ function Sov_table(props) {
         set_total(sum); 
     }
 
+    const build_prev_draw_sums = () =>{
+        let temp_sums = []; 
+        let temp_val= 0; 
+        for (let i = 0; i<props.sov_data.length; i++){
+            temp_val = 0; 
+            for (let k = 0; k<props.sov_data[i].pay_apps.length; k++){
+                temp_val += props.sov_data[i].pay_apps[k]; 
+            }
+            temp_sums.push(temp_val); 
+
+        }
+        set_prev_draws(temp_sums); 
+    }
+
     //calculated balances for all cost items
     const build_balance = () => {
         let temp_list = []; 
@@ -141,6 +155,7 @@ function Sov_table(props) {
     //update the balances column in the table. This needs to wait until the previous draws state is populated.
     useEffect(()=>{
         build_balance(); 
+        build_prev_draw_sums(); 
         build_max_input(); //TODO FIX!!!
         get_total(); 
         set_co_total(co_sums.reduce((prev,cur)=>prev+cur)); 
@@ -340,6 +355,7 @@ function Sov_table(props) {
     return (
         
         <div> 
+            
             
             
         

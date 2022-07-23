@@ -28,7 +28,9 @@ function Project_Info(props) {
                 state:ref_state.current.value,
                 zip:ref_zip.current.value,
                 number:ref_number.current.value,
-                date:start_date
+                date:start_date,
+                app_count:0
+
             }; 
         
         set_project_data(temp_data); 

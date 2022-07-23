@@ -132,6 +132,7 @@ function Job_setup() {
             temp_project["base_contract_value"] = get_job_total(sov_data); 
             temp_project["co_count"] = 0; 
             temp_project["co_value"] = 0; 
+            temp_project["app_count"] = 0; 
 
             firestoreDB.collection("contracts").add(temp_project)
             .then((docRef2) => {
