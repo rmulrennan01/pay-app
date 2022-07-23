@@ -42,7 +42,7 @@ function Sov_table(props) {
     //const [co_sums, set_co_sums] = useState([]); 
     //const [prev_draws, set_prev_draws] = useState([]); 
     const [co_sums, set_co_sums] = useState(props.co_sums); 
-    const [prev_draws, set_prev_draws] = useState([0]); 
+    
     const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
     //const [saved_inputs, set_saved_inputs] = useState(props.saved_inputs); 
@@ -99,25 +99,35 @@ function Sov_table(props) {
         set_total(sum); 
     }
 
+    /*
     const build_prev_draw_sums = () =>{
         let temp_sums = []; 
         let temp_val= 0; 
+        let total = 0; 
         for (let i = 0; i<props.sov_data.length; i++){
             temp_val = 0; 
             for (let k = 0; k<props.sov_data[i].pay_apps.length; k++){
                 temp_val += props.sov_data[i].pay_apps[k]; 
             }
             temp_sums.push(temp_val); 
+            total +=temp_val; 
 
         }
         set_prev_draws(temp_sums); 
+        props.update_prev_daws_total(total); 
     }
+    */
 
     //calculated balances for all cost items
     const build_balance = () => {
         let temp_list = []; 
         for (var i = 0; i<table_content.length; i++){
-            temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(prev_draws[i]) - inputs.current[i].getValue(); 
+            if(props.prev_draws[i] == null){
+                temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - inputs.current[i].getValue(); 
+            }
+            else{
+                temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(props.prev_draws[i]) - inputs.current[i].getValue(); 
+            }
        
         }
         set_balances(temp_list); 
@@ -128,7 +138,7 @@ function Sov_table(props) {
     //calculates balance for just one cost item for onChange event. This avoids having to recalculate all cost items.
     const adjust_balance = (i) => {
         let temp_list = balances; 
-        temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(prev_draws[i]) - inputs.current[i].getValue();
+        temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(props.prev_draws[i]) - inputs.current[i].getValue();
         set_balances(temp_list); 
         //console.log(temp_list); 
     }
@@ -136,7 +146,7 @@ function Sov_table(props) {
     const build_max_input = () => {
         let temp_list = []; 
         for (var i = 0; i<table_content.length; i++){
-            temp_list[i] = String(Number(table_content[i].value)+Number(co_sums[i])-Number(prev_draws[i])); 
+            temp_list[i] = String(Number(table_content[i].value)+Number(co_sums[i])-Number(props.prev_draws[i])); 
         }
         set_max_input(temp_list); 
         //console.log(max_input); 
@@ -148,14 +158,15 @@ function Sov_table(props) {
     //need to build the co_sums & prev draws within a function call inside useEffect. Otherwise, inside the body we get too many renders.
     useEffect(() => {
         //get_co_sums();
-        {console.log("prev: ", prev_draws)}
+        {console.log("prev: ", props.prev_draws)}
         //get_previous_draws(); 
     }, [])
 
     //update the balances column in the table. This needs to wait until the previous draws state is populated.
     useEffect(()=>{
+        console.log("here"+props.prev_draws); 
+        //build_prev_draw_sums(); 
         build_balance(); 
-        build_prev_draw_sums(); 
         build_max_input(); //TODO FIX!!!
         get_total(); 
         set_co_total(co_sums.reduce((prev,cur)=>prev+cur)); 
@@ -169,6 +180,7 @@ function Sov_table(props) {
         }
         //set_saved_inputs(temp_arry); 
         props.update_inputs(temp_arry); 
+        console.log("temp_arry", temp_arry); 
     }
 
     const zero_inputs = () => {
@@ -181,7 +193,12 @@ function Sov_table(props) {
 
         let temp_list = []; 
         for (var i = 0; i<table_content.length; i++){
-            temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(prev_draws[i]); 
+            if(props.prev_draws[i]==null){
+                temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) ; 
+            }
+            else{
+                temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(props.prev_draws[i]);
+            }
        
         }
         set_balances(temp_list); 
@@ -192,7 +209,7 @@ function Sov_table(props) {
     const bill_full = () =>{
         let temp_list = []; 
         for (var i = 0; i<table_content.length; i++){
-            temp_list[i] = Number(table_content[i].value)+Number(co_sums[i])-Number(prev_draws[i]); 
+            temp_list[i] = Number(table_content[i].value)+Number(co_sums[i])-Number(props.prev_draws[i]); 
         }
         props.update_inputs(temp_list); 
 
@@ -304,7 +321,7 @@ function Sov_table(props) {
                     </TableCell>
                     <TableCell>
                         <CurrencyFormat 
-                                value={prev_draws[index]} 
+                                value={props.prev_draws[index]} 
                                 displayType={'text'} 
                                 thousandSeparator={true} 
                                 prefix={'$'} 
@@ -453,7 +470,7 @@ function Sov_table(props) {
                         <TableCell>
                             <h3>
                                 <CurrencyFormat 
-                                    value={prev_draws.reduce((prev,cur)=>prev+cur)} 
+                                    value={props.prev_draws.reduce((prev,cur)=>prev+cur)} 
                                     displayType={'text'} 
                                     thousandSeparator={true} 
                                     prefix={'$'} 

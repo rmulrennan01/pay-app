@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Paper from '@mui/material/Paper';
 
 import './Page_G702.css'; 
@@ -19,21 +19,24 @@ import CurrencyFormat from 'react-currency-format';
 
 
 function Page_G702(props) {
+    const [total_earned, set_total_earned] = useState(0); 
     const [content, setContent] = useState(
        { 
            base_contract:props.contract_info.base_contract_value,
            co_total:props.contract_info.co_value, 
            total_contract:Number(props.contract_info.base_contract_value)+Number(props.contract_info.co_value),
-           completed:0, 
+           completed:total_earned, 
            space:null,
            retention:0, 
            earned:0,
-           prev_pay:0,
+           prev_pay: props.prev_draws_total*.95,
            due:0,
-           balance:props.balance
+           balance:0
 
         }
     );
+
+    
 
     const content_keys = ["base_contract","co_total","total_contract", "completed", "space", "retention", "earned", "prev_pay", "due","balance"]
 
@@ -59,7 +62,12 @@ function Page_G702(props) {
         ]; 
 
     const table_headers = ["CHANGE ORDER SUMMARY", "ADDITIONS", "DEDUCTIONS"]; 
-
+    
+    useEffect(() => {
+        get_input_total(); 
+        
+        
+    }, [])
 
 
     const build_table_body = (item,index) => {
@@ -78,7 +86,13 @@ function Page_G702(props) {
 
 
         )
+    }
 
+    const get_input_total = () => {
+        let temp = 0; 
+        props.saved_inputs.map((item) => Number(temp) + Number(item)); 
+        set_total_earned(temp); 
+        //console.log(props.saved_inputs); 
     }
 
     const build_table_cell = (item,index) =>{
