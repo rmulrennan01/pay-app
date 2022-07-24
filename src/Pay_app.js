@@ -40,15 +40,22 @@ function Pay_app() {
     const [co_total, set_co_total] = useState(0); 
     const [balance, set_balance] = useState(0); 
     const [bill_retention, set_bill_retention] = useState(false); 
+    const [this_draw_total, set_this_draw_total] = useState(0); 
     
-    
+    const update_billed_to_date = (inputs) =>{
+        set_saved_inputs(inputs); 
+        let temp = 0; 
+        
+        inputs.map((item) => temp += Number(item));        
+        set_this_draw_total(temp)
+    }
 
     
     const [current_step, set_current_step] = useState(0); 
     const steps = [       
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
-            content: <Sov_table sov_data={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={(item)=>set_saved_inputs(item)} balance={(item)=>set_balance(item)} />},
+            content: <Sov_table sov_data={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={update_billed_to_date} balance={(item)=>set_balance(item)} />},
         {label: 'Billing Details', content: <Billing_details  balance={balance} bill_retention={bill_retention} update_bill_retention={(item)=>set_bill_retention(item)}/>},
         {label: 'Recap', content: <div></div>}
     ];
@@ -247,7 +254,7 @@ function Pay_app() {
                 </Tabs>
             
 
-                {modal_index==0 ? <Paper>  <Page_G702 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} saved_inputs={saved_inputs} co_sums={co_sums} balance={balance} />  </Paper>  : <></>  }
+                {modal_index==0 ? <Paper>  <Page_G702 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} this_draw_total={this_draw_total} saved_inputs={saved_inputs} co_sums={co_sums} balance={balance} />  </Paper>  : <></>  }
                 {modal_index==1 ? <Paper>  <Page_G703 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} balance={balance}/> </Paper>  : <></>  }
                </Paper> 
                     

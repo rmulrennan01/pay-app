@@ -19,19 +19,19 @@ import CurrencyFormat from 'react-currency-format';
 
 
 function Page_G702(props) {
-    const [total_earned, set_total_earned] = useState(0); 
-    const [content, setContent] = useState(
+    //const [total_earned, set_total_earned] = useState(0); 
+    const [content, set_content] = useState(
        { 
            base_contract:props.contract_info.base_contract_value,
            co_total:props.contract_info.co_value, 
            total_contract:Number(props.contract_info.base_contract_value)+Number(props.contract_info.co_value),
-           completed:total_earned, 
+           completed:Number(props.this_draw_total)+Number(props.prev_draws_total), 
            space:null,
-           retention:0, 
-           earned:0,
+           retention:(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05, 
+           earned:Number(props.this_draw_total)+Number(props.prev_draws_total)-(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05,
            prev_pay: props.prev_draws_total*.95,
-           due:0,
-           balance:0
+           due:Number(props.this_draw_total)+Number(props.prev_draws_total)-(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05-props.prev_draws_total*.95, 
+           balance: props.balance
 
         }
     );
@@ -64,8 +64,7 @@ function Page_G702(props) {
     const table_headers = ["CHANGE ORDER SUMMARY", "ADDITIONS", "DEDUCTIONS"]; 
     
     useEffect(() => {
-        get_input_total(); 
-        
+//        
         
     }, [])
 
@@ -88,12 +87,18 @@ function Page_G702(props) {
         )
     }
 
+    /*
     const get_input_total = () => {
         let temp = 0; 
-        props.saved_inputs.map((item) => Number(temp) + Number(item)); 
-        set_total_earned(temp); 
-        //console.log(props.saved_inputs); 
+        let temp_arry = content; 
+        props.saved_inputs.map((item) => temp += Number(item)); 
+        temp_arry['completed']= Number(temp_arry['completed'])+Number(temp); 
+        set_content(temp_arry); 
+        console.log(content); 
+        
+        console.log("total earned: ", temp); 
     }
+    */
 
     const build_table_cell = (item,index) =>{
         if(content[item]==null){
@@ -145,7 +150,7 @@ function Page_G702(props) {
                     
                 </Paper>
                 <Paper className="page_G702__top__child">
-                    <h4>Application #:</h4>
+                    <h4>Application #: {props.contract_info.app_count}</h4>
                     <h4>Period To:</h4>
 
                     <h4>Contract Date:</h4>
