@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Paper from '@mui/material/Paper';
 import "./Page_G703.css";
 import CurrencyFormat from 'react-currency-format';
@@ -16,85 +16,140 @@ import TablePagination from '@mui/material/TablePagination';
 
 
 function Page_G703(props) {
-    const columnID = ['', 'A','B','C', 'C1', 'C2', 'D', 'E', 'F', 'G1', 'G2', 'H','I'];
+    const [sov, set_sov] = useState(props.sov); 
+    const [rev_values, set_rev_values] =useState([]); 
+    const [total_draws, set_total_draws] = useState([]); 
+    const columnID = ['', 'A','B','C', 'C1', 'C2', 'D', 'E', 'F', 'G', 'H','I'];
     const tableHeaders=['COST CODE', 'ITEM NO.', 'DESCRIPTION OF WORK', 'SCHEDULED VALUE', 'CHANGE ORDERS', 
-        'REVISED SCHEDULED VALUES', 'WORK COMPLETE FROM PREVIOUS APPLICATIONS', 'THIS PERIOD', 'MATERIALS PRESENTLY STORED',
+        'REVISED SCHEDULED VALUES', 'WORK COMPLETE FROM PREVIOUS APPLICATIONS', 'THIS PERIOD',
         'TOTAL COMPLETED & STORED TO DATE', '% (G÷C)','BALANCE TO FINISH', 'RETAINAGE'];
 
-        const build_table_body = (item,index) => {
-            //ref={(item) => (rows.current[index] = item)}
-            return(
-                <TableRow  key={index}> 
-                    <TableCell>
-                        {item.cost_code}
-                    </TableCell>
-                    <TableCell>
-                        {item.description}
-                        
-                    </TableCell>
-                    <TableCell >
-                        <CurrencyFormat 
-                            
-                            value={item.value} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                        
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                                //ref={(val) => (co_totals.current[index] = val)}
-                               
-                                value={12} 
-                                
-                                displayType={'text'} 
-                                thousandSeparator={true} 
-                                prefix={'$'} 
-                                fixedDecimalScale={true} 
-                                decimalScale={2}
-                        />
-                        
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                            value={Number(item.value)+Number(12)} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                                value={12} 
-                                displayType={'text'} 
-                                thousandSeparator={true} 
-                                prefix={'$'} 
-                                fixedDecimalScale={true} 
-                                decimalScale={2}
-                            />                    
-                    </TableCell>
-                    <TableCell >
-                        
+    useEffect(() => {
+        //build revised line item values (base+co)
+        let temp_rev_values = []; 
+        props.sov.map((item,index) => temp_rev_values.push(Number(item.value)+Number(props.co_sums[index])) );
+        set_rev_values(temp_rev_values); 
+        
+        //build this period totals (previous period + this period)
+        let temp_total_draws = [];
+        props.prev_draws.map((item,index)=>temp_total_draws.push(Number(props.saved_inputs[index] ?  props.saved_inputs[index]:0)+Number(item))); 
+        set_total_draws(temp_total_draws); 
+                
+                
+    }, [])
 
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                            value={12} 
+
+    const build_table_body = (item,index) => {
+        //ref={(item) => (rows.current[index] = item)}
+        return(
+            <TableRow  key={index}> 
+                <TableCell>
+                    {item.cost_code}
+                </TableCell>
+                <TableCell>
+                    {index}
+                </TableCell>
+                <TableCell>
+                    {item.description}
+                    
+                </TableCell>
+                <TableCell >
+                    <CurrencyFormat 
+                        
+                        value={item.value} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                    
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                            //ref={(val) => (co_totals.current[index] = val)}
+                            
+                            value={props.co_sums[index]} 
+                            
                             displayType={'text'} 
                             thousandSeparator={true} 
                             prefix={'$'} 
                             fixedDecimalScale={true} 
                             decimalScale={2}
-                        />
-                    </TableCell>
-       
-                </TableRow>
-            );
+                    />
+                    
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                        value={rev_values[index]} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                            value={props.prev_draws[index]} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />                    
+                </TableCell>
+                <TableCell >
+                    <CurrencyFormat 
+                        value={props.saved_inputs[index] ?  props.saved_inputs[index]:0} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    /> 
+                    
+
+                </TableCell>
+
+
+                <TableCell>
+                    <CurrencyFormat 
+                        value={total_draws[index]}
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                </TableCell>
+                <TableCell>
+                    {Number(total_draws[index]/rev_values[index]*100).toFixed(2)}%
+                    
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                        value={Number(rev_values[index])-Number(total_draws[index])}
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                        value={Number(total_draws[index])*.05}
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                </TableCell>
+    
+            </TableRow>
+        );
     }
     
   return (
@@ -135,6 +190,8 @@ function Page_G703(props) {
                     
                 </TableHead>
                 <TableBody> 
+                    {sov.map(build_table_body)}
+                    {console.log("balance: ",props.balance)}
 
                         
                 </TableBody> 
