@@ -254,8 +254,8 @@ function Pay_app() {
                 </Tabs>
             
 
-                {modal_index==0 ? <Paper>  <Page_G702 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} prev_draws_total={prev_draws_total} this_draw_total={this_draw_total} saved_inputs={saved_inputs} co_sums={co_sums} balance={balance} />  </Paper>  : <></>  }
-                {modal_index==1 ? <Paper>  <Page_G703 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} balance={balance} saved_inputs={saved_inputs}/> </Paper>  : <></>  }
+                {modal_index==0 ? <Paper>  <Page_G702 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} prev_draws_total={prev_draws_total} this_draw_total={this_draw_total} saved_inputs={saved_inputs} balance={balance} />  </Paper>  : <></>  }
+                {modal_index==1 ? <Paper>  <Page_G703 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} prev_draws_total={prev_draws_total} this_draw_total={this_draw_total} saved_inputs={saved_inputs} balance={balance}/> </Paper>  : <></>  }
                </Paper> 
                     
                 

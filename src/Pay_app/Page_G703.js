@@ -11,6 +11,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TableFooter from '@mui/material/TableFooter';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -195,6 +196,110 @@ function Page_G703(props) {
 
                         
                 </TableBody> 
+                <TableFooter>
+                    <TableRow>
+                        <TableCell></TableCell><TableCell></TableCell><TableCell>Totals:</TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={props.contract_info.base_contract_value}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={props.contract_info.co_value}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={props.contract_info.base_contract_value + props.contract_info.co_value}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={props.prev_draws_total}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={props.this_draw_total}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={props.this_draw_total+props.prev_draws_total}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+                        <TableCell>
+                            {Number((props.contract_info.base_contract_value + props.contract_info.co_value-props.this_draw_total-props.prev_draws_total)/
+                            (props.contract_info.base_contract_value+props.contract_info.co_value)*100).toFixed(2)}%
+                              
+                            
+                        </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={props.contract_info.base_contract_value + props.contract_info.co_value-props.this_draw_total-props.prev_draws_total}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={(props.this_draw_total+props.prev_draws_total)*.05}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                            
+                        </TableCell>
+
+
+
+                 
+                    </TableRow>
+
+                </TableFooter>
                 
 
             </Table> 
