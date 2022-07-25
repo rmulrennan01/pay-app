@@ -12,6 +12,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
+import Checkbox from '@mui/material/Checkbox';
 
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
@@ -22,6 +23,7 @@ import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import CurrencyFormat from 'react-currency-format';
+import { Check } from '@material-ui/icons';
 
 
 
@@ -64,14 +66,13 @@ function Contract_browser() {
         if(index >= row_count*page && index <= row_count*page+row_count-1){
         return(
             <TableRow className="Contract_browser__row" key={index} onClick={()=>window.location='/contract/'+ String(item.id)} > 
-            
+                <TableCell padding="checkbox">
+                    <Checkbox>
+
+                    </Checkbox>
+                </TableCell>
                 <TableCell>
-                    <TableSortLabel
-                      
-                        
-                        >
-                        
-                    </TableSortLabel>
+                   
                     {item.name}
                 </TableCell>
                 <TableCell>
@@ -176,6 +177,9 @@ function Contract_browser() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table" size={'small'}>
                 <TableHead> 
                     <TableRow className="Contract_browser__header">
+                        <TableCell className="Contract_browser__header_text">
+                           <h3>   </h3> 
+                        </TableCell>
                         <TableCell className="Contract_browser__header_text">
                            <h3>  Project </h3> 
                         </TableCell>
