@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import firebase from "./Firebase.js"; 
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import { PieChart, PieArcSeries } from 'reaviz';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
@@ -264,6 +265,25 @@ function Contract_page(props) {
         }
     }
 
+    const chart = () => {
+  
+       
+        const data = [
+            { key: 'Base Contract', data: contract_info.base_contract_value },
+            { key: 'Change Orders', data: contract_info.co_value }
+          ];
+    
+        return (
+          <PieChart
+            width={450}
+            height={350}
+            data={data}
+            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
+          />
+        );
+
+    }
+
   
 
 
@@ -278,6 +298,7 @@ function Contract_page(props) {
                 </Grid>
                 <Grid item xs = {6}>
                     {job_summary()}
+                    {loading? <CircularProgress/> : chart()}
 
                 </Grid>
 
