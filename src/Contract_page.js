@@ -83,7 +83,7 @@ function Contract_page(props) {
 
     const submit_co = (sov_id, data) => {
         //add the change order to the appropriate sov data item
-        let temp_app_count = 0; 
+        /*let temp_app_count = 0; 
         if(contract_info.app_count ==null){
             temp_app_count =0; 
 
@@ -91,9 +91,10 @@ function Contract_page(props) {
         else{
             temp_app_count = contract_info.app_count; 
         }
+        */
         firestoreDB.collection("contracts").doc(id).collection("sov").doc(sov_id).update({
 
-            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value, app_count: temp_app_count})
+            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value, pay_app: data.pay_app})
         })
         .then((docRef) => {
             console.log("added CO successfully"); 
@@ -298,7 +299,7 @@ function Contract_page(props) {
     
 
             <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
-                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal sov_data={sov} close_modal={()=>set_modal_open(false)} submit={submit_co}/> }
+                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal contract_info={contract_info} sov_data={sov} close_modal={()=>set_modal_open(false)} submit={submit_co}/> }
             </Modal>
         </>
   

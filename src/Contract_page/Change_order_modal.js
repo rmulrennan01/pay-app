@@ -27,7 +27,7 @@ function Change_order_modal(props) {
 
   const submit_change_order = () => {
    //console.log({description:descripRef.current.value, value: value})
-   let tempData = {description:descripRef.current.value, value: value}; 
+   let tempData = {description:descripRef.current.value, value: value, pay_app:Number(props.contract_info.app_count)+Number(1)}; 
 
    props.submit(cost_code_selection, tempData); 
 
