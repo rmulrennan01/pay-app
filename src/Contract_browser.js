@@ -65,36 +65,36 @@ function Contract_browser() {
     const build_table_body = (item,index) => {
         if(index >= row_count*page && index <= row_count*page+row_count-1){
         return(
-            <TableRow className="Contract_browser__row" key={index} onClick={()=>window.location='/contract/'+ String(item.id)} > 
+            <TableRow className="Contract_browser__row" key={index}  > 
                 <TableCell padding="checkbox">
                     <Checkbox>
 
                     </Checkbox>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                    
                     {item.name}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                     {item.address_01}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                     {item.city}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                     {item.state}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                    {item.owner_name}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                    <CurrencyFormat value={item.base_contract_value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                     <CurrencyFormat value={item.co_value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
                 
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={()=>window.location='/contract/'+ String(item.id)}>
                     <CurrencyFormat value={Number(item.co_value)+Number(item.base_contract_value)} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
                 
                 </TableCell>

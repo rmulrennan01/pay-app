@@ -62,9 +62,47 @@ function Page_G702(props) {
         ]; 
 
     const table_headers = ["CHANGE ORDER SUMMARY", "ADDITIONS", "DEDUCTIONS"]; 
+
+ 
+    const [co_adds, set_co_adds] = useState([]); 
+    const [co_deducts, set_co_deducts] = useState([]); 
     
     useEffect(() => {
-//        
+        let prev_co_add = 0; 
+        let prev_co_deduct = 0; 
+        let cur_co_add = 0; 
+        let cur_co_deduct = 0; 
+        
+
+        props.sov.map((cost_item)=>{
+            if(cost_item.change_orders){
+                cost_item.change_orders.map((co)=>{
+                    //get cur month co additions
+                    if(co.value>0 && co.pay_app>props.contract_info.app_count){
+                        cur_co_add += Number(co.value);
+                    }
+                    //get cur month co deducts
+                    else if(co.value<0 && co.pay_app>props.contract_info.app_count){
+                        cur_co_deduct += Number(co.value)*-1;
+                    }
+                    //get prev month co additions
+                    else if(co.value>0 && co.pay_app<=props.contract_info.app_count){
+                        prev_co_add += Number(co.value);
+                    }
+                    //get prev month co deducts
+                    else if(co.value<0 && co.pay_app<=props.contract_info.app_count){
+                        prev_co_deduct += Number(co.value)*-1;
+                    }
+
+                }
+                );
+            } 
+        } 
+        )
+        set_co_adds([prev_co_add, cur_co_add, Number(prev_co_add)+Number(cur_co_add)]); 
+        set_co_deducts([prev_co_deduct, cur_co_deduct, Number(prev_co_deduct)+Number(cur_co_deduct)]);
+
+
         
     }, [])
 
@@ -76,10 +114,26 @@ function Page_G702(props) {
                     {item}
                 </TableCell>
                 <TableCell>
-                    {index}
+                    
+                    <CurrencyFormat 
+                        value={co_adds[index]}
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
                 </TableCell>
                 <TableCell>
-                    {index}
+                    <CurrencyFormat 
+                        value={co_deducts[index]}
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                    
                 </TableCell>
             </TableRow>
 

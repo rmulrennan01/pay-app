@@ -31,7 +31,7 @@ function Change_order_table(props) {
                 return(
                     <TableRow key= {index2}> 
                         <TableCell>
-                            {element.id}
+                            {element.pay_app}
                         </TableCell>
                         <TableCell>
                             {item.cost_code}
@@ -66,7 +66,7 @@ function Change_order_table(props) {
                 <TableHead> 
                     <TableRow>
                         <TableCell> 
-                            <h3> ID # </h3> 
+                            <h3> Pay Period </h3> 
                         </TableCell> 
                         <TableCell>
                             <h3> Cost Code </h3> 
