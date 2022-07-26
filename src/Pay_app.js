@@ -52,12 +52,25 @@ function Pay_app() {
 
     
     const [current_step, set_current_step] = useState(0); 
+    const preview = () => {
+        return(
+            <>
+            <div> Please review the application before continuing to the submission step. </div>
+            <Button onClick={()=>set_modal_open(true)}> 
+                Preview Application
+            </Button> <br/> 
+            </>
+
+        );
+
+    }
     const steps = [       
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
             content: <Sov_table sov_data={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={update_billed_to_date} balance={(item)=>set_balance(item)} />},
         {label: 'Billing Details', content: <Billing_details  balance={balance} bill_retention={bill_retention} update_bill_retention={(item)=>set_bill_retention(item)}/>},
-        {label: 'Recap', content: <div></div>}
+        {label: 'Preview', content: preview()},
+        {label: 'Submission' , content: <div></div>}
     ];
     
     const [modal_open, set_modal_open] = useState(false); 
@@ -176,6 +189,7 @@ function Pay_app() {
     }
 
 
+
     const build_steps = (item,index) => {
         const button_builder = () => {
             if (index==0){
@@ -191,7 +205,7 @@ function Pay_app() {
                     <div> By clicking the generate application button below, the user acknolwdges responsiblity in verfiying the accuracy
                         of the content. </div>
                     <Button onClick={()=>set_modal_open(true)}> 
-                        Generate Application
+                        Save & Submit
                     </Button> 
                     <Button onClick={()=>set_current_step(current_step-1)}> 
                         Back
@@ -247,11 +261,12 @@ function Pay_app() {
    
                 <Paper> 
 
-                <Tabs value={modal_index}  centered>
-                    <Tab label={<h3>G702</h3>} onClick={()=>set_modal_index(0)}/>
-                    <Tab label={<h3>G703</h3>} onClick={()=>set_modal_index(1)}/>
+                <Tabs value={modal_index}  centered  >
+                    <Tab  label={<h3>G702</h3>} onClick={()=>set_modal_index(0)}/>
+                    <Tab  label={<h3>G703</h3>} onClick={()=>set_modal_index(1)}/>
                     
                 </Tabs>
+          
             
 
                 {modal_index==0 ? <Paper>  <Page_G702 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} prev_draws_total={prev_draws_total} this_draw_total={this_draw_total} saved_inputs={saved_inputs} balance={balance} />  </Paper>  : <></>  }

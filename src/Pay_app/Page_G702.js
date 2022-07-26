@@ -186,7 +186,7 @@ function Page_G702(props) {
     //contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} balance={balance}
     return (
         <div className="page_G702">
-            {console.log(props.sov)}
+            {console.log(props.contract_info)}
             <div className="page_G702__top">
                 <Paper className="page_G702__top__child">
                     <h4>To Owner:</h4>

@@ -269,8 +269,8 @@ function Contract_page(props) {
   
        
         const data = [
-            { key: 'Base Contract', data: contract_info.base_contract_value },
-            { key: 'Change Orders', data: contract_info.co_value }
+            { key: 'Base Contract ($)', data: contract_info.base_contract_value },
+            { key: 'Change Orders ($)', data: contract_info.co_value }
           ];
     
         return (
