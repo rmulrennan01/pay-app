@@ -22,6 +22,7 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import { Bathtub } from '@material-ui/icons';
 //import Billing_details from './Job_setup/Billing_Details.js';
 
 
@@ -188,6 +189,110 @@ function Pay_app() {
         set_co_sums(temp_sums);  
     }
 
+    const submit_pay_app = () => {
+        //make a copy of the current sov and append pay app values to each item
+        let temp_sov = sov; 
+        temp_sov.map((item,index)=>{
+            if(!item.pay_apps){
+                
+                item["pay_apps"] =[]
+            }
+            if(saved_inputs[index]==""){
+                item.pay_apps.push(0)
+
+            }
+            else{
+                item.pay_apps.push(saved_inputs[index])
+            }
+        });
+        console.log("updated sov", temp_sov); 
+        console.log("prev_draws_total", prev_draws_total); 
+        console.log("this_draw_total", this_draw_total); 
+        console.log("balance", balance); 
+
+        let batch = firestoreDB.batch(); 
+        let contract_ref = firestoreDB.collection("contracts").doc(id); 
+        let sov_ref = contract_ref.collection("sov"); 
+        
+        sov.map((item,) => {
+            batch.update(sov_ref.doc(item.id), {"pay_apps": item.pay_apps}); 
+
+
+        });
+        //add the new pay app values to each sov item 
+        /*
+        sov_ref.get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                doc.ref.set({
+                    pay_apps: 
+                });
+                count++;
+            });
+        });
+        */
+
+        
+
+        //batch.set(sov_ref, {sov:temp_sov}); 
+        batch.update(contract_ref, {"prev_draws":Number(prev_draws_total)});
+        batch.update(contract_ref, {"this_draw":Number(this_draw_total)});
+        batch.update(contract_ref, {"balance":Number(balance)});
+        batch.update(contract_ref, {"balance":Number(balance)});
+        batch.update(contract_ref, {"app_count":Number(contract_info.app_count + Number(1))});
+        batch.commit().then(()=>{
+            alert("App Submitted"); 
+        })
+        .catch((error) => {
+            console.error("Error adding pay app", error); 
+        });
+
+        //backup pay_app status
+        //saved_inputs, prev_draws_total, this_draw_total, balance
+
+        /*
+
+        firestoreDB.collection("contracts").doc(id).collection("sov").set({
+            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value, pay_app: data.pay_app})
+        })
+        .then((docRef) => {
+            console.log("added CO successfully"); 
+        })
+        .catch((error) => {
+            console.error("Error adding change order info", error); 
+        });
+        */
+
+    }
+    /*
+    const submit_co = (sov_id, data) => {
+
+        firestoreDB.collection("contracts").doc(id).collection("sov").doc(sov_id).update({
+
+            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value, pay_app: data.pay_app})
+        })
+        .then((docRef) => {
+            console.log("added CO successfully"); 
+        })
+        .catch((error) => {
+            console.error("Error adding change order info", error); 
+        });
+        //update the change order quantitiy count and change order dollar total
+        const delta = firebase.firestore.FieldValue.increment(data.value); 
+        firestoreDB.collection("contracts").doc(id).update({
+            "co_value": delta
+        })
+        .then((docRef) => {
+            console.log("updated co total successfully"); 
+            alert("Change Order Added Successfully"); 
+            window.location.reload(false);
+            
+        })
+        .catch((error) => {
+            console.error("Error updating change order total", error); 
+        });
+    } 
+    */
+
 
 
     const build_steps = (item,index) => {
@@ -204,7 +309,7 @@ function Pay_app() {
                     <>
                     <div> By clicking the generate application button below, the user acknolwdges responsiblity in verfiying the accuracy
                         of the content. </div>
-                    <Button onClick={()=>set_modal_open(true)}> 
+                    <Button onClick={()=>submit_pay_app()}> 
                         Save & Submit
                     </Button> 
                     <Button onClick={()=>set_current_step(current_step-1)}> 
