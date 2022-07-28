@@ -259,19 +259,29 @@ function Contract_page(props) {
         else {
             return(
                 <Paper>
-                    <Pay_app_table id={id}/> 
+                    <Pay_app_table id={id} contract_info={contract_info} sov={sov}/> 
                 </Paper>
             ); 
         }
     }
 
     const chart = () => {
+        const data = []
+        if(contract_info.balance && contract_info.prev_draws && contract_info.this_draw){
+             data.push({ key: 'Open Balance ($)', data: contract_info.balance });
+             data.push({ key: 'Previous Draws ($)', data: contract_info.prev_draws }); 
+             data.push({key: 'Current Draw ($)', data: contract_info.this_draw}); 
+               
+            
+
+        }
+        else{
+            data.push({ key: 'Base Contract ($)', data: contract_info.base_contract_value });
+            data.push({ key: 'Change Orders ($)', data: contract_info.co_value });
+          
   
-       
-        const data = [
-            { key: 'Base Contract ($)', data: contract_info.base_contract_value },
-            { key: 'Change Orders ($)', data: contract_info.co_value }
-          ];
+   
+        }
     
         return (
           <PieChart
