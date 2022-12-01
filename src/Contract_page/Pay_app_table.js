@@ -16,8 +16,9 @@ import CurrencyFormat from 'react-currency-format';
 function Pay_app_table(props) {
   const [pay_apps, set_pay_apps] = useState(props.sov);
   const [co_apps, set_co_apps] = useState([]);
-  const table_headers = ["Base Contract", "Change Orders", "Revised Contract",  "Previous Payments", "Payment This Period", "Remaining Balance", "Retention"];
+  const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  "Previous Payments", "Payment This Period", "Remaining Balance", "Retention"];
   const [period_info, set_period_info] = useState([]); 
+  const [no_apps, set_no_apps] = useState(false); 
 
 
   //contract_info={contract_info} sov={sov}
@@ -41,8 +42,13 @@ function Pay_app_table(props) {
           let temp_sov_item = props.sov[i]; 
           console.log("temp sov item is: ", temp_sov_item); 
         
-          //loop through each SOV item and create a combined draw total for each pay period          
-          if(temp_sov_item.pay_apps !==0){
+          //if it does not exist
+          if(!temp_sov_item.pay_apps){
+            set_no_apps(true); 
+            break; 
+          }
+           //loop through each SOV item and create a combined draw total for each pay period   
+          else if(temp_sov_item.pay_apps !==0){
             temp_sov_item.pay_apps.map((item,index) => temp_app_totals[index] = Number(temp_app_totals[index])+Number(item))
           }
           
@@ -52,40 +58,45 @@ function Pay_app_table(props) {
           }
         }
 
-        let temp_line_item = []; 
-        for (let i = 0; i<temp_app_totals.length; i++){
-          let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention:0}; 
-          temp_info.base_contract=props.contract_info.base_contract_value;
-          temp_info.change_orders=temp_co_totals[i];
+        if(!no_apps){
+          let temp_line_item = []; 
+          for (let i = 0; i<temp_app_totals.length; i++){
+            let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention:0}; 
+            temp_info.base_contract=props.contract_info.base_contract_value;
+            temp_info.change_orders=temp_co_totals[i];
+            
+            temp_info.this_draw=temp_app_totals[i]; 
+            if(i==0){
+              temp_info.previous_payments=0;
+              temp_info.revised_contract=Number(props.contract_info.base_contract_value)+Number(temp_co_totals[i]); 
+            }
+            else{
+              temp_info.previous_payments=Number(temp_line_item[i-1].this_draw)+Number(temp_line_item[i-1].previous_payments); 
+              temp_info.revised_contract=Number(temp_line_item[i-1].revised_contract)+Number(temp_co_totals[i]); 
+            }
+            temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)-Number(temp_info.this_draw);
           
-          temp_info.this_draw=temp_app_totals[i]; 
-          if(i==0){
-            temp_info.previous_payments=0;
-            temp_info.revised_contract=Number(props.contract_info.base_contract_value)+Number(temp_co_totals[i]); 
+            temp_line_item.push(temp_info); 
           }
-          else{
-            temp_info.previous_payments=Number(temp_line_item[i-1].this_draw)+Number(temp_line_item[i-1].previous_payments); 
-            temp_info.revised_contract=Number(temp_line_item[i-1].revised_contract)+Number(temp_co_totals[i]); 
-          }
-          temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)-Number(temp_info.this_draw);
-        
-          temp_line_item.push(temp_info); 
+          
+          console.log("temp line item", temp_line_item); 
+          console.log("temp_app_totals", temp_app_totals); 
+          console.log("temp_co_totals", temp_co_totals); 
+          console.log("contract_info", props.contract_info); 
+          set_period_info(temp_line_item); 
         }
-        
-        console.log("temp line item", temp_line_item); 
-        console.log("temp_app_totals", temp_app_totals); 
-        console.log("temp_co_totals", temp_co_totals); 
-        console.log("contract_info", props.contract_info); 
-        set_period_info(temp_line_item); 
         //period_info=temp_line_item; 
 
     }
   
 
-    const build_table_body = (item) => {
+    const build_table_body = (item,index) => {
       return(
       //let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention:0};
       <TableRow>
+        <TableCell>
+          {index}
+        </TableCell>
         <TableCell> 
           <CurrencyFormat value={item.base_contract} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
         </TableCell>
@@ -122,13 +133,13 @@ function Pay_app_table(props) {
         <Table>
           <TableHead> 
             <TableRow> 
-              {table_headers.map((item) => <TableCell> {item} </TableCell> )}
+              {table_headers.map((item) => <TableCell> <h3>{item}</h3></TableCell> )}
             </TableRow>
           </TableHead>
           <TableBody>
             
             
-            {(pay_apps.length == 0) ? console.log("it's here") : period_info.map(build_table_body)}
+            {(no_apps) ? console.log("it's here") : period_info.map(build_table_body)}
 
             
             

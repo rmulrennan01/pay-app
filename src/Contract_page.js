@@ -204,7 +204,7 @@ function Contract_page(props) {
                 
                 </h3> 
                 <h3> 
-                    Payment Applications Completed: {contract_info.app_count}
+                    Payment Applications Completed: {contract_info.app_count+1}
                 </h3>
                 <h3> 
                     Change Orders Submitted: {contract_info.co_count}
