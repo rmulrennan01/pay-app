@@ -154,24 +154,7 @@ function Pay_app() {
         //console.log("prev draws total: ", total)
     }
 
-    /*
-    const build_prev_draw_sums = () =>{
-        let temp_sums = []; 
-        let temp_val= 0; 
-        let total = 0; 
-        for (let i = 0; i<props.sov_data.length; i++){
-            temp_val = 0; 
-            for (let k = 0; k<props.sov_data[i].pay_apps.length; k++){
-                temp_val += props.sov_data[i].pay_apps[k]; 
-            }
-            temp_sums.push(temp_val); 
-            total +=temp_val; 
 
-        }
-        set_prev_draws(temp_sums); 
-        props.update_prev_daws_total(total); 
-    }
-    */
 
     const get_co_sums = () =>{
         let temp_sums = []; 

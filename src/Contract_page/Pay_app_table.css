@@ -1,0 +1,19 @@
+
+
+.Pay_app_table__row:hover{
+
+    background-color: lightgray;
+    cursor: pointer; 
+
+}
+
+.Pay_app_table__header{
+    background-color: #1976d2;
+    
+    
+}
+
+.Pay_app_table__header_text{
+    color: white !important; 
+
+}

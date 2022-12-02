@@ -48,48 +48,6 @@ function Sov_table(props) {
     //const [saved_inputs, set_saved_inputs] = useState(props.saved_inputs); 
 
   
-
- 
-
-/*
-    const get_co_sums = () =>{
-        let temp_sums = []; 
-        let sum = 0; 
-        for (var i = 0; i<table_content.length; i++){
-            if(table_content[i].change_orders.length >0){
-                table_content[i].change_orders.map(item=>sum = Number(sum) + Number(item.value)); 
-                temp_sums[i] = sum; 
-            } 
-            else{
-                temp_sums[i] = 0; 
-            }
-            sum = 0; 
-        }
-        set_co_sums(temp_sums);  
-    }
-
-    const get_previous_draws = () =>{
-        let temp_sums = []; 
-        let sum = 0; 
-        for (var i = 0; i<table_content.length; i++){
-            if(table_content[i].hasOwnProperty('pay_apps')){
-                if(table_content[i].pay_apps.length >0){
-                    table_content[i].pay_apps.map(item=>sum = Number(sum) + Number(item.value)); 
-                    temp_sums[i] = sum; 
-                } 
-                else{
-                    temp_sums[i] = 0; 
-                }
-            }
-            else{
-                temp_sums[i] = 0; 
-            }
-            sum = 0; 
-        }
-        set_prev_draws(temp_sums);  
-    }
-    */
-
     const get_total = () =>{
         let sum = 0; 
         
@@ -99,24 +57,6 @@ function Sov_table(props) {
         set_total(sum); 
     }
 
-    /*
-    const build_prev_draw_sums = () =>{
-        let temp_sums = []; 
-        let temp_val= 0; 
-        let total = 0; 
-        for (let i = 0; i<props.sov_data.length; i++){
-            temp_val = 0; 
-            for (let k = 0; k<props.sov_data[i].pay_apps.length; k++){
-                temp_val += props.sov_data[i].pay_apps[k]; 
-            }
-            temp_sums.push(temp_val); 
-            total +=temp_val; 
-
-        }
-        set_prev_draws(temp_sums); 
-        props.update_prev_daws_total(total); 
-    }
-    */
 
     //calculated balances for all cost items
     const build_balance = () => {
@@ -151,9 +91,6 @@ function Sov_table(props) {
         set_max_input(temp_list); 
         //console.log(max_input); 
     }
-
-
-
 
     //need to build the co_sums & prev draws within a function call inside useEffect. Otherwise, inside the body we get too many renders.
     useEffect(() => {
@@ -220,15 +157,8 @@ function Sov_table(props) {
         }
         set_balances(temp_list2); 
 
-
-        //build_balance(); 
-
     }
 
-
-
-    
-    
     const input_total = () => {
         let sum = 0; 
         for (var i = 0; i<props.saved_inputs.length; i++){
@@ -247,35 +177,17 @@ function Sov_table(props) {
         if(balances.length ==0){
             return 0; 
         }
-        /*for (var i = 0; i<balances.length; i++){
-            if(balances[i] == []){
-                sum+= Number(0); 
-            }
-            else{
-                sum+=Number(balances[i]); 
-            }
-        */
+
         let temp_balance = balances.reduce((prev,cur)=>prev+cur); 
         props.balance(temp_balance);
         return temp_balance; 
     }
 
-
-       // console.log("inputs: ", props.saved_inputs)
-        //if(props.saved_input === [] ){
-          // return props.saved_inputs.reduce((prev,cur)=>prev+cur)
-          // return 1; 
-
-        //}
-        //return 0; 
-        //return props.saved_inputs === [] ? 0 : props.saved_inputs.reduce((prev,cur)=>prev+cur); 
-   // }
-
-
     const build_table_body = (item,index) => {
       
             return(
                 <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
+                {console.log("building table rows")}
                     <TableCell>
                         {item.cost_code}
                     </TableCell>
@@ -300,7 +212,6 @@ function Sov_table(props) {
                                 //ref={(val) => (co_totals.current[index] = val)}
                                
                                 value={co_sums[index]} 
-                                
                                 displayType={'text'} 
                                 thousandSeparator={true} 
                                 prefix={'$'} 
@@ -363,21 +274,8 @@ function Sov_table(props) {
             );
     }
 
-  
-
-  
-   
-
-
     return (
-        
         <div> 
-            
-            
-            
-        
-        
-            
         Please provide the dollar amounts for each cost item that you intend to draw on for this pay period.  
         <br/>
         <br/> 
@@ -505,22 +403,11 @@ function Sov_table(props) {
                                     decimalScale={2}
                                 />
                             </h3> 
-                    
                         </TableCell>
-
                     </TableRow>
                 </TableFooter>
             </Table>
-
         </TableContainer>
-        
-      
-
-       
-
-     
-
-
         </div>
     )
 }

@@ -18,9 +18,11 @@ import Contract_sov from "./Contract_page/Contract_sov.js";
 import Change_order_modal from './Contract_page/Change_order_modal.js';
 import Change_order_table from './Contract_page/Change_order_table.js'; 
 import Pay_app_table from './Contract_page/Pay_app_table.js'; 
+import Pay_app_modal from './Contract_page/Pay_app_modal.js'; 
 import { getScopedCssBaselineUtilityClass } from '@mui/material';
 
 import CurrencyFormat from 'react-currency-format';
+
 
 
 function Contract_page(props) {
@@ -30,7 +32,9 @@ function Contract_page(props) {
     const [loading, set_loading] = useState(true); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const {id} = useParams(); 
-    const [modal_open, set_modal_open] = useState(false); 
+    const [co_modal_open, set_co_modal_open] = useState(false); 
+    const [pay_modal_open, set_pay_modal_open] = useState(false); 
+    const [pay_app_id, set_pay_app_id] = useState(0); 
     const [tab, set_tab] = useState(0);   
    
 
@@ -259,7 +263,7 @@ function Contract_page(props) {
         else {
             return(
                 <Paper>
-                    <Pay_app_table id={id} contract_info={contract_info} sov={sov}/> 
+                    <Pay_app_table id={id} contract_info={contract_info} sov={sov} set_pay_app_id={set_pay_app_id} open_modal={()=>set_pay_modal_open(true)}/> 
                 </Paper>
             ); 
         }
@@ -323,14 +327,17 @@ function Contract_page(props) {
             {console.log(tab)}
 
             {tab==0 ? <Paper>  <h3> Contract Summary </h3> {job_sov()}<br/> </Paper>  : <></>  }
-            {tab==1 ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
+            {tab==1 ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
             {tab==2 ? <Paper>  <h3> Payment Applications </h3> {pay_apps()}<br/> </Paper>  : <></>  }
-            
+            {console.log("pay_app_id", pay_app_id)}
 
     
 
-            <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
-                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal contract_info={contract_info} sov_data={sov} close_modal={()=>set_modal_open(false)} submit={submit_co}/> }
+            <Modal open={co_modal_open} onClose={()=>set_co_modal_open(false)}  >
+                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal contract_info={contract_info} sov_data={sov} close_modal={()=>set_co_modal_open(false)} submit={submit_co}/> }
+            </Modal>
+            <Modal open={pay_modal_open} onClose={()=>set_pay_modal_open(false)}  >
+                {loading? <Paper> <CircularProgress/> </Paper> : <Pay_app_modal pay_app_id={pay_app_id} contract_info={contract_info} sov_data={sov}  close_modal={()=>set_pay_modal_open(false)} submit={submit_co}/> }
             </Modal>
         </>
   

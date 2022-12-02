@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'; 
 import Button from '@mui/material/Button';
+import "./Pay_app_table.css"; 
 
 //Tables
 import Table from '@mui/material/Table';
@@ -88,14 +89,19 @@ function Pay_app_table(props) {
         //period_info=temp_line_item; 
 
     }
+
+    const open_modal = (ind) =>{
+      props.set_pay_app_id(ind); 
+      props.open_modal()
+    }
   
 
     const build_table_body = (item,index) => {
       return(
       //let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention:0};
-      <TableRow>
+      <TableRow className="Pay_app_table__row" onClick={()=>open_modal(index)}>
         <TableCell>
-          {index}
+          {index+1}
         </TableCell>
         <TableCell> 
           <CurrencyFormat value={item.base_contract} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
