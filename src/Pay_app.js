@@ -157,6 +157,7 @@ function Pay_app() {
 
 
     const get_co_sums = () =>{
+        console.log("This is sov", sov); 
         let temp_sums = []; 
         let sum = 0; 
         for (var i = 0; i<sov.length; i++){

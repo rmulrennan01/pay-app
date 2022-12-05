@@ -41,7 +41,7 @@ function Pay_app_table(props) {
         //loop through each sov item
         for (let i = 0; i < props.sov.length; i++){
           let temp_sov_item = props.sov[i]; 
-          console.log("temp sov item is: ", temp_sov_item); 
+          //console.log("temp sov item is: ", temp_sov_item); 
         
           //if it does not exist
           if(!temp_sov_item.pay_apps){
@@ -80,10 +80,10 @@ function Pay_app_table(props) {
             temp_line_item.push(temp_info); 
           }
           
-          console.log("temp line item", temp_line_item); 
-          console.log("temp_app_totals", temp_app_totals); 
-          console.log("temp_co_totals", temp_co_totals); 
-          console.log("contract_info", props.contract_info); 
+          //console.log("temp line item", temp_line_item); 
+          //console.log("temp_app_totals", temp_app_totals); 
+          //console.log("temp_co_totals", temp_co_totals); 
+          //console.log("contract_info", props.contract_info); 
           set_period_info(temp_line_item); 
         }
         //period_info=temp_line_item; 
@@ -124,7 +124,7 @@ function Pay_app_table(props) {
         <TableCell> 
           <CurrencyFormat value={item.retention} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
         </TableCell>
-        {console.log("here", item)}
+        
       </TableRow>
       )
     }

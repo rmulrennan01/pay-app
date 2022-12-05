@@ -45,7 +45,7 @@ function Contract_page(props) {
         const fetchData = async () =>{
             const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             set_contract_info(dataList.data()); 
-            console.log(dataList.data()); 
+            //console.log(dataList.data()); 
         
             const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
             set_owner_info(dataList2.data()); 
@@ -62,7 +62,7 @@ function Contract_page(props) {
                 //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
             });
 
-            console.log(tempList); 
+            //console.log(tempList); 
             set_sov(tempList); 
             set_loading(false); 
             
@@ -324,12 +324,12 @@ function Contract_page(props) {
                 <Tab label={<h3>Change Orders</h3>} onClick={()=>set_tab(1)}/>
                 <Tab label={<h3>Payment Applications</h3>} onClick={()=>set_tab(2)}/>
             </Tabs>
-            {console.log(tab)}
+            
 
             {tab==0 ? <Paper>  <h3> Contract Summary </h3> {job_sov()}<br/> </Paper>  : <></>  }
             {tab==1 ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
             {tab==2 ? <Paper>  <h3> Payment Applications </h3> {pay_apps()}<br/> </Paper>  : <></>  }
-            {console.log("pay_app_id", pay_app_id)}
+            
 
     
 

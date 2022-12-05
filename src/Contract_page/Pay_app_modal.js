@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import Paper from '@mui/material/Paper';
-import Sov_table from '../Pay_app/Sov_table.js'; 
+import Pay_app_modal_table from './Pay_app_modal_table.js'; 
 
 
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
@@ -10,15 +10,6 @@ import Slider from '@mui/material/Slider';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-
-/*
-<Sov_table sov_data={sov} prev_draws={prev_draws} 
-prev_draws_total={prev_draws_total} 
-co_sums={co_sums} 
-saved_inputs={saved_inputs} 
-update_inputs={update_billed_to_date} 
-balance={(item)=>set_balance(item)} />}
-*/
 
 
 
@@ -41,8 +32,8 @@ function Pay_app_modal(props) {
     }
     useEffect(() => {
            
-        get_previous_draws(); 
-        get_co_sums(); 
+       // get_previous_draws(); 
+        //get_co_sums(); 
         console.log("loaded"); 
         
         //console.log("hey hey", contract_info); 
@@ -51,71 +42,33 @@ function Pay_app_modal(props) {
         
     }, [sov])
 
-    const get_previous_draws = () =>{
-        let temp_sums = []; 
-        let sum = 0; 
-        let total = 0; 
-        //console.log("this is the sov here: ", sov); 
-        for (var i = 0; i<sov.length; i++){
-           // console.log("sov", sov); 
-            if(sov[i].hasOwnProperty('pay_apps')){
-                if(sov[i].pay_apps.length >0){
-                    sov[i].pay_apps.map(item=>sum = Number(sum) + Number(item)); 
-                    temp_sums[i] = sum; 
-                    console.log("here2:",sum);
-                    total +=sum; 
-                } 
-                else{
-                    temp_sums[i] = 0; 
-                }
-            }
-            else{
-                temp_sums.push(0); 
-            }
-            sum = 0; 
-        }
-        set_prev_draws(temp_sums);  
-        set_prev_draws_total(total); 
-        //set_prev_draws_total(total); 
-        console.log("total",total)
-        //console.log("prev draws total: ", total)
-    }
-
-    const get_co_sums = () =>{
-        let temp_sums = []; 
-        let sum = 0; 
-        for (var i = 0; i<sov.length; i++){
-            if(sov[i].change_orders.length >0){
-                sov[i].change_orders.map(item=>sum = Number(sum) + Number(item.value)); 
-                temp_sums[i] = sum; 
-            } 
-            else{
-                temp_sums[i] = 0; 
-            }
-            sum = 0; 
-        }
-        set_co_sums(temp_sums);  
-    }
-
+ 
 
     return (
         
             <div>
-                You clicked on Pay App # {props.pay_app_id+1}
-                {console.log("here is the stuff", props.sov_data)}
-          
-                {
+                <Paper> 
+                    You clicked on Pay App # {props.pay_app_id+1} <br></br>
+                    COs by SOV:
+                    {co_sums.map((item)=>item+", ")} <br></br>
+                    Previous draws:
+                    {prev_draws.map((item)=>item+", ")}
+                    
+                    
                 
-                !co_sums || !prev_draws ? <div>{console.log("co_sums", co_sums)} </div> : <Sov_table 
+                </Paper> 
+                 
+                    
+
+                
+                 <Pay_app_modal_table
                     sov_data={sov} 
-                    prev_draws={prev_draws} 
-                    prev_draws_total={prev_draws_total} 
-                    co_sums={co_sums} 
-                    saved_inputs={saved_inputs} 
-                    update_inputs={update_billed_to_date} 
-                    balance={(item)=>set_balance(item)}
-                />
-                }
+                    pay_app_id={props.pay_app_id}
+                 /> 
+                
+
+
+                
 
 
             </div>
