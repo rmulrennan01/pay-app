@@ -16,6 +16,7 @@ import Button from '@mui/material/Button';
 function Pay_app_modal(props) {
     
     const [sov, set_sov] = useState(props.sov_data); 
+    const [edit_mode, set_edit_mode] = useState(false); 
     const [prev_draws, set_prev_draws] = useState([]); 
     const [prev_draws_total, set_prev_draws_total] = useState(0); 
     const [co_sums, set_co_sums] = useState([]);
@@ -42,17 +43,20 @@ function Pay_app_modal(props) {
         
     }, [sov])
 
+    const enable_edit_mode = () => {
+        set_edit_mode(true); 
+        alert("Please note, making adjustments to this payment application will result in any subsequent payment applications being updated accordingly.");
+    }
+
  
 
     return (
         
             <div>
                 <Paper> 
-                    You clicked on Pay App # {props.pay_app_id+1} <br></br>
-                    COs by SOV:
-                    {co_sums.map((item)=>item+", ")} <br></br>
-                    Previous draws:
-                    {prev_draws.map((item)=>item+", ")}
+                    <h2>Pay App # {props.pay_app_id+1} </h2> <br></br>
+                    <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>  
+                    
                     
                     
                 
@@ -64,6 +68,7 @@ function Pay_app_modal(props) {
                  <Pay_app_modal_table
                     sov_data={sov} 
                     pay_app_id={props.pay_app_id}
+                    edit_mode={edit_mode}
                  /> 
                 
 

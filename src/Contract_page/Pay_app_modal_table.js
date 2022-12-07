@@ -34,6 +34,7 @@ function Pay_app_modal_table(props) {
     const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
     const [cc_line_items, set_cc_line_items] = useState([]); 
+    const [trigger, set_trigger] = useState(false); 
 
  
     //needs to be done to each cost code item
@@ -43,130 +44,32 @@ function Pay_app_modal_table(props) {
         //let cost_item = sov[sov_index]; 
         let prev_draws = 0; 
         let co_sum = 0; 
+        //get total of all previous draws applied to this cost item
         for (let i = 0; i<props.pay_app_id; i++){
             prev_draws += Number(cost_item.pay_apps[i])
         }
+        //get total of all CO's applied to this cost item
         if(cost_item.hasOwnProperty('change_orders')){
             for (let a = 0; a<cost_item.change_orders.length; a++){
-                co_sum = Number(co_sum) + Number(cost_item.pay_apps[a].value)
+                co_sum = Number(co_sum) + Number(cost_item.change_orders[a].value)
             }
         }
-
-
-        temp_cc_line_items.push({prev:prev_draws, cur: Number(cost_item.pay_apps[props.pay_app_id]), co_sum: co_sum, cost_code:cost_item.cost_code, value:cost_item.value})
+        temp_cc_line_items.push(
+            {
+                prev:prev_draws, 
+                cur: Number(cost_item.pay_apps[props.pay_app_id]),
+                co_sum: co_sum, 
+                cost_code:cost_item.cost_code,
+                value:cost_item.value
+            }); 
         set_cc_line_items(temp_cc_line_items); 
-
-
-
-
-    }
-
-    const get_prev_draws = () => {
-        let sum = 0; 
-        let temp_prev_draws = 0; 
-        let draws_by_period = new Array(props.pay_app_id).fill(Number(0)); 
-        let cur_draw_total = 0; 
-       // let cur_draw_list = new A
-        console.log("draws_by_period", draws_by_period); 
-        console.log("pay_app_id", props.pay_app_id+1); 
-
-        //only want to look at draws up to the clicked on pay_app
-        for (let i = 0; i<sov.length; i++){
-            //loop through each sov item
-            if(sov[i].hasOwnProperty('pay_apps')){
-                if(sov[i].pay_apps.length >0){
-                    sum=0; 
-                    //loop through each pay_app
-                    for(let a = 0; a<props.pay_app_id+1; a++){
-                        if(a<props.pay_app_id){
-                            sum += Number(sov[i].pay_apps[a]); 
-                            //console.log(sov[i].pay_apps[a]); 
-                            draws_by_period[a] = Number(draws_by_period[a]) + Number(sov[i].pay_apps[a]); 
-                        }
-                        else{
-                            cur_draw_total += Number(sov[i].pay_apps[a])
-
-                        }
-                    }
-                    temp_prev_draws += sum; 
-                }   
-
-            }
-
-            
-        }
-        set_prev_draws(draws_by_period);  
-        set_prev_draws_total(temp_prev_draws); 
-        set_cur_draws_total(cur_draw_total); 
-        console.log("prev_draws: ", prev_draws); 
-        console.log("prev_draws_total: ", prev_draws_total); 
-        console.log("sov: ", sov); 
-        console.log("ID: ", props.pay_app_id); 
-
     }
 
 
-    const build_table_body2 = (item) => {
-        <TableRow>
-            <TableCell>
-                {}
-            </TableCell>
-
-
-
-        </TableRow>
-
-
-
-
-
-    }
-
-    
-
-   
-
-    //get co_sums by sov_item
-    const get_co_sums = () =>{
-        console.log("this sov:", sov); 
-        let temp_sums = []; 
-        let sum = 0; 
-        for (var i = 0; i<sov.length; i++){
-            if(sov[i].change_orders.length >0){
-                sov[i].change_orders.map(item=>sum = Number(sum) + Number(item.value)); 
-                temp_sums[i] = sum; 
-            } 
-            else{
-                temp_sums[i] = 0; 
-            }
-            sum = 0; 
-        }
-        set_co_sums(temp_sums);  
-        console.log("co_sums:", co_sums); 
-    }
-
-
-
-    const get_total = () =>{
-        let sum = 0; 
-        
-        for (var i =0; i<sov.length; i++){
-            sum += Number(sov[i].value); 
-        }
-        set_total(sum); 
-    }
-
-    useEffect(() => {
-           
-       // get_prev_draws(); 
-        //get_co_sums(); 
+    useEffect(() => { 
         sov.map(build_cc_line_item); 
-        console.log("loaded"); 
-        
-        //console.log("hey hey", contract_info); 
-       // set_contract_total(contract_info ? contract_info.base_contract_value : 0); 
-        //set_co_total(contract_info ? contract_info.co_value : 0); 
-        
+        console.log("ran useEffect"); 
+        set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
     }, [])
 
     //calculated balances for all cost items
@@ -202,19 +105,6 @@ function Pay_app_modal_table(props) {
         set_max_input(temp_list); 
         //console.log(max_input); 
     }
-
-
-    /*
-    //update the balances column in the table. This needs to wait until the previous draws state is populated.
-    useEffect(()=>{
-        console.log("here"+props.prev_draws); 
-        //build_prev_draw_sums(); 
-        build_balance(); 
-        build_max_input(); //TODO FIX!!!
-        get_total(); 
-        //set_co_total(co_sums.reduce((prev,cur)=>prev+cur)); 
-    }, [co_sums])
-    */
    
     const backup_inputs = () => {
         let temp_arry = []; 
@@ -253,7 +143,6 @@ function Pay_app_modal_table(props) {
     }
 
     const build_table_body = (item,index) => {
-      
             return(
                 <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
                 {console.log("building table rows")}
@@ -307,23 +196,35 @@ function Pay_app_modal_table(props) {
                             />                    
                     </TableCell>
                     <TableCell >
-                        
-                        <CurrencyTextField
-                            label="Amount"
-                            variant="outlined"
-                            value={item.cur}
-                            currencySymbol="$"
-                            minimumValue="0"
-                            maximumValue = {max_input[index]} 
-                            //maximumValue = "12"
-                            outputFormat="string"
-                            decimalCharacter="."
-                            digitGroupSeparator=","
-                            
-                            leadingZero={"deny"}
-                            ref={(val) => (inputs.current[index] = val)}
-                            onChange={()=>build_balance()}
-                        />  
+                        {
+                            props.edit_mode ?
+                            <CurrencyTextField
+                                label="Amount"
+                                variant="outlined"
+                                value={item.cur}
+                                currencySymbol="$"
+                                minimumValue="0"
+                                maximumValue = {max_input[index]} 
+                                //maximumValue = "12"
+                                outputFormat="string"
+                                decimalCharacter="."
+                                digitGroupSeparator=","
+                                leadingZero={"deny"}
+                                ref={(val) => (inputs.current[index] = val)}
+                                onChange={()=>build_balance()}
+                            />  
+                            :
+                            <CurrencyFormat 
+                                value={item.cur} 
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                        }
+
+
                     </TableCell>
                     <TableCell>
                         <CurrencyFormat 
@@ -335,142 +236,13 @@ function Pay_app_modal_table(props) {
                             decimalScale={2}
                         />
                     </TableCell>
+                    {console.log("created table row")}
        
                 </TableRow>
             );
     }
 
     return (
-        /*
- 
-
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead> 
-                    <TableRow>
-                        <TableCell>
-                            <h4> Cost Code </h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4>Description</h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4> Value ($) </h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4> Change Orders ($) </h4>
-
-                        </TableCell>
-                        <TableCell>
-                            <h4>Revised Value ($)</h4> 
-
-                        </TableCell>
-                        <TableCell>
-                            <h4> Work Complete in Previous Periods ($) </h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4>Work Complete this Period ($) </h4>
-                        </TableCell>
-                        <TableCell>
-                            <h4>Balance to Finish ($) </h4>
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {(sov.length == 0) ? null : sov.map(build_table_body)}
-        
-                </TableBody>
-                <TableFooter>
-                    <TableRow>
-                        <TableCell>
-                            <h3>Totals</h3>
-                        </TableCell>
-                        <TableCell>
-                            -
-                        </TableCell>
-                        <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={0} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
-                        </TableCell>
-                        <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={0} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
-                        </TableCell>
-                        <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={0} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
-                        </TableCell>
-                        <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={0} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
-                        </TableCell>
-                        <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={0} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
-                        </TableCell>
-                        <TableCell>
-                            <h3>
-                                
-                                <CurrencyFormat 
-                                    value={0} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                        </TableCell>
-                    </TableRow>
-                </TableFooter>
-            </Table>
-        </TableContainer>
-        */
        <Paper> 
            <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -505,8 +277,96 @@ function Pay_app_modal_table(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {cc_line_items.map(build_table_body)}
+                    {cc_line_items.length ==0 ? null : cc_line_items.map(build_table_body)}
                 </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell>
+                                <h3>Totals</h3>
+                            </TableCell>
+                            <TableCell>
+                                -
+                            </TableCell>
+                            <TableCell>
+                                <h3>
+                                    <CurrencyFormat 
+                                        value={0} 
+                                        displayType={'text'} 
+                                        thousandSeparator={true} 
+                                        prefix={'$'} 
+                                        fixedDecimalScale={true} 
+                                        decimalScale={2}
+                                    />
+                                </h3> 
+                        
+                            </TableCell>
+                            <TableCell>
+                                <h3>
+                                    <CurrencyFormat 
+                                        value={0} 
+                                        displayType={'text'} 
+                                        thousandSeparator={true} 
+                                        prefix={'$'} 
+                                        fixedDecimalScale={true} 
+                                        decimalScale={2}
+                                    />
+                                </h3> 
+                        
+                            </TableCell>
+                            <TableCell>
+                                <h3>
+                                    <CurrencyFormat 
+                                        value={0} 
+                                        displayType={'text'} 
+                                        thousandSeparator={true} 
+                                        prefix={'$'} 
+                                        fixedDecimalScale={true} 
+                                        decimalScale={2}
+                                    />
+                                </h3> 
+                        
+                            </TableCell>
+                            <TableCell>
+                                <h3>
+                                    <CurrencyFormat 
+                                        value={0} 
+                                        displayType={'text'} 
+                                        thousandSeparator={true} 
+                                        prefix={'$'} 
+                                        fixedDecimalScale={true} 
+                                        decimalScale={2}
+                                    />
+                                </h3> 
+                        
+                            </TableCell>
+                            <TableCell>
+                                <h3>
+                                    <CurrencyFormat 
+                                        value={0} 
+                                        displayType={'text'} 
+                                        thousandSeparator={true} 
+                                        prefix={'$'} 
+                                        fixedDecimalScale={true} 
+                                        decimalScale={2}
+                                    />
+                                </h3> 
+                        
+                            </TableCell>
+                            <TableCell>
+                                <h3>
+                                    
+                                    <CurrencyFormat 
+                                        value={0} 
+                                        displayType={'text'} 
+                                        thousandSeparator={true} 
+                                        prefix={'$'} 
+                                        fixedDecimalScale={true} 
+                                        decimalScale={2}
+                                    />
+                                </h3> 
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
                 </TableContainer> 
 
