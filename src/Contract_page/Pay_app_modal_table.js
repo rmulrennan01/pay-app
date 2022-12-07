@@ -30,6 +30,8 @@ function Pay_app_modal_table(props) {
     const [max_input, set_max_input] = useState([]); 
     const [cc_line_items, set_cc_line_items] = useState([]); 
     const [trigger, set_trigger] = useState(false); 
+    const [user_input, set_user_input] = useState(false); 
+    const [inputs_changed, set_inputs_changed] = useState(false);
     
 
  
@@ -143,8 +145,21 @@ function Pay_app_modal_table(props) {
         console.log("temp_arry", temp_arry); 
     }
 
+    const input_total = () => {
+        let sum = 0; 
+        console.log("INPUTS", inputs.current); 
+        for (var i = 0; i<inputs.current.length; i++){
+            if(inputs.current[i] == ""){
+                sum+= Number(0); 
+            }
+            else{
+                sum+=Number(inputs.current[i].getValue()); 
+            }
+        }
+        return sum; 
+    }
 
-
+    /*
     const input_total = () => {
         let sum = 0; 
         for (var i = 0; i<props.saved_inputs.length; i++){
@@ -157,6 +172,9 @@ function Pay_app_modal_table(props) {
         }
         return sum; 
     }
+    */
+
+    
 
     const balance_total = () => {
         console.log(balances); 
@@ -168,6 +186,8 @@ function Pay_app_modal_table(props) {
         props.balance(temp_balance);
         return temp_balance; 
     }
+
+ 
 
     const build_table_body = (item,index) => {
             return(
@@ -238,7 +258,7 @@ function Pay_app_modal_table(props) {
                                 digitGroupSeparator=","
                                 leadingZero={"deny"}
                                 ref={(val) => (inputs.current[index] = val)}
-                                onChange={()=>build_balance()}
+                                onChange={()=>set_inputs_changed(!inputs_changed)}
                             />  
                             :
                             <CurrencyFormat 
@@ -263,8 +283,6 @@ function Pay_app_modal_table(props) {
                             decimalScale={2}
                         />
                     </TableCell>
-                    
-       
                 </TableRow>
             );
     }
@@ -366,14 +384,25 @@ function Pay_app_modal_table(props) {
                             </TableCell>
                             <TableCell>
                                 <h3>
-                                    <CurrencyFormat 
-                                        value={column_totals.cur} 
-                                        displayType={'text'} 
-                                        thousandSeparator={true} 
-                                        prefix={'$'} 
-                                        fixedDecimalScale={true} 
-                                        decimalScale={2}
-                                    />
+                                    {(props.edit_mode) ?
+                                        <CurrencyFormat 
+                                            value={input_total()} 
+                                            displayType={'text'} 
+                                            thousandSeparator={true} 
+                                            prefix={'$'} 
+                                            fixedDecimalScale={true} 
+                                            decimalScale={2}
+                                        />
+                                        :
+                                        <CurrencyFormat 
+                                            value={column_totals.cur} 
+                                            displayType={'text'} 
+                                            thousandSeparator={true} 
+                                            prefix={'$'} 
+                                            fixedDecimalScale={true} 
+                                            decimalScale={2}
+                                        />
+                                    }
                                 </h3> 
                         
                             </TableCell>
