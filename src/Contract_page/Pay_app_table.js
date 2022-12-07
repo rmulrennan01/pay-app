@@ -17,7 +17,7 @@ import CurrencyFormat from 'react-currency-format';
 function Pay_app_table(props) {
   const [pay_apps, set_pay_apps] = useState(props.sov);
   const [co_apps, set_co_apps] = useState([]);
-  const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  "Previous Payments", "Payment This Period", "Remaining Balance", "Retention"];
+  const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  "Previous Work Complete", "Work Complete This Period", "Remaining Balance", "Retention"];
   const [period_info, set_period_info] = useState([]); 
   const [no_apps, set_no_apps] = useState(false); 
 

@@ -22,12 +22,7 @@ import CurrencyFormat from 'react-currency-format';
 
 function Pay_app_modal_table(props) {
     const [sov, set_sov] = useState(props.sov_data);
-    const [prev_draws, set_prev_draws] = useState([]); 
-    const [prev_draws_total, set_prev_draws_total] = useState(0); 
-    const [cur_draws, set_cur_draws]=useState([]); 
-    const [cur_draws_total, set_cur_draws_total]=useState([]); 
-    const [total, set_total] = useState(0); 
-    const [co_total, set_co_total] = useState(0); 
+    const [column_totals, set_column_totals] = useState({}); 
     const rows = useRef([]); 
     const inputs = useRef([]); 
     const [co_sums, set_co_sums] = useState(props.co_sums); 
@@ -35,6 +30,7 @@ function Pay_app_modal_table(props) {
     const [max_input, set_max_input] = useState([]); 
     const [cc_line_items, set_cc_line_items] = useState([]); 
     const [trigger, set_trigger] = useState(false); 
+    
 
  
     //needs to be done to each cost code item
@@ -44,6 +40,7 @@ function Pay_app_modal_table(props) {
         //let cost_item = sov[sov_index]; 
         let prev_draws = 0; 
         let co_sum = 0; 
+ 
         //get total of all previous draws applied to this cost item
         for (let i = 0; i<props.pay_app_id; i++){
             prev_draws += Number(cost_item.pay_apps[i])
@@ -60,17 +57,47 @@ function Pay_app_modal_table(props) {
                 cur: Number(cost_item.pay_apps[props.pay_app_id]),
                 co_sum: co_sum, 
                 cost_code:cost_item.cost_code,
-                value:cost_item.value
+                value:cost_item.value,
+                description:cost_item.description
             }); 
-        set_cc_line_items(temp_cc_line_items); 
+        set_cc_line_items(temp_cc_line_items);
+
+    }
+
+    const update_footer_totals = () => {
+        let co_total = 0; 
+        let prev_total = 0; 
+        let cur_total = 0; 
+        console.log('CC_LINE_ITEMS INSIDE FOOTER TOTALS', cc_line_items); 
+        cc_line_items.map((item) => co_total = Number(co_total) + Number(item.co_sum)); 
+        cc_line_items.map((item) => prev_total = Number(prev_total) + Number(item.prev));
+        cc_line_items.map((item) => cur_total = Number(cur_total) + Number(item.cur));
+        set_column_totals({
+            co:co_total,
+            prev:prev_total,
+            cur:cur_total
+        })
+        console.log('COLUMN TOTALS', column_totals); 
+
+
     }
 
 
     useEffect(() => { 
         sov.map(build_cc_line_item); 
-        console.log("ran useEffect"); 
+        update_footer_totals(); 
+
         set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
     }, [])
+
+    useEffect(() => { 
+        
+        update_footer_totals(); 
+
+        set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
+    }, [cc_line_items])
+
+
 
     //calculated balances for all cost items
     const build_balance = () => {
@@ -145,12 +172,12 @@ function Pay_app_modal_table(props) {
     const build_table_body = (item,index) => {
             return(
                 <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
-                {console.log("building table rows")}
+                
                     <TableCell>
                         {item.cost_code}
                     </TableCell>
                     <TableCell>
-                        TODO                        
+                        {item.description}                        
                     </TableCell>
                     <TableCell >
                         <CurrencyFormat 
@@ -228,7 +255,7 @@ function Pay_app_modal_table(props) {
                     </TableCell>
                     <TableCell>
                         <CurrencyFormat 
-                            value={'todo'} 
+                            value={Number(item.value)+Number(item.co_sum)-Number(item.prev)-Number(item.cur)} 
                             displayType={'text'} 
                             thousandSeparator={true} 
                             prefix={'$'} 
@@ -236,7 +263,7 @@ function Pay_app_modal_table(props) {
                             decimalScale={2}
                         />
                     </TableCell>
-                    {console.log("created table row")}
+                    
        
                 </TableRow>
             );
@@ -284,13 +311,11 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>Totals</h3>
                             </TableCell>
-                            <TableCell>
-                                -
-                            </TableCell>
+                            <TableCell></TableCell>
                             <TableCell>
                                 <h3>
                                     <CurrencyFormat 
-                                        value={0} 
+                                        value={props.contract_info.base_contract_value} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 
@@ -303,7 +328,7 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>
                                     <CurrencyFormat 
-                                        value={0} 
+                                        value={column_totals.co} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 
@@ -316,7 +341,7 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>
                                     <CurrencyFormat 
-                                        value={0} 
+                                        value={props.contract_info.base_contract_value + column_totals.co} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 
@@ -329,7 +354,7 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>
                                     <CurrencyFormat 
-                                        value={0} 
+                                        value={column_totals.prev} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 
@@ -342,7 +367,7 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>
                                     <CurrencyFormat 
-                                        value={0} 
+                                        value={column_totals.cur} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 
@@ -356,7 +381,7 @@ function Pay_app_modal_table(props) {
                                 <h3>
                                     
                                     <CurrencyFormat 
-                                        value={0} 
+                                        value={props.contract_info.base_contract_value+column_totals.co-column_totals.prev-column_totals.cur} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 
@@ -369,8 +394,6 @@ function Pay_app_modal_table(props) {
                     </TableFooter>
                 </Table>
                 </TableContainer> 
-
-           {console.log("here are the line items", cc_line_items)} 
            
         </Paper>
        

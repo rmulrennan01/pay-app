@@ -45,7 +45,7 @@ function Pay_app_modal(props) {
 
     const enable_edit_mode = () => {
         set_edit_mode(true); 
-        alert("Please note, making adjustments to this payment application will result in any subsequent payment applications being updated accordingly.");
+        alert("Please note: Making adjustments to this payment application will result in any subsequent payment applications being updated accordingly.");
     }
 
  
@@ -69,6 +69,7 @@ function Pay_app_modal(props) {
                     sov_data={sov} 
                     pay_app_id={props.pay_app_id}
                     edit_mode={edit_mode}
+                    contract_info={props.contract_info}
                  /> 
                 
 
