@@ -55,7 +55,11 @@ function Pay_app_modal(props) {
             <div>
                 <Paper> 
                     <h2>Pay App # {props.pay_app_id+1} </h2> <br></br>
-                    <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>  
+                    {edit_mode ? 
+                        <Button variant="contained" onClick={()=>alert("Are you sure?")}> Save & Submit Changes </Button> 
+                        :
+                        <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>
+                    }
                     
                     
                     

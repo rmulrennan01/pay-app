@@ -38,23 +38,24 @@ function Pay_app_table(props) {
 
         let temp_app_totals = new Array(props.contract_info.app_count+1).fill(0); 
         let temp_co_totals = new Array(props.contract_info.app_count+1).fill(0); 
-       
+        
         //loop through each sov item
         for (let i = 0; i < props.sov.length; i++){
           let temp_sov_item = props.sov[i]; 
           //console.log("temp sov item is: ", temp_sov_item); 
         
           //if it does not exist
-          if(!temp_sov_item.pay_apps){
+          if(!temp_sov_item.hasOwnProperty("pay_apps")){
             set_no_apps(true); 
             break; 
           }
-           //loop through each SOV item and create a combined draw total for each pay period   
+          //create a combined draw total for each pay period   
           else if(temp_sov_item.pay_apps !==0){
             temp_sov_item.pay_apps.map((item,index) => temp_app_totals[index] = Number(temp_app_totals[index])+Number(item))
+            
           }
           
-          //loop through each CO for the sov item to build totals for each pay period
+          //build totals for each pay period
           if(temp_sov_item.change_orders !==0){
             temp_sov_item.change_orders.map((item) => temp_co_totals[item.pay_app-1] = Number(temp_co_totals[item.pay_app-1])+Number(item.value))
           }
@@ -62,7 +63,7 @@ function Pay_app_table(props) {
 
         if(!no_apps){
           let temp_line_item = []; 
-          for (let i = 0; i<temp_app_totals.length; i++){
+          for (let i = 0; i<props.contract_info.app_count; i++){
             let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention:0}; 
             temp_info.base_contract=props.contract_info.base_contract_value;
             temp_info.change_orders=temp_co_totals[i];
@@ -89,7 +90,7 @@ function Pay_app_table(props) {
             temp_line_item.push(temp_info); 
           }
           
-          //console.log("temp line item", temp_line_item); 
+          console.log("temp line item", temp_line_item); 
           //console.log("temp_app_totals", temp_app_totals); 
           //console.log("temp_co_totals", temp_co_totals); 
           //console.log("contract_info", props.contract_info); 
