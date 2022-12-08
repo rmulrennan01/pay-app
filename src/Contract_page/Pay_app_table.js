@@ -17,7 +17,8 @@ import CurrencyFormat from 'react-currency-format';
 function Pay_app_table(props) {
   const [pay_apps, set_pay_apps] = useState(props.sov);
   const [co_apps, set_co_apps] = useState([]);
-  const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  "Previous Work Complete", "Work Complete This Period", "Remaining Balance", "Retention"];
+  const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  
+    "Previous Work Complete", "Work Complete This Period", "Payment This Period (Work Complete Less Retention)", "Remaining Balance Including Retention"];
   const [period_info, set_period_info] = useState([]); 
   const [no_apps, set_no_apps] = useState(false); 
 
@@ -75,8 +76,16 @@ function Pay_app_table(props) {
               temp_info.previous_payments=Number(temp_line_item[i-1].this_draw)+Number(temp_line_item[i-1].previous_payments); 
               temp_info.revised_contract=Number(temp_line_item[i-1].revised_contract)+Number(temp_co_totals[i]); 
             }
-            temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)-Number(temp_info.this_draw);
-          
+            
+            if(props.contract_info.hasOwnProperty('retention')){
+              let ret = 1 - props.contract_info.retention; 
+              temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*ret -Number(temp_info.this_draw)*ret;
+              temp_info.payment=temp_info.this_draw*(1-props.contract_info.retention);
+            }
+            else{
+              temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*.95-Number(temp_info.this_draw)*.95;
+              temp_info.payment=temp_info.this_draw*.95; 
+            }
             temp_line_item.push(temp_info); 
           }
           
@@ -119,10 +128,11 @@ function Pay_app_table(props) {
           <CurrencyFormat value={item.this_draw} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
         </TableCell>
         <TableCell> 
-          <CurrencyFormat value={item.balance} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+          <CurrencyFormat value={item.payment} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
         </TableCell>
+
         <TableCell> 
-          <CurrencyFormat value={item.retention} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+          <CurrencyFormat value={item.balance} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
         </TableCell>
         
       </TableRow>
