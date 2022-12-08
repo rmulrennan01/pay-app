@@ -25,13 +25,16 @@ function Pay_app_modal_table(props) {
     const [column_totals, set_column_totals] = useState({}); 
     const rows = useRef([]); 
     const inputs = useRef([]); 
+    const [input_total, set_input_total] = useState(0); 
+    const [input_pay_total, set_input_pay_total] = useState(0); 
+    const [input_balance_total, set_input_balance_total] = useState(0); 
     const [co_sums, set_co_sums] = useState(props.co_sums); 
     const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
     const [cc_line_items, set_cc_line_items] = useState([]); 
     const [trigger, set_trigger] = useState(false); 
     const [user_input, set_user_input] = useState(false); 
-    const [inputs_changed, set_inputs_changed] = useState(false);
+    
     
 
  
@@ -57,19 +60,15 @@ function Pay_app_modal_table(props) {
                 }
             }
         }
+        let ret = 0; 
         if(props.contract_info.hasOwnProperty('retention')){
-            let ret = 1 - props.contract_info.retention; 
-            payment=Number(cost_item.pay_apps[props.pay_app_id])*ret;
-            balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
- 
+            ret = 1 - props.contract_info.retention; 
         } 
         else{
-            let ret = .95; 
-            payment=Number(cost_item.pay_apps[props.pay_app_id])*ret;
-            balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
+            ret = .95; 
         }
-        
-
+        payment=Number(cost_item.pay_apps[props.pay_app_id])*ret;
+        balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
         temp_cc_line_items.push(
             {
                 prev:prev_draws, 
@@ -82,7 +81,6 @@ function Pay_app_modal_table(props) {
                 balance:balance
             }); 
         set_cc_line_items(temp_cc_line_items);
-
     }
 
     const update_footer_totals = () => {
@@ -104,23 +102,17 @@ function Pay_app_modal_table(props) {
             payment:payment_total,
             balance:balance_total
         })
-        console.log('COLUMN TOTALS', column_totals); 
-
-
     }
 
 
     useEffect(() => { 
         sov.map(build_cc_line_item); 
         update_footer_totals(); 
-
         set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
     }, [])
 
     useEffect(() => { 
-        
         update_footer_totals(); 
-
         set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
     }, [cc_line_items])
 
@@ -143,22 +135,6 @@ function Pay_app_modal_table(props) {
        
     }
 
-    //calculates balance for just one cost item for onChange event. This avoids having to recalculate all cost items.
-    const adjust_balance = (i) => {
-        let temp_list = balances; 
-        temp_list[i] = Number(sov[i].value) + Number(co_sums[i]) - Number(props.prev_draws[i]) - inputs.current[i].getValue();
-        set_balances(temp_list); 
-        //console.log(temp_list); 
-    }
-
-    const build_max_input = () => {
-        let temp_list = []; 
-        for (var i = 0; i<sov.length; i++){
-            temp_list[i] = String(Number(sov[i].value)+Number(co_sums[i])-Number(props.prev_draws[i])); 
-        }
-        set_max_input(temp_list); 
-        //console.log(max_input); 
-    }
    
     const backup_inputs = () => {
         let temp_arry = []; 
@@ -170,9 +146,10 @@ function Pay_app_modal_table(props) {
         console.log("temp_arry", temp_arry); 
     }
 
-    const input_total = () => {
+    const update_input_total = () => {
+         
         let sum = 0; 
-        console.log("INPUTS", inputs.current); 
+        //loop through each input and add together
         for (var i = 0; i<inputs.current.length; i++){
             if(inputs.current[i] == ""){
                 sum+= Number(0); 
@@ -181,38 +158,36 @@ function Pay_app_modal_table(props) {
                 sum+=Number(inputs.current[i].getValue()); 
             }
         }
-        return sum; 
-    }
-
-    /*
-    const input_total = () => {
-        let sum = 0; 
-        for (var i = 0; i<props.saved_inputs.length; i++){
-            if(props.saved_inputs[i] == ""){
-                sum+= Number(0); 
-            }
-            else{
-                sum+=Number(props.saved_inputs[i]); 
-            }
+     
+        let ret = 0; 
+        if(props.contract_info.hasOwnProperty('retention')){
+            ret = 1 - props.contract_info.retention; 
+        } 
+        else{
+            ret = .95; 
+        } 
+        //update column totals resulting from inupt changes
+        let payment=sum*ret;
+        let balance=props.contract_info.base_contract_value + column_totals.co - ret*column_totals.prev - ret*sum;
+        set_column_totals({
+            co:column_totals.co,
+            prev:column_totals.prev,
+            cur:sum,
+            payment:payment,
+            balance:balance
+        })
+   
+        //adjust line item totals for payments and open balances resulting from input changes
+        let copy_items = cc_line_items; 
+        for (var i=0; i<cc_line_items.length; i++){
+            copy_items[i].payment = Number(inputs.current[i].getValue()) * ret;
+            copy_items[i].balance = copy_items[i].value + copy_items[i].co_sum - Number(inputs.current[i].getValue())*ret - copy_items[i].prev*ret;
         }
-        return sum; 
-    }
-    */
-
-    
-
-    const balance_total = () => {
-        console.log(balances); 
-        if(balances.length ==0){
-            return 0; 
-        }
-
-        let temp_balance = balances.reduce((prev,cur)=>prev+cur); 
-        props.balance(temp_balance);
-        return temp_balance; 
+        console.log(cc_line_items); 
+        set_cc_line_items(copy_items); 
     }
 
- 
+
 
     const build_table_body = (item,index) => {
             return(
@@ -283,7 +258,7 @@ function Pay_app_modal_table(props) {
                                 digitGroupSeparator=","
                                 leadingZero={"deny"}
                                 ref={(val) => (inputs.current[index] = val)}
-                                onChange={()=>set_inputs_changed(!inputs_changed)}
+                                onChange={()=>update_input_total()}
                             />  
                             :
                             <CurrencyFormat 
@@ -422,16 +397,7 @@ function Pay_app_modal_table(props) {
                             </TableCell>
                             <TableCell>
                                 <h3>
-                                    {(props.edit_mode) ?
-                                        <CurrencyFormat 
-                                            value={input_total()} 
-                                            displayType={'text'} 
-                                            thousandSeparator={true} 
-                                            prefix={'$'} 
-                                            fixedDecimalScale={true} 
-                                            decimalScale={2}
-                                        />
-                                        :
+                               
                                         <CurrencyFormat 
                                             value={column_totals.cur} 
                                             displayType={'text'} 
@@ -440,7 +406,7 @@ function Pay_app_modal_table(props) {
                                             fixedDecimalScale={true} 
                                             decimalScale={2}
                                         />
-                                    }
+                                    
                                 </h3> 
                         
                             </TableCell>
