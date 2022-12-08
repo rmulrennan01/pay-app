@@ -42,6 +42,8 @@ function Pay_app_modal_table(props) {
         //let cost_item = sov[sov_index]; 
         let prev_draws = 0; 
         let co_sum = 0; 
+        let payment = 0; 
+        let balance = 0; 
  
         //get total of all previous draws applied to this cost item
         for (let i = 0; i<props.pay_app_id; i++){
@@ -50,9 +52,24 @@ function Pay_app_modal_table(props) {
         //get total of all CO's applied to this cost item
         if(cost_item.hasOwnProperty('change_orders')){
             for (let a = 0; a<cost_item.change_orders.length; a++){
-                co_sum = Number(co_sum) + Number(cost_item.change_orders[a].value)
+                if(Number(cost_item.change_orders[a].pay_app) <= Number(props.pay_app_id)+1){
+                    co_sum = Number(co_sum) + Number(cost_item.change_orders[a].value);
+                }
             }
         }
+        if(props.contract_info.hasOwnProperty('retention')){
+            let ret = 1 - props.contract_info.retention; 
+            payment=Number(cost_item.pay_apps[props.pay_app_id])*ret;
+            balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
+ 
+        } 
+        else{
+            let ret = .95; 
+            payment=Number(cost_item.pay_apps[props.pay_app_id])*ret;
+            balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
+        }
+        
+
         temp_cc_line_items.push(
             {
                 prev:prev_draws, 
@@ -60,7 +77,9 @@ function Pay_app_modal_table(props) {
                 co_sum: co_sum, 
                 cost_code:cost_item.cost_code,
                 value:cost_item.value,
-                description:cost_item.description
+                description:cost_item.description,
+                payment:payment,
+                balance:balance
             }); 
         set_cc_line_items(temp_cc_line_items);
 
@@ -70,14 +89,20 @@ function Pay_app_modal_table(props) {
         let co_total = 0; 
         let prev_total = 0; 
         let cur_total = 0; 
+        let payment_total = 0; 
+        let balance_total= 0; 
         console.log('CC_LINE_ITEMS INSIDE FOOTER TOTALS', cc_line_items); 
         cc_line_items.map((item) => co_total = Number(co_total) + Number(item.co_sum)); 
         cc_line_items.map((item) => prev_total = Number(prev_total) + Number(item.prev));
         cc_line_items.map((item) => cur_total = Number(cur_total) + Number(item.cur));
+        cc_line_items.map((item) => payment_total = Number(payment_total) + Number(item.payment)); 
+        cc_line_items.map((item) => balance_total = Number(balance_total) + Number(item.balance));
         set_column_totals({
             co:co_total,
             prev:prev_total,
-            cur:cur_total
+            cur:cur_total,
+            payment:payment_total,
+            balance:balance_total
         })
         console.log('COLUMN TOTALS', column_totals); 
 
@@ -275,13 +300,23 @@ function Pay_app_modal_table(props) {
                     </TableCell>
                     <TableCell>
                         <CurrencyFormat 
-                            value={Number(item.value)+Number(item.co_sum)-Number(item.prev)-Number(item.cur)} 
+                            value={item.payment} 
                             displayType={'text'} 
                             thousandSeparator={true} 
                             prefix={'$'} 
                             fixedDecimalScale={true} 
                             decimalScale={2}
                         />
+                    </TableCell>
+                    <TableCell>
+                        <CurrencyFormat 
+                            value={item.balance} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                    />
                     </TableCell>
                 </TableRow>
             );
@@ -300,24 +335,27 @@ function Pay_app_modal_table(props) {
                             <h4>Description</h4> 
                         </TableCell>
                         <TableCell>
-                            <h4> Value ($) </h4> 
+                            <h4> Value  </h4> 
                         </TableCell>
                         <TableCell>
-                            <h4> Change Orders ($) </h4>
+                            <h4> Change Orders </h4>
 
                         </TableCell>
                         <TableCell>
-                            <h4>Revised Value ($)</h4> 
+                            <h4>Revised Value </h4> 
 
                         </TableCell>
                         <TableCell>
-                            <h4> Work Complete in Previous Periods ($) </h4> 
+                            <h4> Work Complete in Previous Periods </h4> 
                         </TableCell>
                         <TableCell>
-                            <h4>Work Complete this Period ($) </h4>
+                            <h4>Work Complete this Period </h4>
                         </TableCell>
                         <TableCell>
-                            <h4>Balance to Finish ($) </h4>
+                            <h4>Payment This Period (Work Complete Less Retention) </h4>
+                        </TableCell>
+                        <TableCell>
+                            <h4>Balance to Finish Including Retention  </h4>
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -409,14 +447,27 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>
                                     
-                                    <CurrencyFormat 
-                                        value={props.contract_info.base_contract_value+column_totals.co-column_totals.prev-column_totals.cur} 
-                                        displayType={'text'} 
-                                        thousandSeparator={true} 
-                                        prefix={'$'} 
-                                        fixedDecimalScale={true} 
-                                        decimalScale={2}
-                                    />
+                                <CurrencyFormat 
+                                    value={column_totals.payment} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
+                                </h3> 
+                            </TableCell>
+                            <TableCell>
+                                <h3>
+                                    
+                                <CurrencyFormat 
+                                    value={column_totals.balance} 
+                                    displayType={'text'} 
+                                    thousandSeparator={true} 
+                                    prefix={'$'} 
+                                    fixedDecimalScale={true} 
+                                    decimalScale={2}
+                                />
                                 </h3> 
                             </TableCell>
                         </TableRow>
