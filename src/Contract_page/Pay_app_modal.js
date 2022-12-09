@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import Paper from '@mui/material/Paper';
 import Pay_app_modal_table from './Pay_app_modal_table.js'; 
-
+import {useParams} from "react-router-dom";
 
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 
@@ -17,6 +17,7 @@ function Pay_app_modal(props) {
     
     const [sov, set_sov] = useState(props.sov_data); 
     const [edit_mode, set_edit_mode] = useState(false); 
+    const {id} = useParams();
     const [prev_draws, set_prev_draws] = useState([]); 
     const [prev_draws_total, set_prev_draws_total] = useState(0); 
     const [co_sums, set_co_sums] = useState([]);
@@ -48,18 +49,27 @@ function Pay_app_modal(props) {
         alert("Please note: Making adjustments to this payment application will result in any subsequent payment applications being updated accordingly.");
     }
 
+    const open_pdf = () => {
+        let new_tab = window.open('about:blank',"_blank"); 
+        new_tab.location = ('/pdf/'+ String(id)+ '/' + String(props.pay_app_id+1)); 
+
+    }
+
  
 
     return (
-        
+            //path='/pay_app/pdf/:id/:app_id' 
             <div>
                 <Paper> 
                     <h2>Pay App # {props.pay_app_id+1} </h2> <br></br>
+                    <Button variant='contained' onClick={()=>open_pdf()}>View PDF</Button>
+                    <Button variant='contained' onClick={()=>window.open('https://www.google.com','_blank')}>test</Button>
                     {edit_mode ? 
                         <Button variant="contained" onClick={()=>alert("Are you sure?")}> Save & Submit Changes </Button> 
                         :
                         <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>
                     }
+                    
                     
                     
                     

@@ -34,6 +34,7 @@ function Contract_page(props) {
     const {id} = useParams(); 
     const [co_modal_open, set_co_modal_open] = useState(false); 
     const [pay_modal_open, set_pay_modal_open] = useState(false); 
+    const [pdf_modal_open, set_pdf_modal_open] = useState(false); 
     const [pay_app_id, set_pay_app_id] = useState(0); 
     const [tab, set_tab] = useState(0);   
    
@@ -269,24 +270,29 @@ function Contract_page(props) {
         }
     }
 
-    const chart = () => {
+    const chart_contract = () => {
         const data = []
-        if(contract_info.balance && contract_info.prev_draws && contract_info.this_draw){
-             data.push({ key: 'Open Balance ($)', data: contract_info.balance });
-             data.push({ key: 'Previous Draws ($)', data: contract_info.prev_draws }); 
-             data.push({key: 'Current Draw ($)', data: contract_info.this_draw}); 
-               
-            
+        data.push({ key: 'Base Contract ($)', data: contract_info.base_contract_value });
+        data.push({ key: 'Change Orders ($)', data: contract_info.co_value });
 
-        }
-        else{
-            data.push({ key: 'Base Contract ($)', data: contract_info.base_contract_value });
-            data.push({ key: 'Change Orders ($)', data: contract_info.co_value });
-          
-  
-   
-        }
-    
+
+        return (
+          <PieChart
+            width={450}
+            height={350}
+            data={data}
+            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
+          />
+        );
+
+    }
+
+    const chart_draws = () => {
+        const data = []
+        data.push({ key: 'Open Balance ($)', data: contract_info.balance });
+        data.push({ key: 'Previous Draws ($)', data: contract_info.prev_draws }); 
+        data.push({key: 'Current Draw ($)', data: contract_info.this_draw}); 
+               
         return (
           <PieChart
             width={450}
@@ -312,9 +318,16 @@ function Contract_page(props) {
                 </Grid>
                 <Grid item xs = {6}>
                     {job_summary()}
-                    {loading? <CircularProgress/> : chart()}
+                    
 
                 </Grid>
+                <Grid item xs = {6}>
+                    <Paper>{loading? <CircularProgress/> : chart_contract()}</Paper>
+                </Grid>
+                <Grid item xs = {6}>
+                    <Paper>{loading? <CircularProgress/> : chart_draws()}</Paper>
+                </Grid>
+
 
             </Grid>
             <br/> 
@@ -339,6 +352,7 @@ function Contract_page(props) {
             <Modal open={pay_modal_open} onClose={()=>set_pay_modal_open(false)}  >
                 {loading? <Paper> <CircularProgress/> </Paper> : <Pay_app_modal pay_app_id={pay_app_id} contract_info={contract_info} sov_data={sov}  close_modal={()=>set_pay_modal_open(false)} submit={submit_co}/> }
             </Modal>
+
         </>
   
     )
