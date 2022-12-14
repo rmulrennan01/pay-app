@@ -2,6 +2,8 @@ import React, {useEffect,useState} from 'react';
 import {useParams} from "react-router-dom";
 import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import firebase from "./Firebase.js"; 
+import PDF_table from "./PDF_Viewer/PDF_table.js";
+import Pay_app_viewer_g702 from "./Pay_app_viewer/Pay_app_viewer_g702.js"; 
 //import { toolbarPlugin, ToolbarSlot } from "@react-pdf-viewer/toolbar";
 
 //Tables
@@ -77,6 +79,27 @@ function Pay_app_viewer(props) {
         
     }, []);  
 
+    const table_styles = StyleSheet.create({
+        table:{
+            flexWrap: "wrap",
+            flexDirection: "row"
+        },
+        row: {
+            flexDirection: "row",
+            alignItems: "center",
+          },
+          cell: {
+            width: "50%",
+          },
+          cell_content: {
+             fontSize: 20
+          }
+
+    }
+    );
+
+
+
     const build_cc_line_item = (cost_item) => {
         //get total of previous draws for this cc
         let temp_cc_line_items = cc_line_items; 
@@ -123,7 +146,7 @@ function Pay_app_viewer(props) {
 
 
     const styles = StyleSheet.create({
-        page: {
+        page_top: {
             flexDirection:'row',
             backgroundColor: '#ffffff'
         },
@@ -147,10 +170,21 @@ function Pay_app_viewer(props) {
             
         }
     });
+    
+    //const build_
+    
 
     const page_g702 = () =>{
         return(
-            <Page size="A4" style={styles.page} orientation="landscape">
+            <Page size="A4" style={styles.page_top} orientation="landscape">
+                <PDF_table 
+                    cell_data={[[1222,2312],[415654,65465],[654663,464544]]}
+                    border={0}
+                    column_width={[50,50]}
+                    
+                
+                />
+                                
                 <View >
                     <Text style={styles.header}>
                         TO OWNER: 
@@ -198,17 +232,7 @@ function Pay_app_viewer(props) {
                         CONTRACT DATE: --
                     </Text>
                </View>
-               <View>
-                    <Text style={styles.content}>
-                        APPLICATION NO: {app_id}
-                    </Text>
-                    <Text style={styles.content}>
-                        PERIOD TO: --
-                    </Text>
-                    <Text style={styles.content}>
-                        CONTRACT DATE: --
-                    </Text>
-               </View>
+
 
             </Page>
         )
@@ -216,6 +240,7 @@ function Pay_app_viewer(props) {
 
     const page_g703 = () =>{
         return(
+            
             <Page size="A4" style={styles.page} orientation="landscape" className="page_G702">
            
             <div className="page_G702__top">
@@ -351,10 +376,16 @@ function Pay_app_viewer(props) {
         return(
         <PDFViewer showToolbar={true} height={800} width={1600}>
         <Document>
-            {page_g702()}
+            
+           
+          
+            
+
+            <Pay_app_viewer_g702/>
+
           <Page size="A4" style={styles.page} orientation="landscape">
             <View style={styles.section}>
-              <Text>Hey there </Text> 
+            
             </View>
             <View style={styles.section}>
               <Text>Section #2</Text>
@@ -385,8 +416,7 @@ function Pay_app_viewer(props) {
 
             
             
-            PROJECT ID: {id} <br/> 
-            PAY APP ID: {app_id}
+
             
         </div>
     )
