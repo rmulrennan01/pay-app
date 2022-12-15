@@ -167,9 +167,9 @@ function Pay_app_viewer_g702(props) {
                 </View> 
                 <View style={styles.r2_section}>
                     <Text style={styles.content}> PROJECT ADDRESS: </Text>
-                    <Text style={styles.content}> TODO</Text>
-                    <Text style={styles.content}> TODO</Text>
-                    <Text style={styles.content}> TODO</Text>
+                    <Text style={styles.content}> {props.contract_info.address_01+" "+props.contract_info.address_02}</Text>
+                    <Text style={styles.content}> {props.contract_info.city+" "+props.contract_info.state + " " + props.contract_info.zip}</Text>
+                    
                 </View> 
                 <View style={styles.r2_section}>
                     <Text style={styles.content}> APPLICATION NO: {props.app_id}</Text>
@@ -214,7 +214,7 @@ function Pay_app_viewer_g702(props) {
                         <View style={styles.r3_c1_middle_right}>
                             {console.log(props.draw_info)}
                             <Text style={styles.content}>{currency(props.draw_info.base_contract)}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.change_orders)}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.change_orders_total)}</Text>
                             <Text style={styles.content}>{currency(props.draw_info.revised_contract)}</Text>
                             <Text style={styles.content}>{currency(props.draw_info.this_draw+props.draw_info.previous_payments)}</Text>
                             <Text style={styles.content}>{props.draw_info.retention}</Text>
@@ -237,23 +237,24 @@ function Pay_app_viewer_g702(props) {
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Total changes approved in previous months by Contractor</Text>
-                            <Text style={styles.table_c2}> $ </Text>
-                            <Text style={styles.table_c3}> $ </Text>
+                            <Text style={styles.table_c2}> {currency(props.draw_info.prev_pos_co)} </Text>
+                            <Text style={styles.table_c3}> {currency(props.draw_info.prev_neg_co)} </Text>
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Total approved this Month</Text>
-                            <Text style={styles.table_c2}> $ </Text>
-                            <Text style={styles.table_c3}> $ </Text>
+                            <Text style={styles.table_c2}> {currency(props.draw_info.co_pos_total)} </Text>
+                            <Text style={styles.table_c3}> {currency(props.draw_info.co_neg_total)} </Text>
                         </View>
+                       
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Totals</Text>
-                            <Text style={styles.table_c2}> $ </Text>
-                            <Text style={styles.table_c3}> $ </Text>
+                            <Text style={styles.table_c2}> {currency(props.draw_info.co_pos_total+props.draw_info.prev_pos_co)} </Text>
+                            <Text style={styles.table_c3}> {currency(props.draw_info.co_neg_total+props.draw_info.prev_neg_co)}</Text>
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Net Changes by Change Orders</Text>
-                            <Text style={styles.table_c2}> $ </Text>
-                            <Text style={styles.table_c3}> $ </Text>
+                            <Text style={styles.table_c2}> {currency(props.draw_info.change_orders_total)} </Text>
+                            <Text style={styles.table_c3}> {" "} </Text>
                         </View>
 
                     </View>

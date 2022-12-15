@@ -213,10 +213,13 @@ function Pay_app_viewer(props) {
     */
    
 
-    
+    //builds the content to be passed as a prop to the G702 sheet
     const build_period_totals = () => {
         let temp_app_totals = new Array(contract_info.app_count+1).fill(0); 
         let temp_co_totals = new Array(contract_info.app_count+1).fill(0); 
+        let temp_co_pos = new Array(contract_info.app_count+1).fill(0); 
+        let temp_co_neg = new Array(contract_info.app_count+1).fill(0); 
+
         //let temp_app_totals = new Array(app_id).fill(0); 
         //let temp_co_totals = new Array(app_id).fill(0); 
         
@@ -238,45 +241,81 @@ function Pay_app_viewer(props) {
           
           //build totals for each pay period
           if(temp_sov_item.change_orders !==0){
-            temp_sov_item.change_orders.map((item) => temp_co_totals[item.pay_app-1] = Number(temp_co_totals[item.pay_app-1])+Number(item.value))
+            temp_sov_item.change_orders.map((item) => {
+                temp_co_totals[item.pay_app-1] = Number(temp_co_totals[item.pay_app-1])+Number(item.value);
+                if(item.value > 0 ){
+                    temp_co_pos[item.pay_app-1] = Number(temp_co_pos[item.pay_app-1])+Number(item.value);            
+                }
+                else{
+                    temp_co_neg[item.pay_app-1] = Number(temp_co_neg[item.pay_app-1])+Number(item.value);                }    
+            
           }
+          )
         }
+        }
+
 
         if(!no_apps){
             
             let temp_line_item = []; 
             for (let i = 0; i<app_id; i++){
-                let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention: " ",ret_prev:0,ret_cur:0}; 
-                temp_info.base_contract=contract_info.base_contract_value;
-                temp_info.change_orders=temp_co_totals[i];
+                let temp_info = 
+                    {
+                    base_contract:0, change_orders:0, change_orders_total:0, revised_contract:0, this_draw:0, 
+                    previous_payments:0, balance:0, retention: " ",ret_prev:0,ret_cur:0,
+                    co_pos_total:0, co_neg_total:0, prev_pos_co:0, prev_neg_co: 0,
+                    }; 
+                    temp_info.base_contract=contract_info.base_contract_value;
+                    temp_info.change_orders=temp_co_totals[i];
+                    temp_info.co_pos_total = temp_co_pos[i]; 
+                    temp_info.co_neg_total = temp_co_neg[i];
+                    temp_info.this_draw=temp_app_totals[i]; 
+
+
+                //get totals of prevoious positive & negative change orders
+                if(i>0){
+                    let prev_pos_co_sum = 0; 
+                    let prev_neg_co_sum = 0; 
+                    for (let a=0; a<i; a++){
+                        prev_pos_co_sum += temp_line_item[a].co_pos_total; 
+                        prev_neg_co_sum += Number(temp_line_item[a].co_neg_total); 
+                    }
+                    
+                    temp_info.prev_pos_co = prev_pos_co_sum; 
+                    temp_info.prev_neg_co = prev_neg_co_sum;
+                };
                 
-                temp_info.this_draw=temp_app_totals[i]; 
+                //temp_line_item[app_-1].change_orders_total = temp_line_item[app_id-1].prev_pos_co - temp_line_item[app_id-1].prev_neg_co +temp_line_item[app_id-1].co_pos_total - temp_line_item[app_id-1].co_neg_total;
+                temp_info.change_orders_total = temp_info.prev_pos_co + temp_info.prev_neg_co +temp_info.co_pos_total + temp_info.co_neg_total;
+            
                 if(i==0){
-                temp_info.previous_payments=0;
-                temp_info.revised_contract=Number(contract_info.base_contract_value)+Number(temp_co_totals[i]); 
+                    temp_info.previous_payments=0;
+                    temp_info.revised_contract=Number(contract_info.base_contract_value)+Number(temp_info.change_orders_total); 
                 }
                 else{
-                temp_info.previous_payments=Number(temp_line_item[i-1].this_draw)+Number(temp_line_item[i-1].previous_payments); 
-                temp_info.revised_contract=Number(temp_line_item[i-1].revised_contract)+Number(temp_co_totals[i]); 
+                    temp_info.previous_payments=Number(temp_line_item[i-1].this_draw)+Number(temp_line_item[i-1].previous_payments); 
+                    temp_info.revised_contract=Number(contract_info.base_contract_value)+Number(temp_info.change_orders_total);
                 }
                 
                 if(contract_info.hasOwnProperty('retention')){
-                let ret = 1 - contract_info.retention; 
-                temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*ret -Number(temp_info.this_draw)*ret;
-                temp_info.payment=temp_info.this_draw*(1-contract_info.retention);
-                temp_info.ret_prev=temp_info.previous_payments*contract_info.retention;
-                temp_info.ret_cur=temp_info.this_draw*contract_info.retention;
-                temp_info.retention = toString(contract_info.retention*100)+"%";
+                    let ret = 1 - contract_info.retention; 
+                    temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*ret -Number(temp_info.this_draw)*ret;
+                    temp_info.payment=temp_info.this_draw*(1-contract_info.retention);
+                    temp_info.ret_prev=temp_info.previous_payments*contract_info.retention;
+                    temp_info.ret_cur=temp_info.this_draw*contract_info.retention;
+                    temp_info.retention = toString(contract_info.retention*100)+"%";
                 }
                 else{
-                temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*.95-Number(temp_info.this_draw)*.95;
-                temp_info.payment=temp_info.this_draw*.95; 
-                temp_info.ret_prev=temp_info.previous_payments*.05;
-                temp_info.ret_cur=temp_info.this_draw*.05;
-                temp_info.retention = "5%";
+                    temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*.95-Number(temp_info.this_draw)*.95;
+                    temp_info.payment=temp_info.this_draw*.95; 
+                    temp_info.ret_prev=temp_info.previous_payments*.05;
+                    temp_info.ret_cur=temp_info.this_draw*.05;
+                    temp_info.retention = "5%";
                 }
                 temp_line_item.push(temp_info); 
             }
+            
+
             
             
             console.log("temp line item", temp_line_item); 
