@@ -27,6 +27,8 @@ function Pay_app_viewer(props) {
     const [sov, set_sov] = useState(); 
     const [loading, set_loading] = useState(true); 
     const [cc_line_items, set_cc_line_items] = useState([]); 
+    const [no_apps, set_no_apps] = useState(false); 
+    const [draw_info, set_draw_info] = useState([]); 
     const table_rows =
         [
             "Total changes approved in previous months by Contractor", 
@@ -48,7 +50,7 @@ function Pay_app_viewer(props) {
             "9. Balance to Finish including Retaingage ",
         ]; 
 
-    React.useEffect( () => {
+    useEffect( () => {
         const fetchData = async () =>{
             const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             set_contract_info(dataList.data()); 
@@ -71,13 +73,26 @@ function Pay_app_viewer(props) {
 
             //console.log(tempList); 
             set_sov(tempList); 
-            set_loading(false); 
+             
+            //build_period_totals(); 
             
         }
         fetchData(); 
 
         
     }, []);  
+
+    useEffect(()=>{
+        if((sov !=null) && (contract_info !=null)){
+            console.log(sov);
+            console.log(contract_info);
+            build_period_totals();
+            set_loading(false);
+            
+        }
+    }, [sov, contract_info]); 
+
+  
 
     const table_styles = StyleSheet.create({
         table:{
@@ -174,203 +189,107 @@ function Pay_app_viewer(props) {
     //const build_
     
 
-    const page_g702 = () =>{
-        return(
-            <Page size="A4" style={styles.page_top} orientation="landscape">
-                <PDF_table 
-                    cell_data={[[1222,2312],[415654,65465],[654663,464544]]}
-                    border={0}
-                    column_width={[50,50]}
-                    
-                
-                />
-                                
-                <View >
-                    <Text style={styles.header}>
-                        TO OWNER: 
-                    </Text>
-                    <Text style={styles.content}>
-                        {owner_info.address_01+" "+owner_info.address_02}
-                    </Text>
-                    <Text style={styles.content}>
-                        {owner_info.city + ", " + owner_info.state + " " + owner_info.zip}
 
-                    </Text>
-  
-                    <Text style={styles.header}>
-                        FROM CONTRACTOR:
-                    </Text>
-                    <Text style={styles.content}>
-                        {owner_info.address_01+" "+owner_info.address_02}
-                    </Text>
-                    <Text style={styles.content}>
-                        {owner_info.city + ", " + owner_info.state + " " + owner_info.zip}
-                    </Text>
-                </View>
-                <View>
-                    <Text style={styles.header}>
-                        PROJECT:
-                    </Text>
-                    <Text style={styles.content}>
-                        {contract_info.name}
-                    </Text>
-                    <Text style={styles.content}>
-                        {contract_info.address_01+" "+contract_info.address_02}
-                    </Text>
-                    <Text style={styles.content}>
-                        {contract_info.city + ", " + contract_info.state + " " + contract_info.zip}
-                    </Text>
-               </View>
-               <View>
-                    <Text style={styles.content}>
-                        APPLICATION NO: {app_id}
-                    </Text>
-                    <Text style={styles.content}>
-                        PERIOD TO: --
-                    </Text>
-                    <Text style={styles.content}>
-                        CONTRACT DATE: --
-                    </Text>
-               </View>
+    /*
+    address_01
+    address_02
+    app_count
+    balance
+    base_contract_value
+    city
+    co_count
+    co_value
+    date
+    name
+    number
+    owner_id
+    owner_name
+    prev_draws
+    state
+    this_draw
+    zip
 
 
-            </Page>
-        )
-    }
+    */
+   
 
-    const page_g703 = () =>{
-        return(
+    
+    const build_period_totals = () => {
+        let temp_app_totals = new Array(contract_info.app_count+1).fill(0); 
+        let temp_co_totals = new Array(contract_info.app_count+1).fill(0); 
+        //let temp_app_totals = new Array(app_id).fill(0); 
+        //let temp_co_totals = new Array(app_id).fill(0); 
+        
+        //loop through each sov item
+        for (let i = 0; i < sov.length; i++){
+          let temp_sov_item = sov[i]; 
+          //console.log("temp sov item is: ", temp_sov_item); 
+        
+          //if it does not exist
+          if(!temp_sov_item.hasOwnProperty("pay_apps")){
+            set_no_apps(true); 
+            break; 
+          }
+          //create a combined draw total for each pay period   
+          else if(temp_sov_item.pay_apps !==0){
+            temp_sov_item.pay_apps.map((item,index) => temp_app_totals[index] = Number(temp_app_totals[index])+Number(item))
             
-            <Page size="A4" style={styles.page} orientation="landscape" className="page_G702">
-           
-            <div className="page_G702__top">
-                <div className="page_G702__top__child">
-                    <h4>To Owner:</h4>
-                    {owner_info.address_01+" "+owner_info.address_02}<br/>
-                    {owner_info.city + ", " + owner_info.state + " " + owner_info.zip}
-                    <h4>From Contractor:</h4>
-                    {owner_info.address_01+" "+owner_info.address_02}<br/>
-                    {owner_info.city + ", " + owner_info.state + " " + owner_info.zip}
-                </div>
-                <div className="page_G702__top__child">
-                    <h4>Project:</h4>
-                    {contract_info.name}<br/>
-                    {contract_info.address_01+" "+contract_info.address_02}<br/>
-                    {contract_info.city + ", " + contract_info.state + " " + contract_info.zip}
-                    
-                </div>
-                <div className="page_G702__top__child">
-                    <h4>Application #: {contract_info.app_count}</h4>
-                    <h4>Period To:</h4>
+          }
+          
+          //build totals for each pay period
+          if(temp_sov_item.change_orders !==0){
+            temp_sov_item.change_orders.map((item) => temp_co_totals[item.pay_app-1] = Number(temp_co_totals[item.pay_app-1])+Number(item.value))
+          }
+        }
 
-                    <h4>Contract Date:</h4>
+        if(!no_apps){
+            
+            let temp_line_item = []; 
+            for (let i = 0; i<app_id; i++){
+                let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention: " ",ret_prev:0,ret_cur:0}; 
+                temp_info.base_contract=contract_info.base_contract_value;
+                temp_info.change_orders=temp_co_totals[i];
+                
+                temp_info.this_draw=temp_app_totals[i]; 
+                if(i==0){
+                temp_info.previous_payments=0;
+                temp_info.revised_contract=Number(contract_info.base_contract_value)+Number(temp_co_totals[i]); 
+                }
+                else{
+                temp_info.previous_payments=Number(temp_line_item[i-1].this_draw)+Number(temp_line_item[i-1].previous_payments); 
+                temp_info.revised_contract=Number(temp_line_item[i-1].revised_contract)+Number(temp_co_totals[i]); 
+                }
+                
+                if(contract_info.hasOwnProperty('retention')){
+                let ret = 1 - contract_info.retention; 
+                temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*ret -Number(temp_info.this_draw)*ret;
+                temp_info.payment=temp_info.this_draw*(1-contract_info.retention);
+                temp_info.ret_prev=temp_info.previous_payments*contract_info.retention;
+                temp_info.ret_cur=temp_info.this_draw*contract_info.retention;
+                temp_info.retention = toString(contract_info.retention*100)+"%";
+                }
+                else{
+                temp_info.balance=Number(temp_info.revised_contract)-Number(temp_info.previous_payments)*.95-Number(temp_info.this_draw)*.95;
+                temp_info.payment=temp_info.this_draw*.95; 
+                temp_info.ret_prev=temp_info.previous_payments*.05;
+                temp_info.ret_cur=temp_info.this_draw*.05;
+                temp_info.retention = "5%";
+                }
+                temp_line_item.push(temp_info); 
+            }
+            
+            
+            console.log("temp line item", temp_line_item); 
+            set_draw_info(temp_line_item[app_id-1]); 
 
-                    <h4>Contract ID:</h4>
+          //set_period_info(temp_line_item); 
+        }
+        //period_info=temp_line_item; 
 
-                </div>
-
-                <div className="page_G702__top__child"> 
-                    <h4> Distribution to: </h4>
-                    [_] Owner:                   <br/>
-                    [_] Architect:              <br/>
-                    [X] General Contractor:      <br/>
-                    [_] Owners Representative:   <br/>
-                </div>
-            </div> 
-            <div className="page_G702__middle">
-                <div className="page_G702__middle__child">
-
-
-                    <div>
-                        <div>
-                            <h2>CONTRACTOR'S APPLICATION FOR PAYMENT</h2>
-                            <h4>Application is made for payment, as shown below, in connection with the Contract. <br/> 
-                                Continuation Sheet G703 is attached. 
-                            </h4> 
-
-                        </div>
-                        <div>
-                            {/*
-                            <Table size='small'>
-                                {content_keys.map(build_table_cell)}
-                            </Table>
-                            */}
-                        </div>
-                        <Table>
-                            <TableBody>
-                                <TableRow>
-
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-
-
-                    </div>
-                    <div>
-                        {/*
-                        <Table>
-                            <TableHead>
-                                <TableRow >
-                                    {table_headers.map((item)=><TableCell style={{fontWeight:"bold"}}>{item}</TableCell>)}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {table_rows.map(build_table_body)}
-                            </TableBody>
-                        </Table>
-                        */}
-
-                    </div>
-                </div> 
-                <div className="page_G702__middle__child">
-                    <div> 
-                        The undersigned Contractor certifies that to the best of the Contractor's knowledge, <br/>
-                        Application is made for payment, as shown below, in connection with the Contract. information and belief the <br/>
-                        Work covered by this Application for Payment has been <br/>
-                        Continuation Sheet, AIA Document G703, is attached. completed in accordance with the Contract Documents, <br/>
-                        that all amounts have been paid by <br/>
-                        the Contractor for Work for which previous Certificates for Payment were issued and <br/>
-                        payments received from the Owner, and that current payment shown herein is now due.  <br/> <br/><br/>
-
-
-                        __________________________________<br/>
-                        Signature & Date                                       
-                    </div>
-                    <div> 
-                        <h3>ARCHITECT'S CERTIFICATE FOR PAYMENT</h3><br/>
-                        Application is made for payment, as shown below, in connection with the Contract.<br/>
-                        Continuation Sheet G703 is attached.<br/>
-                        In accordance with the Contract Documents, based on on-site observations and the data comprising this<br/>
-                        application, The Architect certifies to the Owner that to the best of the Architects knowledge,<br/>
-                        information and belief the Work has progressed as indicated the Quality of the work is in accordance<br/>
-                        with the Contract documents and the Contractor is entitled to payment of the AMOUNT CERTIFIED<br/><br/>
-                        <h4>AMOUNT CERTIFIED............................................................................................................$_____________________</h4><br/>
-                        (Attach explanation if amount certified differs from the amount applied. Initial all figures on this<br/>
-                        Application and on the Continuation Sheet that are charged to conform with the amount certified)      <br/>   <br/>
-
-                        ARCHITECT:<br/> <br/>
-                        By:_______________________________________________Date:_____________ <br/>
-                        This Certificate is not negotiable. The AMOUNT CERTIFIED is payable only to the <br/>
-                        Contractor named herein. Issuance, payment and acceptance of payment are without prejudice <br/>
-                        to any of the rights of the Owner or Contractor under this contract. 
-
-
-                    </div> 
-                </div> 
-            </div>
-
-        </Page>
-    )
-
-
-
-
-
-
-        
-
-        
     }
+    
+
+
 
     const doc = () => {
         return(
@@ -380,8 +299,13 @@ function Pay_app_viewer(props) {
            
           
             
-
-            <Pay_app_viewer_g702/>
+            
+            <Pay_app_viewer_g702
+                draw_info={draw_info}
+                contract_info={contract_info}
+                owner_info={owner_info}
+                app_id={app_id}
+            />
 
           <Page size="A4" style={styles.page} orientation="landscape">
             <View style={styles.section}>

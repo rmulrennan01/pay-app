@@ -1,10 +1,11 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import { BorderColor } from '@material-ui/icons';
+import CurrencyFormat from 'react-currency-format';
 
 
 
-function Pay_app_viewer_g702() {
+function Pay_app_viewer_g702(props) {
     
 
         const styles = StyleSheet.create({
@@ -104,9 +105,50 @@ function Pay_app_viewer_g702() {
 
         });
 
+        /*
+                   { 
+           base_contract:props.contract_info.base_contract_value,
+           co_total:props.contract_info.co_value, 
+           total_contract:Number(props.contract_info.base_contract_value)+Number(props.contract_info.co_value),
+           completed:Number(props.this_draw_total)+Number(props.prev_draws_total), 
+           space:null,
+           retention:(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05, 
+           earned:Number(props.this_draw_total)+Number(props.prev_draws_total)-(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05,
+           prev_pay: props.prev_draws_total*.95,
+           due:Number(props.this_draw_total)+Number(props.prev_draws_total)-(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05-props.prev_draws_total*.95, 
+           balance: props.balance
 
+        }
+
+
+        ​​
+            balance: 9643.100000000006
+            ​​base_contract: 37100
+            change_orders: 14000
+            payment: 30495
+            previous_payments: 26802
+            retention: 0
+            ​​revised_contract: 65600
+            this_draw: 32100
+        */
     
 
+    //function for formatting values to display on the pay app
+    const currency = (val) =>{
+        return(
+            <CurrencyFormat 
+            value={val}
+            displayType={'text'} 
+            thousandSeparator={true} 
+            prefix={'$'} 
+            fixedDecimalScale={true} 
+            decimalScale={2}
+            renderText={value => <>{value}</>} 
+            />
+            
+
+        )
+    }
 
     return (
         <Page size="A4" style={styles.page} orientation="landscape">
@@ -117,13 +159,11 @@ function Pay_app_viewer_g702() {
             <View style={styles.r2}>
                 <View style={styles.r2_section}>
                     <Text style={styles.content}> TO OWNER: </Text>
-                    <Text style={styles.content}> TODO</Text>
-                    <Text style={styles.content}> TODO</Text>
-                    <Text style={styles.content}> TODO</Text>
+                    <Text style={styles.content}> {props.owner_info.address_01+" "+props.owner_info.address_02}</Text>
+                    <Text style={styles.content}> {props.owner_info.city + ", " + props.owner_info.state + " " + props.owner_info.zip}</Text>
                     <Text style={[styles.content, {marginTop:12}]}> FROM CONTRACTOR: </Text>
-                    <Text style={styles.content}> TODO</Text>
-                    <Text style={styles.content}> TODO</Text>
-                    <Text style={styles.content}> TODO</Text>
+                    <Text style={styles.content}> {props.owner_info.address_01+" "+props.owner_info.address_02}</Text>
+                    <Text style={styles.content}> {props.owner_info.city + ", " + props.owner_info.state + " " + props.owner_info.zip}</Text>
                 </View> 
                 <View style={styles.r2_section}>
                     <Text style={styles.content}> PROJECT ADDRESS: </Text>
@@ -132,7 +172,7 @@ function Pay_app_viewer_g702() {
                     <Text style={styles.content}> TODO</Text>
                 </View> 
                 <View style={styles.r2_section}>
-                    <Text style={styles.content}> APPLICATION NO: </Text>
+                    <Text style={styles.content}> APPLICATION NO: {props.app_id}</Text>
                     <Text style={styles.content}> PERIOD TO: </Text>
                     <Text style={styles.content}> CONTRACT FOR: </Text>
                     <Text style={styles.content}> CONTRACT DATE: </Text>
@@ -172,18 +212,19 @@ function Pay_app_viewer_g702() {
 
                         </View>
                         <View style={styles.r3_c1_middle_right}>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}> - </Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}> - </Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}>$0.00</Text>
-                            <Text style={styles.content}>$0.00</Text>
+                            {console.log(props.draw_info)}
+                            <Text style={styles.content}>{currency(props.draw_info.base_contract)}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.change_orders)}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.revised_contract)}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.this_draw+props.draw_info.previous_payments)}</Text>
+                            <Text style={styles.content}>{props.draw_info.retention}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.ret_cur+props.draw_info.ret_prev)}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.this_draw+props.draw_info.previous_payments-props.draw_info.ret_cur-props.draw_info.ret_prev)} </Text>
+                            <Text style={styles.content}>{" "}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.previous_payments-props.draw_info.ret_prev)} </Text>
+                            <Text style={styles.content}>{" "}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.payment)}</Text>
+                            <Text style={styles.content}>{currency(props.draw_info.revised_contract- props.draw_info.this_draw -props.draw_info.previous_payments + props.draw_info.ret_cur+props.draw_info.ret_prev)}</Text>
 
                         </View>
 
