@@ -30,6 +30,7 @@ function Pay_app_viewer(props) {
     const [cc_line_items, set_cc_line_items] = useState([]); 
     const [no_apps, set_no_apps] = useState(false); 
     const [draw_info, set_draw_info] = useState([]); 
+    const [g703_data, set_g703_data] = useState([]); 
     const table_rows =
         [
             "Total changes approved in previous months by Contractor", 
@@ -88,6 +89,8 @@ function Pay_app_viewer(props) {
             console.log(sov);
             console.log(contract_info);
             build_period_totals();
+            sov.map(build_g703_data); 
+            console.log("the droids you're looking for", g703_data)
             set_loading(false);
             
         }
@@ -115,10 +118,10 @@ function Pay_app_viewer(props) {
     );
 
 
-
-    const build_cc_line_item = (cost_item) => {
+    //build table data for g703 sheet
+    const build_g703_data = (cost_item, index) => {
         //get total of previous draws for this cc
-        let temp_cc_line_items = cc_line_items; 
+        let temp_cc_line_items = g703_data; 
         //let cost_item = sov[sov_index]; 
         let prev_draws = 0; 
         let co_sum = 0; 
@@ -146,8 +149,10 @@ function Pay_app_viewer(props) {
         }
         payment=Number(cost_item.pay_apps[app_id])*ret;
         balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
-        temp_cc_line_items.push(
-            {
+        let completed = prev_draws+Number(cost_item.pay_apps[app_id]);
+        temp_cc_line_items.push([cost_item.cost_code,index+1,cost_item.description,cost_item.value,co_sum,cost_item.value+co_sum,prev_draws,
+                    Number(cost_item.pay_apps[app_id]),completed,0,balance,0]);
+            /*{
                 prev:prev_draws, 
                 cur: Number(cost_item.pay_apps[app_id]),
                 co_sum: co_sum, 
@@ -156,8 +161,8 @@ function Pay_app_viewer(props) {
                 description:cost_item.description,
                 payment:payment,
                 balance:balance
-            }); 
-        set_cc_line_items(temp_cc_line_items);
+            }); */
+        set_g703_data(temp_cc_line_items);
     }
 
 
@@ -331,15 +336,34 @@ function Pay_app_viewer(props) {
 
 
 
+    const update_footer_totals = () => {
+        let co_total = 0; 
+        let prev_total = 0; 
+        let cur_total = 0; 
+        let payment_total = 0; 
+        let balance_total= 0; 
+        console.log('CC_LINE_ITEMS INSIDE FOOTER TOTALS', cc_line_items); 
+        cc_line_items.map((item) => co_total = Number(co_total) + Number(item.co_sum)); 
+        cc_line_items.map((item) => prev_total = Number(prev_total) + Number(item.prev));
+        cc_line_items.map((item) => cur_total = Number(cur_total) + Number(item.cur));
+        cc_line_items.map((item) => payment_total = Number(payment_total) + Number(item.payment)); 
+        cc_line_items.map((item) => balance_total = Number(balance_total) + Number(item.balance));
+        /*set_column_totals({
+            co:co_total,
+            prev:prev_total,
+            cur:cur_total,
+            payment:payment_total,
+            balance:balance_total
+        })
+        */
+    }
+
+
+
     const doc = () => {
         return(
         <PDFViewer showToolbar={true} height={800} width={1600}>
         <Document>
-            
-           
-          
-            
-            
             <Pay_app_viewer_g702
                 draw_info={draw_info}
                 contract_info={contract_info}
@@ -347,7 +371,11 @@ function Pay_app_viewer(props) {
                 app_id={app_id}
             />
 
-            <Pay_app_viewer_g703 /> 
+            <Pay_app_viewer_g703
+                g703_data={g703_data}
+            
+            
+            /> 
         </Document>
         </PDFViewer>
         )

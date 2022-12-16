@@ -238,18 +238,18 @@ function Pay_app_viewer_g702(props) {
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Total changes approved in previous months by Contractor</Text>
                             <Text style={styles.table_c2}> {currency(props.draw_info.prev_pos_co)} </Text>
-                            <Text style={styles.table_c3}> {currency(props.draw_info.prev_neg_co)} </Text>
+                            <Text style={styles.table_c3}> {currency(-1*props.draw_info.prev_neg_co)} </Text>
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Total approved this Month</Text>
                             <Text style={styles.table_c2}> {currency(props.draw_info.co_pos_total)} </Text>
-                            <Text style={styles.table_c3}> {currency(props.draw_info.co_neg_total)} </Text>
+                            <Text style={styles.table_c3}> {currency(-1*props.draw_info.co_neg_total)} </Text>
                         </View>
                        
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Totals</Text>
                             <Text style={styles.table_c2}> {currency(props.draw_info.co_pos_total+props.draw_info.prev_pos_co)} </Text>
-                            <Text style={styles.table_c3}> {currency(props.draw_info.co_neg_total+props.draw_info.prev_neg_co)}</Text>
+                            <Text style={styles.table_c3}> {currency(-1*props.draw_info.co_neg_total+props.draw_info.prev_neg_co)}</Text>
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Net Changes by Change Orders</Text>

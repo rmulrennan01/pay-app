@@ -14,8 +14,8 @@ function Pay_app_viewer_g703(props) {
             flexWrap: "wrap",
             flexDirection: "row"
         },
-        column: {
-            flexDirection: "column",
+        row: {
+            flexDirection: "row",
             alignItems: "center",
           }
     }); 
@@ -39,17 +39,17 @@ function Pay_app_viewer_g703(props) {
  
 
 
-    const build_columns = (data,index) =>{
-        let column_widths = [20,10,50,50,60,20,40,40,40,40,40,40]; 
+    const build_rows = (data,text,row_height) =>{
+        let column_widths = [60,100,60,60,60,60,60,60,60,60,60,60]; 
         return(
             <View style={styles.table}>
-            {data.map((item)=>{
+            {data.map((item,index)=>{
                 return (
-                    <View style={styles.column}>
-                        {item.map((cell,ind)=>{
+                    <View style={[styles.row]}>
+                        {item.map((cell,indt)=>{
                             return(
-                                <Text style={[styles.cell_content, {width:column_widths[index]}, {border:1}]} key={ind+cell}>
-                                    {cell}
+                                <Text style={[{fontSize:8},{border:1}, {width:column_widths[index]},{height:row_height}]} key={indt+cell}>
+                                    {text ? cell : (index==9 ? cell+'%' : cell)}
                                 </Text> 
                             );
                             }
@@ -72,7 +72,7 @@ function Pay_app_viewer_g703(props) {
     const build_table = (data) => {
         return(
             <View style={styles.table}>
-                {build_columns(data[0])}
+                {build_rows(data[0])}
             </View>
         )
     }
@@ -93,11 +93,40 @@ function Pay_app_viewer_g703(props) {
     )
 } */
     const my_data = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18],[19,20,21],[22,23,24],[25,26,27],[28,29,30],[31,32,33],[34,35,36]];
-    
+    const table_headers = [['CODE','ITEM NO','DESCRIPTION OF WORK','SCHEDULED VALUE',"BUDGET ADJUSTMENTS & CO'S",'REVISED SCHEDULED VALUES',
+        'FROM PREVIOUS APPLICATION (D+E)','THIS PERIOD','TOTAL COMPLETED AND STORED TO DATE','%','BALANCE TO FINISH','RETAINAGE']];
+    const column_labels = [['A','B','C','D','E','F','G','H','J','K','L','M']];
     return (
         <Page size="A4" style={styles.page} orientation="landscape">
-            {build_columns(my_data)}
-        
+            <View style={[{height:50},{flexDirection:"row"}]}>
+                <Text>CONTINUATION SHEET</Text>
+            </View>
+            <View style={[{height:125},{flexDirection:"row"}]}>
+                
+                <View style={[{flexDirection:'column'}]}>
+                    <Text style={[{fontSize:8}]}>In tabulations below, amounts are stated to be the nearest dollar.</Text>
+                    <Text style={[{fontSize:8}]}>Use Column I on the Contracts wehre variable retainage for line items may apply</Text>
+                </View>
+                <View style={[{width:300}]}>
+
+                </View>
+                <View style={[{width:200},{flexDirection:'column'}]}>
+                    <Text style={[{fontSize:10}]}>Application #</Text>
+                    <Text style={[{fontSize:10}]}>Application Date:</Text>
+                    <Text style={[{fontSize:10}]}>Period To:</Text>
+                </View>
+                <View style={[{width:200},{flexDirection:'column'}]}>
+                    <Text style={[{fontSize:10}]}>TODO</Text>
+                    <Text style={[{fontSize:10}]}>TODO</Text>
+                    <Text style={[{fontSize:10}]}>TODO</Text>
+                </View>
+
+            </View>
+            <View>
+                {build_rows(column_labels,true,35)}
+                {build_rows(table_headers,true,35)}
+                {build_rows(props.g703_data,false,15)}
+            </View>
         </Page> 
 
     )
