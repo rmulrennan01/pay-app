@@ -4,6 +4,7 @@ import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } fr
 import firebase from "./Firebase.js"; 
 import PDF_table from "./PDF_Viewer/PDF_table.js";
 import Pay_app_viewer_g702 from "./Pay_app_viewer/Pay_app_viewer_g702.js"; 
+import Pay_app_viewer_g703 from "./Pay_app_viewer/Pay_app_viewer_g703.js"; 
 //import { toolbarPlugin, ToolbarSlot } from "@react-pdf-viewer/toolbar";
 
 //Tables
@@ -346,22 +347,7 @@ function Pay_app_viewer(props) {
                 app_id={app_id}
             />
 
-          <Page size="A4" style={styles.page} orientation="landscape">
-            <View style={styles.section}>
-            
-            </View>
-            <View style={styles.section}>
-              <Text>Section #2</Text>
-            </View>
-          </Page>
-          <Page size="A4" style={styles.page} orientation="landscape">
-            <View style={styles.section}>
-              <Text>Section #1</Text>
-            </View>
-            <View style={styles.section}>
-              <Text>Section #2</Text>
-            </View>
-          </Page>
+            <Pay_app_viewer_g703 /> 
         </Document>
         </PDFViewer>
         )
