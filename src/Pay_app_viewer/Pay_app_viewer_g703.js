@@ -36,21 +36,43 @@ function Pay_app_viewer_g703(props) {
         )
     }
 
+    const cell_formatter = (item, type) =>{
+        let result = ""; 
+        switch(type){
+            case "txt":
+                return item; 
+            case "$":
+                return currency(item);
+            case "%":
+                return item*100 + "%"; 
+            default:
+                return "";
+            
+        }
+
+
+
+    }
+
  
 
 
-    const build_rows = (data,text,row_height) =>{
-        let column_widths = [60,100,60,60,60,60,60,60,60,60,60,60]; 
+    const build_rows = (data,header,row_height) =>{
+        let column_widths = [60,60,100,60,60,60,60,60,60,60,60,60];
+        let type = header ? new Array (12).fill("txt") : ["txt","txt","txt","$","$","$","$","$","$","%","$","$"] ;
         return(
             <View style={styles.table}>
             {data.map((item,index)=>{
                 return (
-                    <View style={[styles.row]}>
+                    <View style={[styles.row]} key={index+"row"}>
                         {item.map((cell,indt)=>{
+      
                             return(
-                                <Text style={[{fontSize:8},{border:1}, {width:column_widths[index]},{height:row_height}]} key={indt+cell}>
-                                    {text ? cell : (index==9 ? cell+'%' : cell)}
-                                </Text> 
+                                <Text style={[{fontSize:8},{border:1}, {width:column_widths[indt]},{height:row_height}]} key={indt+cell}>
+                                     {cell_formatter(cell,type[indt])}
+                                </Text>
+                              
+
                             );
                             }
                         )} 
