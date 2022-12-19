@@ -31,6 +31,7 @@ function Pay_app_viewer(props) {
     const [no_apps, set_no_apps] = useState(false); 
     const [draw_info, set_draw_info] = useState([]); 
     const [g703_data, set_g703_data] = useState([]); 
+    const [g703_totals, set_g703_totals] = useState([]); 
     const table_rows =
         [
             "Total changes approved in previous months by Contractor", 
@@ -90,7 +91,8 @@ function Pay_app_viewer(props) {
             console.log(contract_info);
             build_period_totals();
             sov.map(build_g703_data); 
-            console.log("the droids you're looking for", g703_data)
+            console.log("the droids you're looking for", g703_data);
+            update_footer_totals(); 
             set_loading(false);
             
         }
@@ -130,7 +132,7 @@ function Pay_app_viewer(props) {
  
         //get total of all previous draws applied to this cost item
         for (let i = 0; i<app_id; i++){
-            prev_draws += Number(cost_item.pay_apps[i])
+            if(i>0){prev_draws += Number(cost_item.pay_apps[i-1])}
         }
         //get total of all CO's applied to this cost item
         if(cost_item.hasOwnProperty('change_orders')){
@@ -342,20 +344,18 @@ function Pay_app_viewer(props) {
         let cur_total = 0; 
         let payment_total = 0; 
         let balance_total= 0; 
-        console.log('CC_LINE_ITEMS INSIDE FOOTER TOTALS', cc_line_items); 
-        cc_line_items.map((item) => co_total = Number(co_total) + Number(item.co_sum)); 
-        cc_line_items.map((item) => prev_total = Number(prev_total) + Number(item.prev));
-        cc_line_items.map((item) => cur_total = Number(cur_total) + Number(item.cur));
-        cc_line_items.map((item) => payment_total = Number(payment_total) + Number(item.payment)); 
-        cc_line_items.map((item) => balance_total = Number(balance_total) + Number(item.balance));
-        /*set_column_totals({
-            co:co_total,
-            prev:prev_total,
-            cur:cur_total,
-            payment:payment_total,
-            balance:balance_total
-        })
-        */
+        g703_data.map((item) => co_total = Number(co_total) + Number(item[4])); 
+        g703_data.map((item) => prev_total = Number(prev_total) + Number(item[6]));
+        g703_data.map((item) => cur_total = Number(cur_total) + Number(item[7]));
+        g703_data.map((item) => payment_total = Number(payment_total) + Number(item[8])); 
+        g703_data.map((item) => balance_total = Number(balance_total) + Number(item[10]));
+        let rev_total = contract_info.base_contract_value+co_total; 
+        let total_complete = Number(prev_total)+Number(cur_total);
+        let percent = Number(total_complete/rev_total) *100; 
+        set_g703_totals([
+            "", "","GRAND TOTALS",contract_info.base_contract_value,co_total,rev_total, prev_total, cur_total, payment_total, percent, balance_total, 0 
+        ])
+        
     }
 
 
@@ -373,6 +373,7 @@ function Pay_app_viewer(props) {
 
             <Pay_app_viewer_g703
                 g703_data={g703_data}
+                g703_totals={g703_totals}
             
             
             /> 

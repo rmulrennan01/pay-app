@@ -148,6 +148,7 @@ function Pay_app_viewer_g703(props) {
                 {build_rows(column_labels,true,35)}
                 {build_rows(table_headers,true,35)}
                 {build_rows(props.g703_data,false,15)}
+                {build_rows([props.g703_totals],false, 15)}
             </View>
         </Page> 
 
