@@ -44,7 +44,7 @@ function Pay_app_viewer_g703(props) {
             case "$":
                 return currency(item);
             case "%":
-                return item*100 + "%"; 
+                return parseFloat(item).toFixed(2) + "%"; 
             default:
                 return "";
             

@@ -122,6 +122,8 @@ function Pay_app_viewer(props) {
 
     //build table data for g703 sheet
     const build_g703_data = (cost_item, index) => {
+        let app_index = app_id-1; 
+        console.log("pay app id", app_id)
         //get total of previous draws for this cc
         let temp_cc_line_items = g703_data; 
         //let cost_item = sov[sov_index]; 
@@ -137,7 +139,7 @@ function Pay_app_viewer(props) {
         //get total of all CO's applied to this cost item
         if(cost_item.hasOwnProperty('change_orders')){
             for (let a = 0; a<cost_item.change_orders.length; a++){
-                if(Number(cost_item.change_orders[a].pay_app) <= Number(app_id)+1){
+                if(Number(cost_item.change_orders[a].pay_app) <= app_index+1){ //adjusted
                     co_sum = Number(co_sum) + Number(cost_item.change_orders[a].value);
                 }
             }
@@ -149,11 +151,14 @@ function Pay_app_viewer(props) {
         else{
             ret = .95; 
         }
-        payment=Number(cost_item.pay_apps[app_id])*ret;
+        payment=Number(cost_item.pay_apps[app_index])*ret; //ADJUSTED
         balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
-        let completed = prev_draws+Number(cost_item.pay_apps[app_id]);
+        
+        let completed = prev_draws+Number(cost_item.pay_apps[app_index]);//adjusted
+        let percent = Number(completed)/Number(cost_item.value+co_sum)*100; 
+        let retained = completed*(1-ret); 
         temp_cc_line_items.push([cost_item.cost_code,index+1,cost_item.description,cost_item.value,co_sum,cost_item.value+co_sum,prev_draws,
-                    Number(cost_item.pay_apps[app_id]),completed,0,balance,0]);
+                    Number(cost_item.pay_apps[app_index]),completed,percent,balance,retained]); //adjusted
             /*{
                 prev:prev_draws, 
                 cur: Number(cost_item.pay_apps[app_id]),
@@ -352,8 +357,16 @@ function Pay_app_viewer(props) {
         let rev_total = contract_info.base_contract_value+co_total; 
         let total_complete = Number(prev_total)+Number(cur_total);
         let percent = Number(total_complete/rev_total) *100; 
+        let ret = 0; 
+        if(contract_info.hasOwnProperty('retention')){
+            ret = 1 - contract_info.retention; 
+        } 
+        else{
+            ret = .95; 
+        }
+        let retained = total_complete *(1-ret)
         set_g703_totals([
-            "", "","GRAND TOTALS",contract_info.base_contract_value,co_total,rev_total, prev_total, cur_total, payment_total, percent, balance_total, 0 
+            "", "","GRAND TOTALS",contract_info.base_contract_value,co_total,rev_total, prev_total, cur_total, payment_total, percent, balance_total, retained 
         ])
         
     }
