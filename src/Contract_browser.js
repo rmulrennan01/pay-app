@@ -36,9 +36,22 @@ function Contract_browser() {
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const [page, set_page] = useState(0); 
     const [row_count, set_row_count] = useState(20); 
+    const [direction, set_direction] = useState('asc');
+    const [active_column, set_active_column] = useState(0); 
+    const headers = [
+        {label:"Project", key:"name"},
+        {label: "Address", key:"address_01"},
+        {label: "City", key:"city"},
+        {label: "State", key: "state"},
+        {label: "Owner", key: "owner_name"},
+        {label: "Base Contract ($)", key:"base_contract_value"},
+        {label: "Change Orders ($)", key: "co_value"},
+        {label: "Revised Contarct ($)", key: "revised_contract"}];
+        
+        
+        
 
-
-
+        //name, address_01, city, state, owner_name, base_contract_value, co_value
     //fetch the contracts
     React.useEffect( () => {
         //map document id's with the local data -> needed for creating links
@@ -61,6 +74,16 @@ function Contract_browser() {
         
     }, []);
 
+    const build_headers = (item, index) =>{
+        return(
+            <TableCell >
+                <TableSortLabel active={active_column == index ? true : false} direction={direction} onClick={()=>handle_sort(index,item.key)} className="Contract_browser__header_text">
+                    <h3> {item.label} </h3> 
+
+                </TableSortLabel>
+            </TableCell>
+        )
+    }
 
     const build_table_body = (item,index) => {
         if(index >= row_count*page && index <= row_count*page+row_count-1){
@@ -104,6 +127,36 @@ function Contract_browser() {
         }
     }
 
+    const handle_sort = (index, key) => {
+        direction=="asc"? set_direction("desc"):set_direction("asc")
+        set_active_column(index); 
+
+        let temp_data = filtered_contracts; 
+        let multiplier = (direction == 'asc') ? 1 : -1; 
+        
+        temp_data.sort(function(a,b){
+            let x = a[key];
+            let y = b[key];
+            if(x<y){
+                return -1*multiplier; 
+            }
+            if (x> y){
+                return 1*multiplier; 
+            }
+            return 0;
+        }); 
+        
+ 
+
+        set_filtered_contracts(temp_data); 
+
+    }
+
+
+
+ 
+
+
     const change_page = (event: unknown, new_page: number) => {
         set_page(new_page); 
     }
@@ -131,12 +184,8 @@ function Contract_browser() {
         let temp_array = []; 
         let str = search_str.toLowerCase(); 
         console.log(str); 
-        
-        
         contracts.map((item)=>{
             console.log(item.name); 
-
-            
             if(
                 item.name.toLowerCase().includes(str) || 
                 item.address_01.toLowerCase().includes(str) || 
@@ -148,13 +197,8 @@ function Contract_browser() {
                 {
                     temp_array.push(item); 
                 }; 
-            
-
         }); 
         set_filtered_contracts(temp_array); 
-        
-
-
     }
     
 
@@ -180,34 +224,7 @@ function Contract_browser() {
                         <TableCell className="Contract_browser__header_text">
                            <h3>   </h3> 
                         </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                           <h3>  Project </h3> 
-                        </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                            <h3> Address </h3> 
-                        </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                            <h3> City </h3> 
-                        </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                            <h3> State </h3> 
-                        </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                        
-                            <h3> Owner </h3> 
-                        </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                        
-                            <h3> Base Contract ($) </h3> 
-                        </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                        
-                            <h3> Change Orders ($) </h3> 
-                        </TableCell>
-                        <TableCell className="Contract_browser__header_text">
-                        
-                            <h3> Revised Contract ($) </h3> 
-                        </TableCell>
+                        {headers.map(build_headers)}
 
   
                     </TableRow>
