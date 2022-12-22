@@ -67,12 +67,12 @@ function Pay_app_modal_table(props) {
         else{
             ret = .95; 
         }
-        payment=Number(cost_item.pay_apps[props.pay_app_id])*ret;
+        payment=Number(cost_item.pay_apps[props.pay_app_id-1])*ret; //EDITED
         balance=Number(cost_item.value)+co_sum-prev_draws*ret-payment;
         temp_cc_line_items.push(
             {
                 prev:prev_draws, 
-                cur: Number(cost_item.pay_apps[props.pay_app_id]),
+                cur: Number(cost_item.pay_apps[props.pay_app_id-1]), //EDITED
                 co_sum: co_sum, 
                 cost_code:cost_item.cost_code,
                 value:cost_item.value,
@@ -299,6 +299,7 @@ function Pay_app_modal_table(props) {
 
     return (
        <Paper> 
+           {console.log("cc Line item is: ", cc_line_items)}
            
            <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">

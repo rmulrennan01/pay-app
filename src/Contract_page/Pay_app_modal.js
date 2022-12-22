@@ -60,6 +60,7 @@ function Pay_app_modal(props) {
     return (
             //path='/pay_app/pdf/:id/:app_id' 
             <div>
+                
                 <Paper> 
                     <h2>Pay App # {props.pay_app_id+1} </h2> <br></br>
                     <Button variant='contained' onClick={()=>open_pdf()}>View PDF</Button>

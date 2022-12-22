@@ -78,7 +78,6 @@ function Pay_app_viewer(props) {
             set_app_id(params.app_id);
             fetchData(); 
         }
-        
         //case where this is a draft payment application to be previewed in the payment application process
         //app_id will be passed as a prop instead of being pulled form the url path
         else {
@@ -165,17 +164,8 @@ function Pay_app_viewer(props) {
         let percent = Number(completed)/Number(cost_item.value+co_sum)*100; 
         let retained = completed*(1-ret); 
         temp_cc_line_items.push([cost_item.cost_code,index+1,cost_item.description,cost_item.value,co_sum,cost_item.value+co_sum,prev_draws,
-                    Number(cost_item.pay_apps[app_index]),completed,percent,balance,retained]); //adjusted
-            /*{
-                prev:prev_draws, 
-                cur: Number(cost_item.pay_apps[app_id]),
-                co_sum: co_sum, 
-                cost_code:cost_item.cost_code,
-                value:cost_item.value,
-                description:cost_item.description,
-                payment:payment,
-                balance:balance
-            }); */
+        Number(cost_item.pay_apps[app_index]),completed,percent,balance,retained]); //adjusted
+
         set_g703_data(temp_cc_line_items);
     }
 

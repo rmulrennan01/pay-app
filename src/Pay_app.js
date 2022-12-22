@@ -103,7 +103,7 @@ function Pay_app() {
                     //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
                 });
     
-                //console.log(tempList); 
+                console.log("tempList: ",tempList); 
                 set_sov(tempList); 
                 set_loading(false); 
                 
@@ -226,6 +226,26 @@ function Pay_app() {
 
     }
 
+    //need to adjust the array of payment applications inside each sov item to prepare it for passing into the Pay_app_viewer component
+    const adjust_sov = () => {
+        let temp_sov = sov; 
+        console.log("here is the temp_sov before :", sov)
+        temp_sov.map((item,index)=>{
+            if(saved_inputs[index] === ""){
+                item.pay_apps.push(0);
+            }
+            else{
+                item.pay_apps.push(Number(saved_inputs[index]));
+            }
+           
+        })
+
+        console.log("here is the temp sov: ", temp_sov)
+        return(temp_sov);
+
+
+    }
+
 
     const build_steps = (item,index) => {
         const button_builder = () => {
@@ -297,9 +317,11 @@ function Pay_app() {
             <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
    
                 <Paper > 
+                    {console.log("Here is the sov: ", sov)}
+                    {console.log("here are the inputs: ", saved_inputs)}
 
                     <Paper sx={{width:400}}> 
-                        <Pay_app_viewer draft={true} app_id={contract_info.app_count+1} contract_info={contract_info} owner_info={owner_info} sov={sov}/>
+                        <Pay_app_viewer draft={true} app_id={contract_info.app_count+1} contract_info={contract_info} owner_info={owner_info} sov={adjust_sov()}/>
                     </Paper>
                     : 
                     <> </>
