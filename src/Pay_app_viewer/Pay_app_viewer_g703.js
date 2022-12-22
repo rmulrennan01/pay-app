@@ -138,7 +138,7 @@ function Pay_app_viewer_g703(props) {
                     <Text style={[{fontSize:10}]}>Period To:</Text>
                 </View>
                 <View style={[{width:200},{flexDirection:'column'}]}>
-                    <Text style={[{fontSize:10}]}>TODO</Text>
+                    <Text style={[{fontSize:10}]}>{props.app_id}</Text>
                     <Text style={[{fontSize:10}]}>TODO</Text>
                     <Text style={[{fontSize:10}]}>TODO</Text>
                 </View>

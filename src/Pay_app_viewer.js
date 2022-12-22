@@ -384,6 +384,7 @@ function Pay_app_viewer(props) {
             <Pay_app_viewer_g703
                 g703_data={g703_data}
                 g703_totals={g703_totals}
+                app_id={app_id}
             
             
             /> 

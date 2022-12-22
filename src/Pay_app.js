@@ -135,7 +135,9 @@ function Pay_app() {
            // console.log("sov", sov); 
             if(sov[i].hasOwnProperty('pay_apps')){
                 if(sov[i].pay_apps.length >0){
-                    sov[i].pay_apps.map(item=>sum = Number(sum) + Number(item)); 
+                    //sov[i].pay_apps.map(item=>sum = Number(sum) + Number(item)); 
+                    sov[i].pay_apps.map(item=>
+                        {sum = Number(sum) + (item ? Number(item):0)}); 
                     temp_sums[i] = sum; 
                     //console.log("here2:",sum);
                     total +=sum; 
