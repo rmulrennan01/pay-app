@@ -63,7 +63,7 @@ function Pay_app_table(props) {
 
         if(!no_apps){
           let temp_line_item = []; 
-          for (let i = 0; i<props.contract_info.app_count; i++){
+          for (let i = 0; i<props.contract_info.app_count+1; i++){ //updated
             let temp_info = {base_contract:0, change_orders:0, revised_contract:0, this_draw:0, previous_payments:0, balance:0, retention:0}; 
             temp_info.base_contract=props.contract_info.base_contract_value;
             temp_info.change_orders=temp_co_totals[i];

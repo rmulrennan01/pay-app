@@ -32,55 +32,62 @@ function Pay_app_viewer(props) {
     const [draw_info, set_draw_info] = useState([]); 
     const [g703_data, set_g703_data] = useState([]); 
     const [g703_totals, set_g703_totals] = useState([]); 
-    const table_rows =
-        [
-            "Total changes approved in previous months by Contractor", 
-            "Total approved this Month", 
-            "Totals", 
-            "Net Changes by Change Order"
-        ]; 
 
-    const summary_rows = 
-        [   "1. Original Contract Sum:", 
-            "2. Net Change by Change Orders",
-            "3. Contract Sum to Date",
-            "4. Total Completed & Stored to date (Column G)",
-            "5. Retainage:",
-            "-------> 5% of Completed Work:",
-            "6. Total Earned Less Retainage",
-            "7. Less Previous Certificates for Payment (Line 6 from prior Certificate)",
-            "8. Current Payment Due",
-            "9. Balance to Finish including Retaingage ",
-        ]; 
+    //const {temp_id,temp_app_id} = useParams();
+    const params = useParams(); 
+    const [id, set_id] = useState(0); 
+    const [app_id, set_app_id] = useState(0); 
+    //const {id, app_id} = useParams();
+
+
+ 
 
     useEffect( () => {
+        //fetches from firebase
         const fetchData = async () =>{
-            const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
-            set_contract_info(dataList.data()); 
-            //console.log(dataList.data()); 
-        
-            const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
-            set_owner_info(dataList2.data()); 
-
-            const tempList = []; 
-
-
-            const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
-            dataList3.forEach((doc) => {
-                let tempDict = doc.data(); 
-                tempDict["id"] = doc.id; 
-                //tempDict["parent"] = doc.ref.parent.path.slice(0,-4); 
-                tempList.push(tempDict); 
-                //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
-            });
-
-            //console.log(tempList); 
-            set_sov(tempList); 
-             
-            //build_period_totals(); 
+            if(params !== undefined){
+                const dataList = await firestoreDB.collection("contracts").doc(params.id).get(); //updated
+                set_contract_info(dataList.data()); 
+                //console.log(dataList.data()); 
             
+                const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+                set_owner_info(dataList2.data()); 
+
+                const tempList = []; 
+
+
+                const dataList3 = await firestoreDB.collection("contracts").doc(params.id).collection("sov").get();
+                dataList3.forEach((doc) => {
+                    let tempDict = doc.data(); 
+                    tempDict["id"] = doc.id; 
+                    //tempDict["parent"] = doc.ref.parent.path.slice(0,-4); 
+                    tempList.push(tempDict); 
+                    //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
+                });
+
+                //console.log(tempList); 
+                set_sov(tempList); 
+                
+                //build_period_totals(); 
+            };
         }
-        fetchData(); 
+      
+        //case where this is displaying an existing payment application
+        if(!props.hasOwnProperty("draft")){
+            set_id(params.id); 
+            set_app_id(params.app_id);
+            fetchData(); 
+        }
+        
+        //case where this is a draft payment application to be previewed in the payment application process
+        //app_id will be passed as a prop instead of being pulled form the url path
+        else {
+            set_app_id(props.app_id); 
+            set_owner_info(props.owner_info);
+            set_contract_info(props.contract_info);
+            set_sov(props.sov); 
+
+        }
 
         
     }, []);  
@@ -398,7 +405,6 @@ function Pay_app_viewer(props) {
 
     
 
-    const {id, app_id} = useParams();
     console.log(id); 
     console.log(app_id); 
     return (

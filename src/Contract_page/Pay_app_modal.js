@@ -63,7 +63,6 @@ function Pay_app_modal(props) {
                 <Paper> 
                     <h2>Pay App # {props.pay_app_id+1} </h2> <br></br>
                     <Button variant='contained' onClick={()=>open_pdf()}>View PDF</Button>
-                    <Button variant='contained' onClick={()=>window.open('https://www.google.com','_blank')}>test</Button>
                     {edit_mode ? 
                         <Button variant="contained" onClick={()=>alert("Are you sure?")}> Save & Submit Changes </Button> 
                         :

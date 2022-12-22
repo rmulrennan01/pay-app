@@ -47,15 +47,18 @@ function Home() {
     const sort_dates = () => {
         let temp_contracts = contracts;
         temp_contracts = temp_contracts.sort(function(a,b){
-            let x = a["update"];
-            let y = b["update"];
-            if (x>y){
-                return -1;
-            }
-            if (x<y){
-                return 1; 
-            }
+            if(a.hasOwnProperty("update") && b.hasOwnProperty("update")){
+                let x = a["update"];
+                let y = b["update"];
+                if (x>y){
+                    return -1;
+                }
+                if (x<y){
+                    return 1; 
+                }
+                }
             return 0;
+            
         }
         )
         set_contracts(temp_contracts); 
@@ -67,7 +70,7 @@ function Home() {
     const display = (item, index) => {
         return(
             <>
-                {item.update.toDate().toString()}
+                {item.hasOwnProperty("update") ? item.update.toDate().toString() : null}
                 <br></br>
             </>
 

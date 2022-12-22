@@ -299,6 +299,7 @@ function Pay_app_modal_table(props) {
 
     return (
        <Paper> 
+           
            <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead> 

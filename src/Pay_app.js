@@ -6,7 +6,8 @@ import Sov_table from './Pay_app/Sov_table.js';
 import Billing_details from './Pay_app/Billing_details.js'; 
 import Page_G702 from './Pay_app/Page_G702.js'; 
 import Page_G703 from './Pay_app/Page_G703.js'; 
-import Change_orders from './Pay_app/Change_orders.js'; 
+import Change_orders from './Pay_app/Change_orders.js';
+import Pay_app_viewer from './Pay_app_viewer.js';  
 
 //For pay app review modal
 import Modal from '@mui/material/Modal';
@@ -23,6 +24,7 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { Bathtub } from '@material-ui/icons';
+import Pay_app_modal_table from './Contract_page/Pay_app_modal_table.js';
 //import Billing_details from './Job_setup/Billing_Details.js';
 
 
@@ -135,7 +137,7 @@ function Pay_app() {
                 if(sov[i].pay_apps.length >0){
                     sov[i].pay_apps.map(item=>sum = Number(sum) + Number(item)); 
                     temp_sums[i] = sum; 
-                    console.log("here2:",sum);
+                    //console.log("here2:",sum);
                     total +=sum; 
                 } 
                 else{
@@ -203,19 +205,7 @@ function Pay_app() {
 
 
         });
-        //add the new pay app values to each sov item 
-        /*
-        sov_ref.get().then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
-                doc.ref.set({
-                    pay_apps: 
-                });
-                count++;
-            });
-        });
-        */
 
-        
 
         //batch.set(sov_ref, {sov:temp_sov}); 
         batch.update(contract_ref, {"prev_draws":Number(prev_draws_total)});
@@ -233,50 +223,8 @@ function Pay_app() {
         //backup pay_app status
         //saved_inputs, prev_draws_total, this_draw_total, balance
 
-        /*
-
-        firestoreDB.collection("contracts").doc(id).collection("sov").set({
-            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value, pay_app: data.pay_app})
-        })
-        .then((docRef) => {
-            console.log("added CO successfully"); 
-        })
-        .catch((error) => {
-            console.error("Error adding change order info", error); 
-        });
-        */
 
     }
-    /*
-    const submit_co = (sov_id, data) => {
-
-        firestoreDB.collection("contracts").doc(id).collection("sov").doc(sov_id).update({
-
-            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value, pay_app: data.pay_app})
-        })
-        .then((docRef) => {
-            console.log("added CO successfully"); 
-        })
-        .catch((error) => {
-            console.error("Error adding change order info", error); 
-        });
-        //update the change order quantitiy count and change order dollar total
-        const delta = firebase.firestore.FieldValue.increment(data.value); 
-        firestoreDB.collection("contracts").doc(id).update({
-            "co_value": delta
-        })
-        .then((docRef) => {
-            console.log("updated co total successfully"); 
-            alert("Change Order Added Successfully"); 
-            window.location.reload(false);
-            
-        })
-        .catch((error) => {
-            console.error("Error updating change order total", error); 
-        });
-    } 
-    */
-
 
 
     const build_steps = (item,index) => {
@@ -345,25 +293,22 @@ function Pay_app() {
             </Stepper>
 
 
-
+            {loading ? null :
             <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
    
-                <Paper> 
+                <Paper > 
 
-                <Tabs value={modal_index}  centered  >
-                    <Tab  label={<h3>G702</h3>} onClick={()=>set_modal_index(0)}/>
-                    <Tab  label={<h3>G703</h3>} onClick={()=>set_modal_index(1)}/>
-                    
-                </Tabs>
-          
-            
-
-                {modal_index==0 ? <Paper>  <Page_G702 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} prev_draws_total={prev_draws_total} this_draw_total={this_draw_total} saved_inputs={saved_inputs} balance={balance} />  </Paper>  : <></>  }
-                {modal_index==1 ? <Paper>  <Page_G703 contract_info={contract_info} owner_info={owner_info} sov={sov} prev_draws={prev_draws} co_sums={co_sums} prev_draws_total={prev_draws_total} this_draw_total={this_draw_total} saved_inputs={saved_inputs} balance={balance}/> </Paper>  : <></>  }
-               </Paper> 
+                    <Paper sx={{width:400}}> 
+                        <Pay_app_viewer draft={true} app_id={contract_info.app_count+1} contract_info={contract_info} owner_info={owner_info} sov={sov}/>
+                    </Paper>
+                    : 
+                    <> </>
+                
+                </Paper> 
                     
                 
             </Modal>
+            }
         </div>
     )
 }
