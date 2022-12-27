@@ -133,6 +133,8 @@ function Job_setup() {
             temp_project["co_count"] = 0; 
             temp_project["co_value"] = 0; 
             temp_project["app_count"] = 0; 
+            temp_project["update"] = new Date();
+            temp_project["recent_task"] = "Added a new contract"; 
 
             firestoreDB.collection("contracts").add(temp_project)
             .then((docRef2) => {

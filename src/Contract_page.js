@@ -4,6 +4,8 @@ import firebase from "./Firebase.js";
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { PieChart, PieArcSeries } from 'reaviz';
+import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
+import Totals_by_key from './Utilities/Totals_by_key.js'; 
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
@@ -22,6 +24,7 @@ import Pay_app_modal from './Contract_page/Pay_app_modal.js';
 import { getScopedCssBaselineUtilityClass } from '@mui/material';
 
 import CurrencyFormat from 'react-currency-format';
+import Sov_table from './Pay_app/Sov_table.js';
 
 
 
@@ -160,6 +163,7 @@ function Contract_page(props) {
         }
     }
 
+    
 
     const job_summary = () =>{
         if(loading){
@@ -209,7 +213,7 @@ function Contract_page(props) {
                 
                 </h3> 
                 <h3> 
-                    Payment Applications Completed: {contract_info.app_count+1}
+                    Payment Applications Completed: {contract_info.app_count}
                 </h3>
 
             </Paper>
@@ -310,6 +314,8 @@ function Contract_page(props) {
     
     return (
         <>
+            {loading? null : console.log(Sov_item_totals(sov,3,0.05))}
+            {loading? null : console.log(Totals_by_key(Sov_item_totals(sov,3,0.05),"prev_draws"))}
             <Grid container spacing={2}>
                 <Grid item xs = {6}>
                     {job_info()}

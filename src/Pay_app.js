@@ -208,12 +208,14 @@ function Pay_app() {
 
         });
 
-
+        let date = new Date();
         //batch.set(sov_ref, {sov:temp_sov}); 
         batch.update(contract_ref, {"prev_draws":Number(prev_draws_total)});
         batch.update(contract_ref, {"this_draw":Number(this_draw_total)});
         batch.update(contract_ref, {"balance":Number(balance)});
         batch.update(contract_ref, {"balance":Number(balance)});
+        batch.update(contract_ref, {"recent_task":"Added a payment application"});
+        batch.update(contract_ref, {"update":date});
         batch.update(contract_ref, {"app_count":Number(contract_info.app_count + Number(1))});
         batch.commit().then(()=>{
             alert("App Submitted"); 

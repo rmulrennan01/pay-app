@@ -76,7 +76,8 @@ function Schedule_of_Values(props) {
             cost_code:ref_cost_code.current.value, 
             description:ref_description.current.value,
             value:Number(value),
-            change_orders:0
+            change_orders:0,
+            pay_apps:[]
             
             }
             ); 

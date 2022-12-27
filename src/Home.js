@@ -3,6 +3,17 @@ import "./Home.css"
 
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import { PieChart, PieArcSeries } from 'reaviz';
+import CircularProgress from '@mui/material/CircularProgress';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import TablePagination from '@mui/material/TablePagination';
+import Checkbox from '@mui/material/Checkbox';
 
 import firebase from "./Firebase.js"; 
 
@@ -62,19 +73,39 @@ function Home() {
         }
         )
         set_contracts(temp_contracts); 
+    }
 
-
-
+    const pie_chart = (data) => {
+        return(
+        <PieChart
+            width={450}
+            height={350}
+            data={data}
+            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
+        />
+        )
     }
 
     const display = (item, index) => {
-        return(
-            <>
-                {item.hasOwnProperty("update") ? item.update.toDate().toString() : null}
-                <br></br>
-            </>
+        if(index < 10 && item.hasOwnProperty("update") && item.hasOwnProperty("recent_task")){
 
-        )
+     
+            return(
+                <TableRow key={index+"recent"}  onClick={()=>window.location='/contract/'+ String(item.id)} className="home__row">
+                    <TableCell className="home__data">
+                        {item.name}
+                    </TableCell>
+                    <TableCell className="home__data">
+                        {item.recent_task}
+                    </TableCell>
+                    <TableCell className="home__data">
+                        {item.hasOwnProperty("update") ? item.update.toDate().toString() : null}
+                    </TableCell>
+                </TableRow>
+
+            )
+        }
+        
 
     }
 
@@ -82,14 +113,27 @@ function Home() {
 
     return (
         <div>
-            <Paper className="home__info__tile"> 
-                Welcome to the payment application manager. Here you can manage all of your payment applications without the need
-                of all those pesky spreadsheets. 
-            </Paper>
-            <br/><br/><br/>
+            <br></br>
+            <Button variant="contained">Setup a new project</Button>
             <Paper>
-                <h3>Recent Activity</h3>
-                {loading ? null : contracts.map(display)}
+
+            </Paper>
+
+            <Paper>
+                <h3>Recent Project Activity</h3>
+                <Paper>
+                <Table>
+                    <TableRow>
+                        <TableCell className="home__data"> <h3>Project</h3></TableCell>
+                        <TableCell className="home__data"> <h3>Task</h3></TableCell>
+                        <TableCell className="home__data"> <h3>Date</h3></TableCell>
+                    </TableRow>
+                    <TableBody>
+                        {loading ? <CircularProgress /> : contracts.map(display)}
+                    </TableBody>
+                </Table>
+                </Paper>
+                
 
             </Paper>
            {loading ? null : console.log(contracts)}
@@ -97,7 +141,6 @@ function Home() {
            
            
 
-            <Button variant="contained">Setup a new project</Button>
         </div>
     )
 }
