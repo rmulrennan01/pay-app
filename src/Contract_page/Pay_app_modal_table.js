@@ -4,7 +4,8 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 
-
+import Sov_item_totals from '../Utilities/Sov_item_totals.js'; 
+import Totals_by_key from '../Utilities/Totals_by_key.js'; 
 
 
 
@@ -35,7 +36,8 @@ function Pay_app_modal_table(props) {
     const [trigger, set_trigger] = useState(false); 
     const [user_input, set_user_input] = useState(false); 
     
-    
+    const line_items = Sov_item_totals(sov,props.pay_app_id,0.05); 
+    console.log(line_items); 
 
  
     //needs to be done to each cost code item
@@ -89,7 +91,7 @@ function Pay_app_modal_table(props) {
         let cur_total = 0; 
         let payment_total = 0; 
         let balance_total= 0; 
-        console.log('CC_LINE_ITEMS INSIDE FOOTER TOTALS', cc_line_items); 
+        //console.log('CC_LINE_ITEMS INSIDE FOOTER TOTALS', cc_line_items); 
         cc_line_items.map((item) => co_total = Number(co_total) + Number(item.co_sum)); 
         cc_line_items.map((item) => prev_total = Number(prev_total) + Number(item.prev));
         cc_line_items.map((item) => cur_total = Number(cur_total) + Number(item.cur));
@@ -143,7 +145,7 @@ function Pay_app_modal_table(props) {
         }
         //set_saved_inputs(temp_arry); 
         props.update_inputs(temp_arry); 
-        console.log("temp_arry", temp_arry); 
+        //console.log("temp_arry", temp_arry); 
     }
 
     const update_input_total = () => {
@@ -183,10 +185,119 @@ function Pay_app_modal_table(props) {
             copy_items[i].payment = Number(inputs.current[i].getValue()) * ret;
             copy_items[i].balance = copy_items[i].value + copy_items[i].co_sum - Number(inputs.current[i].getValue())*ret - copy_items[i].prev*ret;
         }
-        console.log(cc_line_items); 
+        //console.log(cc_line_items); 
         set_cc_line_items(copy_items); 
     }
 
+
+
+    const build_table_body_2 = (item,index) => {
+        return(
+            <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
+            
+                <TableCell>
+                    {item.cost_code}
+                </TableCell>
+                <TableCell>
+                    {item.description}                        
+                </TableCell>
+                <TableCell >
+                    <CurrencyFormat 
+                        
+                        value={item.value} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                    
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                            value={Number(item.co_cur)+Number(item.co_prev)} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                    />
+                    
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                        value={item.revised_value} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                            value={item.prev_draws} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />                    
+                </TableCell>
+                <TableCell >
+                    {
+                        props.edit_mode ?
+                        <CurrencyTextField
+                            label="Amount"
+                            variant="outlined"
+                            value={item.cur}
+                            currencySymbol="$"
+                            minimumValue="0"
+                            maximumValue = {max_input[index]} 
+                            //maximumValue = "12"
+                            outputFormat="string"
+                            decimalCharacter="."
+                            digitGroupSeparator=","
+                            leadingZero={"deny"}
+                            ref={(val) => (inputs.current[index] = val)}
+                            onChange={()=>update_input_total()}
+                        />  
+                        :
+                        <CurrencyFormat 
+                            value={item.cur_draw} 
+                            displayType={'text'} 
+                            thousandSeparator={true} 
+                            prefix={'$'} 
+                            fixedDecimalScale={true} 
+                            decimalScale={2}
+                        />
+                    }
+
+
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                        value={item.cur_payment} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                    />
+                </TableCell>
+                <TableCell>
+                    <CurrencyFormat 
+                        value={Number(item.balance) + Number(item.retention)} 
+                        displayType={'text'} 
+                        thousandSeparator={true} 
+                        prefix={'$'} 
+                        fixedDecimalScale={true} 
+                        decimalScale={2}
+                />
+                </TableCell>
+            </TableRow>
+        );
+}
 
 
     const build_table_body = (item,index) => {
@@ -299,7 +410,7 @@ function Pay_app_modal_table(props) {
 
     return (
        <Paper> 
-           {console.log("cc Line item is: ", cc_line_items)}
+           
            
            <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -337,7 +448,8 @@ function Pay_app_modal_table(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {cc_line_items.length ==0 ? null : cc_line_items.map(build_table_body)}
+                    {/*cc_line_items.length ==0 ? null : cc_line_items.map(build_table_body)*/}
+                    {line_items.length ==0 ? null : line_items.map(build_table_body_2)}
                 </TableBody>
                     <TableFooter>
                         <TableRow>
