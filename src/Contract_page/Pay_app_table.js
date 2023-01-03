@@ -17,11 +17,8 @@ import Period_totals from '../Utilities/Period_totals';
 
 
 function Pay_app_table(props) {
-  const [pay_apps, set_pay_apps] = useState(props.sov);
-  const [co_apps, set_co_apps] = useState([]);
   const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  
     "Previous Work Complete", "Work Complete This Period", "Payment This Period (Work Complete Less Retention)", "Remaining Balance Including Retention"];
-  const [period_info, set_period_info] = useState([]); 
   const [no_apps, set_no_apps] = useState(false); 
 
   const [period_summary, set_period_summary] = useState([]);
@@ -41,16 +38,14 @@ function Pay_app_table(props) {
       props.open_modal()
     }
 
-
+    //format the data from the sov to be used in the pay app table
     const build_table_data = () => {
       let temp_period_summary = []; 
 
       for (let i = 0; i<props.contract_info.app_count; i++){
         temp_period_summary.push(Period_totals(props.contract_info.base_contract_value,props.sov,i+1,0.05));
       }
-
       set_period_summary(temp_period_summary); 
-      
     }
 
     //function for formatting values to display on the pay app
@@ -71,7 +66,6 @@ function Pay_app_table(props) {
     }
 
     
-
     const build_table_body = (item,index) => {
       console.log("item", item); 
       
@@ -108,14 +102,6 @@ function Pay_app_table(props) {
       )
     }
 
-    
-
-  
-    
-
-  
-
-
   return (
     <div>
       {console.log("PERIOD TOTALS", period_summary)}
@@ -128,21 +114,11 @@ function Pay_app_table(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            
-            
             {/*(no_apps) ? console.log("it's here") : period_info.map(build_table_body)*/}
             {(no_apps) && period_summary.length > 0  ? console.log("it's here") : period_summary.map(build_table_body)}
-
-            
-            
-            
           </TableBody>
 
         </Table>
-
-    
-
-
     </div>
   )
 }
