@@ -37,9 +37,10 @@ function Pay_app_modal_table(props) {
     const [user_input, set_user_input] = useState(false); 
     
     const line_items = Sov_item_totals(sov,props.pay_app_id,0.05); 
-    console.log(line_items); 
+    console.log("line items", line_items); 
 
  
+    /*
     //needs to be done to each cost code item
     const build_cc_line_item = (cost_item) => {
         //get total of previous draws for this cc
@@ -85,6 +86,8 @@ function Pay_app_modal_table(props) {
         set_cc_line_items(temp_cc_line_items);
     }
 
+    */
+
     const update_footer_totals = () => {
         let co_total = 0; 
         let prev_total = 0; 
@@ -108,7 +111,7 @@ function Pay_app_modal_table(props) {
 
 
     useEffect(() => { 
-        sov.map(build_cc_line_item); 
+        //sov.map(build_cc_line_item); 
         update_footer_totals(); 
         set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
     }, [])
@@ -214,6 +217,7 @@ function Pay_app_modal_table(props) {
                     
                 </TableCell>
                 <TableCell>
+                    {console.log("co's", item.co_cur, item.co_prev)}
                     <CurrencyFormat 
                             value={Number(item.co_cur)+Number(item.co_prev)} 
                             displayType={'text'} 
@@ -300,114 +304,6 @@ function Pay_app_modal_table(props) {
 }
 
 
-    const build_table_body = (item,index) => {
-            return(
-                <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
-                
-                    <TableCell>
-                        {item.cost_code}
-                    </TableCell>
-                    <TableCell>
-                        {item.description}                        
-                    </TableCell>
-                    <TableCell >
-                        <CurrencyFormat 
-                            
-                            value={item.value} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                        
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                                value={item.co_sum} 
-                                displayType={'text'} 
-                                thousandSeparator={true} 
-                                prefix={'$'} 
-                                fixedDecimalScale={true} 
-                                decimalScale={2}
-                        />
-                        
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                            value={Number(item.value)+Number(item.co_sum)} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                                value={item.prev} 
-                                displayType={'text'} 
-                                thousandSeparator={true} 
-                                prefix={'$'} 
-                                fixedDecimalScale={true} 
-                                decimalScale={2}
-                            />                    
-                    </TableCell>
-                    <TableCell >
-                        {
-                            props.edit_mode ?
-                            <CurrencyTextField
-                                label="Amount"
-                                variant="outlined"
-                                value={item.cur}
-                                currencySymbol="$"
-                                minimumValue="0"
-                                maximumValue = {max_input[index]} 
-                                //maximumValue = "12"
-                                outputFormat="string"
-                                decimalCharacter="."
-                                digitGroupSeparator=","
-                                leadingZero={"deny"}
-                                ref={(val) => (inputs.current[index] = val)}
-                                onChange={()=>update_input_total()}
-                            />  
-                            :
-                            <CurrencyFormat 
-                                value={item.cur} 
-                                displayType={'text'} 
-                                thousandSeparator={true} 
-                                prefix={'$'} 
-                                fixedDecimalScale={true} 
-                                decimalScale={2}
-                            />
-                        }
-
-
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                            value={item.payment} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                            value={item.balance} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                    />
-                    </TableCell>
-                </TableRow>
-            );
-    }
-
     return (
        <Paper> 
            
@@ -473,7 +369,7 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>
                                     <CurrencyFormat 
-                                        value={column_totals.co} 
+                                        value={Totals_by_key(line_items,"co_prev")+Totals_by_key(line_items,"co_cur")} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 
@@ -486,7 +382,7 @@ function Pay_app_modal_table(props) {
                             <TableCell>
                                 <h3>
                                     <CurrencyFormat 
-                                        value={props.contract_info.base_contract_value + column_totals.co} 
+                                        value={props.contract_info.base_contract_value + Totals_by_key(line_items,"co_prev")+Totals_by_key(line_items,"co_cur")} 
                                         displayType={'text'} 
                                         thousandSeparator={true} 
                                         prefix={'$'} 

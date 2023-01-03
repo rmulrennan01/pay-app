@@ -31,10 +31,10 @@ const Sov_item_totals = (sov, app_num, retention) => {
             let prev_co = Number(0); 
             let cur_co = Number(0);
             item.change_orders.map((co) => {
-                if(co.pay_app<app_num){
+                if(co.pay_app<app_num+1){ 
                     prev_co += Number(co.value); 
                 }
-                if(co.pay_app==app_num){
+                else if(co.pay_app===app_num+1){
                     cur_co += Number(co.value); 
                 }
                 temp_line_item.co_prev = prev_co; 
