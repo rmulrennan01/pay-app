@@ -32,31 +32,24 @@ function Pay_app_modal_table(props) {
     const [max_input, set_max_input] = useState([]); 
     const [cc_line_items, set_cc_line_items] = useState([]); 
     const [trigger, set_trigger] = useState(false); 
-    
-    const line_items = Sov_item_totals(sov,props.pay_app_id,0.05); 
+    const [retention, set_retention] = useState(.05); 
+    const [line_items, set_line_items] = useState([]); 
 
+
+    useEffect(() => {
+        set_line_items(Sov_item_totals(sov,props.pay_app_id,0.05)); 
+
+    }, [])
+    
+
+    useEffect(() => { 
+        //sov.map(build_cc_line_item); 
+        build_footer_totals(); 
+        set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
+    }, [line_items])
  
 
-    const update_footer_totals = () => {
-        let co_total = 0; 
-        let prev_total = 0; 
-        let cur_total = 0; 
-        let payment_total = 0; 
-        let balance_total= 0; 
-        //console.log('CC_LINE_ITEMS INSIDE FOOTER TOTALS', cc_line_items); 
-        cc_line_items.map((item) => co_total = Number(co_total) + Number(item.co_sum)); 
-        cc_line_items.map((item) => prev_total = Number(prev_total) + Number(item.prev));
-        cc_line_items.map((item) => cur_total = Number(cur_total) + Number(item.cur));
-        cc_line_items.map((item) => payment_total = Number(payment_total) + Number(item.payment)); 
-        cc_line_items.map((item) => balance_total = Number(balance_total) + Number(item.balance));
-        set_column_totals({
-            co:co_total,
-            prev:prev_total,
-            cur:cur_total,
-            payment:payment_total,
-            balance:balance_total
-        })
-    }
+
 
     const currency = (val) =>{
         return(
@@ -105,35 +98,37 @@ function Pay_app_modal_table(props) {
         set_footers(footer); 
     }
 
-    //TODO
-    //function to call if user input on payment applicaiton is applied. Needs to update totals on the SOV table
+    //This adjusts the line items totals to accomodate user input when editing an existing payment application.
     const adjust_totals = () => {
         let footer_copy = footers; 
         let temp_input_sum = Number(0); 
         inputs.current.map((item)=>temp_input_sum+=Number(item.getValue())); 
         footer_copy[6] = currency(temp_input_sum);
-        footer_copy[7] = currency(temp_input_sum*(.95));
-        footer_copy[8] = currency(Number(footer_copy[4].props.value)-Number((footer_copy[5].props.value*.95))-Number(footer_copy[7].props.value));
+        footer_copy[7] = currency(temp_input_sum*(1-retention));
+        footer_copy[8] = currency(Number(footer_copy[4].props.value)-Number((footer_copy[5].props.value*(1-retention)))-Number(footer_copy[7].props.value));
         //console.log("big cheese", footer_copy[4].props.value)
         set_footers(footer_copy); 
+        adjust_line_items(); 
         set_trigger(!trigger);
+    }
+
+    //This adjusts the line items to accomodate user input when editing an existing payment application.
+    const adjust_line_items = () => {
+        let line_item_copy = line_items; 
+
+        for (let i=0; i<line_item_copy.length; i++){
+            line_item_copy[i].cur_payment = inputs.current[i].getValue()* (1-Number(retention)); 
+            let draws = Number(line_item_copy[i].prev_draws) + Number(inputs.current[i].getValue()); 
+            line_item_copy[i].balance = Number(line_item_copy[i].revised_value) - Number(draws);
+            line_item_copy[i].retention = draws * (Number(retention)); 
+        }
+
+        set_line_items(line_item_copy); 
+
 
     }
 
 
-
-
-    useEffect(() => { 
-        //sov.map(build_cc_line_item); 
-        build_footer_totals(); 
-        set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
-    }, [])
-
-   
-
-
-
-   
     const backup_inputs = () => {
         let temp_arry = []; 
         for (var i = 0; i<sov.length; i++){
@@ -143,9 +138,6 @@ function Pay_app_modal_table(props) {
         props.update_inputs(temp_arry); 
         //console.log("temp_arry", temp_arry); 
     }
-
-
-
 
 
 
@@ -167,7 +159,7 @@ function Pay_app_modal_table(props) {
                 <TableCell>
                     {currency(item.revised_value)}
                 </TableCell>
-                <TableCell>
+                <TableCell> 
                     {currency(item.prev_draws)}                  
                 </TableCell>
                 <TableCell >
