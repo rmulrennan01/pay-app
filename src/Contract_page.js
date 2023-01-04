@@ -232,7 +232,7 @@ function Contract_page(props) {
         else {
             return(
                 <Paper>
-                    <Contract_sov sov_data={sov} /> 
+                    <Contract_sov sov_data={sov} contract_info={contract_info}/> 
                 </Paper>
             ); 
         }
@@ -249,7 +249,7 @@ function Contract_page(props) {
         else {
             return(
                 <Paper>
-                    <Change_order_table co_data={sov} /> 
+                    <Change_order_table sov={sov} contract_info={contract_info}/> 
                 </Paper>
             ); 
         }

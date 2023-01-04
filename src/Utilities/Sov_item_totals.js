@@ -10,6 +10,7 @@
     cur_payment
     retention (.05 is typical)
     balance (exluding retention)
+    cost_code
 */
 
 const Sov_item_totals = (sov, app_num, retention) => {

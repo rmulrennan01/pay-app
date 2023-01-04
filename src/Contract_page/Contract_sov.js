@@ -1,14 +1,7 @@
 
 import React, {useState} from 'react';
-
-
-import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
 import CurrencyFormat from 'react-currency-format';
-
-
-
 
 //Tables
 import Table from '@mui/material/Table';
@@ -17,17 +10,12 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-
+import TableFooter from '@mui/material/TableFooter';
 
 
 function Contract_sov(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
-    const [update, set_update] = useState(1); 
-    const total = 0; 
-
-
-
-    
+      
     const get_co_total = (co) => {
         let sum = 0; 
         if(co.length >0){
@@ -35,10 +23,8 @@ function Contract_sov(props) {
             return sum; 
         }; 
         return 0; 
-
     }
 
-    
     
     const get_totals = () => {
         let sum = 0;
@@ -48,20 +34,11 @@ function Contract_sov(props) {
 
         }
         return sum; 
-
     }
     
 
-
- 
-
-
-
     const build_table_body = (item,index) => {
         const temp_co_total = get_co_total(item.change_orders); 
-
-
-      
             return(
                 <TableRow key={index}> 
                     <TableCell>
@@ -96,12 +73,8 @@ function Contract_sov(props) {
             );
     }
 
-
-
-
     return (
         <div> 
-     
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead> 
@@ -130,24 +103,55 @@ function Contract_sov(props) {
                     
 
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell></TableCell>
+                        <TableCell> <h3>Totals</h3></TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                value={props.contract_info.base_contract_value} 
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                                />
+                            </h3>
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                value={props.contract_info.co_value} 
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                                />
+                            </h3>
+                        </TableCell>
+                        <TableCell>
+                            <h3>
+                                <CurrencyFormat 
+                                value={Number(props.contract_info.base_contract_value) + Number(props.contract_info.co_value)}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                                />
+                            </h3>
+                        </TableCell>
+                      
+                    </TableRow>
+
+                </TableFooter>
             </Table>
 
         </TableContainer>
         
-            Contract Total: <CurrencyFormat 
-                value={get_totals()} 
-                displayType={'text'} 
-                thousandSeparator={true} 
-                prefix={'$'} 
-                fixedDecimalScale={true} 
-                decimalScale={2}
-            />
-
-       
-
-     
-
-
+ 
         </div>
     )
 }

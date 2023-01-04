@@ -145,11 +145,7 @@ function Contract_browser() {
             }
             return 0;
         }); 
-        
- 
-
         set_filtered_contracts(temp_data); 
-
     }
 
 
