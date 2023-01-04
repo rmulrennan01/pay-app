@@ -23,14 +23,10 @@ import CurrencyFormat from 'react-currency-format';
 
 function Pay_app_modal_table(props) {
     const [sov, set_sov] = useState(props.sov_data);
-    const [column_totals, set_column_totals] = useState({}); 
     const [footers, set_footers] = useState([]);
     const rows = useRef([]); 
     const inputs = useRef([]); 
-    const [co_sums, set_co_sums] = useState(props.co_sums); 
-    const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
-    const [cc_line_items, set_cc_line_items] = useState([]); 
     const [trigger, set_trigger] = useState(false); 
     const [retention, set_retention] = useState(.05); 
     const [line_items, set_line_items] = useState([]); 
@@ -47,9 +43,17 @@ function Pay_app_modal_table(props) {
         build_footer_totals(); 
         set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
     }, [line_items])
+
+    //this updates the line items in the pay app edit mode. Only needs to run one time after edit mode is enabled.
+    useEffect(() => {
+        if(props.edit_mode){
+            adjust_totals();
+        }
+    }, [props.edit_mode])
+
  
-
-
+ 
+  
 
     const currency = (val) =>{
         return(
@@ -165,13 +169,14 @@ function Pay_app_modal_table(props) {
                 <TableCell >
                     {
                         props.edit_mode ?
+                        
                         <CurrencyTextField
                             label="Amount"
                             variant="outlined"
-                            value={item.cur}
+                            value={0}
                             currencySymbol="$"
                             minimumValue="0"
-                            maximumValue = {max_input[index]} 
+                            maximumValue = {item.revised_value-item.prev_draws} 
                             //maximumValue = "12"
                             outputFormat="string"
                             decimalCharacter="."
@@ -180,6 +185,7 @@ function Pay_app_modal_table(props) {
                             ref={(val) => (inputs.current[index] = val)}
                             onChange={()=>adjust_totals()}
                         />  
+                        
                         :
                         currency(item.cur_draw)
                     }
