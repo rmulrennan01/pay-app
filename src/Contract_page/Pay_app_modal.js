@@ -55,6 +55,26 @@ function Pay_app_modal(props) {
 
     }
 
+    const edit_button = () => {
+        console.log("Here's the cheese", props.contract_info.app_count, props.pay_app_id+1); 
+        if (edit_mode){
+            return(
+                <Button variant="contained" onClick={()=>alert("Are you sure?")}> Save & Submit Changes </Button>
+            );
+        }
+        else if (!edit_mode && props.pay_app_id+1 === props.contract_info.app_count){
+            return( 
+                <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>
+            );
+        }
+
+        return(
+            <Button variant="contained" onClick={()=>alert("Only the most recent payment application can be edited. To edit this application, all subsequent applications need to be deleted.")}> Edit Application </Button>
+        )
+
+
+    }
+
  
 
     return (
@@ -64,12 +84,7 @@ function Pay_app_modal(props) {
                 <Paper> 
                     <h2>Pay App # {props.pay_app_id+1} </h2> <br></br>
                     <Button variant='contained' onClick={()=>open_pdf()}>View PDF</Button>
-                    {edit_mode ? 
-                        <Button variant="contained" onClick={()=>alert("Are you sure?")}> Save & Submit Changes </Button> 
-                        :
-                        <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>
-                    }
-                    
+                    {edit_button() }
                     
                     
                     

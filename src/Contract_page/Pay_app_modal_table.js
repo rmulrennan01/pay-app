@@ -112,7 +112,9 @@ function Pay_app_modal_table(props) {
         let temp_input_sum = Number(0); 
         inputs.current.map((item)=>temp_input_sum+=Number(item.getValue())); 
         footer_copy[6] = currency(temp_input_sum);
-        footer_copy[7] = currency(temp_input_sum*(.95))
+        footer_copy[7] = currency(temp_input_sum*(.95));
+        footer_copy[8] = currency(Number(footer_copy[4].props.value)-Number((footer_copy[5].props.value*.95))-Number(footer_copy[7].props.value));
+        //console.log("big cheese", footer_copy[4].props.value)
         set_footers(footer_copy); 
         set_trigger(!trigger);
 
@@ -124,15 +126,10 @@ function Pay_app_modal_table(props) {
     useEffect(() => { 
         //sov.map(build_cc_line_item); 
         build_footer_totals(); 
-        update_footer_totals(); 
         set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
     }, [])
 
-    useEffect(() => { 
-        update_footer_totals(); 
-        set_trigger(!trigger); //needed to add this state change as re-render wasn't triggering within the state change inside the map function        
-    }, [cc_line_items])
-
+   
 
 
 
