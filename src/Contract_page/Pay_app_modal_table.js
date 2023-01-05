@@ -66,8 +66,6 @@ function Pay_app_modal_table(props) {
             decimalScale={2}
             renderText={value => <>{value}</>} 
             />
-            
-  
         )
       }
 
@@ -79,26 +77,9 @@ function Pay_app_modal_table(props) {
         footer.push(currency(Totals_by_key(line_items, "co_prev")+Totals_by_key(line_items, "co_cur")));
         footer.push(currency(Totals_by_key(line_items, "revised_value")));
         footer.push(currency(Totals_by_key(line_items, "prev_draws")));
-        /*
-        if(props.edit_mode){
-            alert("hey")
-            let temp_input_sum = Number(0); 
-            console.log("inputs", inputs.current[0]); 
-            inputs.current.map((item)=>temp_input_sum+=Number(item.getValue())); 
-            footer.push(currency(Totals_by_key(temp_input_sum)));
-            //footer.push(currency(Totals_by_key(line_items, "cur_draw")));
-
-
-        }
-        else{
-            footer.push(currency(Totals_by_key(line_items, "cur_draw")));
-
-        }
-        */
         footer.push(currency(Totals_by_key(line_items, "cur_draw")));
         footer.push(currency(Totals_by_key(line_items, "cur_payment")));
         footer.push(currency(Totals_by_key(line_items, "balance")+Totals_by_key(line_items, "retention")));
-
         set_footers(footer); 
     }
 
@@ -243,7 +224,6 @@ function Pay_app_modal_table(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {/*cc_line_items.length ==0 ? null : cc_line_items.map(build_table_body)*/}
                     {line_items.length ==0 ? null : line_items.map(build_table_body)}
                 </TableBody>
                     <TableFooter>

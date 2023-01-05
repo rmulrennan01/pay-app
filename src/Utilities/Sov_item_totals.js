@@ -16,8 +16,7 @@
 const Sov_item_totals = (sov, app_num, retention) => {
  
     const sov_list = []; 
-    const sov_totals = {};
-
+    console.log("SOV inside utility", sov); 
     
     
 

@@ -65,11 +65,6 @@ function Billing_details(props) {
          <div>
         
              {full_draw_check()}
-
-
-
-             
-
          </div>
      )
  }

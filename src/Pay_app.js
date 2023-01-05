@@ -1,6 +1,8 @@
 import React, {useState,useEffect} from 'react';
 import {useParams} from "react-router-dom";
 import firebase from "./Firebase.js"; 
+import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
+import Totals_by_key from './Utilities/Totals_by_key.js'; 
 
 import Sov_table from './Pay_app/Sov_table.js'; 
 import Billing_details from './Pay_app/Billing_details.js'; 
@@ -11,9 +13,8 @@ import Pay_app_viewer from './Pay_app_viewer.js';
 
 //For pay app review modal
 import Modal from '@mui/material/Modal';
-import AppBar from '@mui/material/AppBar';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+
+
 
 
 ////Stepper
@@ -30,7 +31,7 @@ import Pay_app_modal_table from './Contract_page/Pay_app_modal_table.js';
 
 function Pay_app() {
     const {id} = useParams(); 
-    const [contract_info, set_contract_info] = useState(); 
+    const [contract_info, set_contract_info] = useState([]); 
     const [owner_info, set_owner_info] = useState(); 
     const [sov, set_sov] = useState([]); 
     const [loading, set_loading] = useState(true); 
@@ -44,6 +45,10 @@ function Pay_app() {
     const [balance, set_balance] = useState(0); 
     const [bill_retention, set_bill_retention] = useState(false); 
     const [this_draw_total, set_this_draw_total] = useState(0); 
+
+    const [line_items, set_line_items] = useState([]); 
+    
+
     
     const update_billed_to_date = (inputs) =>{
         set_saved_inputs(inputs); 
@@ -70,7 +75,7 @@ function Pay_app() {
     const steps = [       
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
-            content: <Sov_table sov_data={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={update_billed_to_date} balance={(item)=>set_balance(item)} />},
+            content: <Sov_table line_items={line_items} contract_info={contract_info} sov_data={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={update_billed_to_date} balance={(item)=>set_balance(item)} />},
         {label: 'Billing Details', content: <Billing_details  balance={balance} bill_retention={bill_retention} update_bill_retention={(item)=>set_bill_retention(item)}/>},
         {label: 'Preview', content: preview()},
         {label: 'Submission' , content: <div></div>}
@@ -81,48 +86,75 @@ function Pay_app() {
     
 
 
-        //fetch the document from firebase
-        useEffect( () => {
-            const fetchData = async () =>{
-                const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
-                set_contract_info(dataList.data()); 
-                console.log(dataList.data()); 
-            
-                const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
-                set_owner_info(dataList2.data()); 
-    
-                const tempList = []; 
-    
-    
-                const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
-                dataList3.forEach((doc) => {
-                    let tempDict = doc.data(); 
-                    tempDict["id"] = doc.id; 
-                    //tempDict["parent"] = doc.ref.parent.path.slice(0,-4); 
-                    tempList.push(tempDict); 
-                    //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
-                });
-    
-                console.log("tempList: ",tempList); 
-                set_sov(tempList); 
-                set_loading(false); 
-                
-            }
-            fetchData(); 
-            
-    
-            
-        }, []);  
+    //fetch the document from firebase
+    useEffect( () => {
+        const fetchData = async () =>{
+            const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
+            set_contract_info(dataList.data()); 
+            console.log(dataList.data()); 
+        
+            const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+            set_owner_info(dataList2.data()); 
 
-        useEffect(() => {
-           
-            get_previous_draws(); 
-            get_co_sums(); 
-            //console.log("hey hey", contract_info); 
-            set_contract_total(contract_info ? contract_info.base_contract_value : 0); 
-            set_co_total(contract_info ? contract_info.co_value : 0); 
+            const tempList = []; 
+
+
+            const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
+            dataList3.forEach((doc) => {
+                let tempDict = doc.data(); 
+                tempDict["id"] = doc.id; 
+                //tempDict["parent"] = doc.ref.parent.path.slice(0,-4); 
+                tempList.push(tempDict); 
+                //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
+            });
+
+            console.log("tempList: ",tempList); 
+            set_sov(tempList); 
+            //set_line_items(Sov_item_totals(sov,contract_info.app_count,0.05));
+            //console.log("LINE_ITEMS", line_items); 
+            set_loading(false); 
+            //set_line_items(Sov_item_totals(dataList3,Number(dataList.app_count),0.05)); 
+            //console.log("LINE_ITEMS", line_items); 
             
-        }, [loading, contract_info, sov])
+        }
+        fetchData(); 
+        
+
+        
+    }, []);  
+
+    useEffect(() => {
+        //set_line_items(Sov_item_totals(sov,contract_info.app_count,0.05));
+        
+        get_previous_draws(); 
+        get_co_sums(); 
+        //console.log("hey hey", contract_info); 
+        set_contract_total(contract_info ? contract_info.base_contract_value : 0); 
+        set_co_total(contract_info ? contract_info.co_value : 0); 
+        set_line_items(contract_info != null && sov !=null ? Sov_item_totals(sov,contract_info.app_count,0.05) : []); 
+        
+        
+    }, [loading, contract_info, sov]);
+
+
+    //TAKE THE SOV DATA AND CONVERT INTO LIST OF JSON OBJECTS TO BE USED INSIDE THE PAYMENT APPLICATION.
+    useEffect(() => {
+        
+        console.log("RAN");
+        console.log("CONTRACT INFO", contract_info); 
+        if(sov.length>0){
+            console.log("SOV", sov.length); 
+            console.log("SOV items", sov); 
+            console.log("APP_COUNT", contract_info.app_count); 
+
+            set_line_items(Sov_item_totals(sov,Number(contract_info.app_count),0.05)); 
+            
+        }
+
+     
+
+        
+    }, [loading]);
     
 
     
@@ -309,6 +341,7 @@ function Pay_app() {
 
     return (
         <div>
+            {console.log('LINE_ITEMS', line_items)}
 
             <Stepper activeStep={current_step} orientation="vertical">
                 {steps.map(build_steps)}

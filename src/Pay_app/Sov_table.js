@@ -1,5 +1,7 @@
 
 import React, {useState,useRef,useEffect} from 'react';
+import Totals_by_key from '../Utilities/Totals_by_key.js'; 
+
 
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -28,98 +30,138 @@ import TableFooter from '@mui/material/TableFooter';
 
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 import CurrencyFormat from 'react-currency-format';
+import { PictureInPictureAltSharp } from '@material-ui/icons';
 
 
 
 
 
 function Sov_table(props) {
-    const [table_content, set_table_content] = useState(props.sov_data);
-    const [total, set_total] = useState(0); 
-    const [co_total, set_co_total] = useState(0); 
+    const [line_items, set_line_items] = useState([]); 
+    const [footer, set_footer] = useState([]);
+    const [user_input, set_user_input] = useState(false); 
     const rows = useRef([]); 
     const inputs = useRef([]); 
     //const [co_sums, set_co_sums] = useState([]); 
     //const [prev_draws, set_prev_draws] = useState([]); 
     const [co_sums, set_co_sums] = useState(props.co_sums); 
-    
+    const [saved_inputs, set_saved_inputs] = useState(props.saved_inputs); 
     const [balances, set_balances] = useState([]); 
     const [max_input, set_max_input] = useState([]); 
+    const [trigger, set_trigger] = useState(true); 
     //const [saved_inputs, set_saved_inputs] = useState(props.saved_inputs); 
 
-  
-    const get_total = () =>{
-        let sum = 0; 
-        
-        for (var i =0; i<table_content.length; i++){
-            sum += Number(table_content[i].value); 
-        }
-        set_total(sum); 
-    }
-
-
-    //calculated balances for all cost items
-    const build_balance = () => {
-        let temp_list = []; 
-        for (var i = 0; i<table_content.length; i++){
-            if(props.prev_draws[i] == null){
-                temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - inputs.current[i].getValue(); 
-            }
-            else{
-                temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(props.prev_draws[i]) - inputs.current[i].getValue(); 
-            }
+  /*
+    description
+    base_value
+    co_prev
+    co_cur
+    revised_value
+    prev_draws
+    cur_draw
+    prev_payment
+    cur_payment
+    retention (.05 is typical)
+    balance (exluding retention)
+    cost_code
+    */
        
-        }
-        set_balances(temp_list); 
-        backup_inputs(); 
-       
-    }
-
-    //calculates balance for just one cost item for onChange event. This avoids having to recalculate all cost items.
-    const adjust_balance = (i) => {
-        let temp_list = balances; 
-        temp_list[i] = Number(table_content[i].value) + Number(co_sums[i]) - Number(props.prev_draws[i]) - inputs.current[i].getValue();
-        set_balances(temp_list); 
-        //console.log(temp_list); 
-    }
-
-    const build_max_input = () => {
-        let temp_list = []; 
-        for (var i = 0; i<table_content.length; i++){
-            temp_list[i] = String(Number(table_content[i].value)+Number(co_sums[i])-Number(props.prev_draws[i])); 
-        }
-        set_max_input(temp_list); 
-        //console.log(max_input); 
-    }
-
-    //need to build the co_sums & prev draws within a function call inside useEffect. Otherwise, inside the body we get too many renders.
     useEffect(() => {
-        //get_co_sums();
-        {console.log("prev: ", props.prev_draws)}
-        //get_previous_draws(); 
+        //default to the line_items passed as props
+        console.log("SAVED INPUTS", props.saved_inputs)
+        
+        set_line_items(props.line_items);
+       
+
+        get_balances(); 
     }, [])
 
-    //update the balances column in the table. This needs to wait until the previous draws state is populated.
-    useEffect(()=>{
-        console.log("here"+props.prev_draws); 
-        //build_prev_draw_sums(); 
-        build_balance(); 
-        build_max_input(); //TODO FIX!!!
-        get_total(); 
-        set_co_total(co_sums.reduce((prev,cur)=>prev+cur)); 
-    }, [co_sums])
-    
-   
+    const get_balances = () => {
+        let cur_draw_total = 0; 
+        let temp_balance = (Number(props.contract_info.co_value)+Number(props.contract_info.base_contract_value)-Number(props.contract_info.prev_draws)-Number(props.contract_info.this_draw));
+
+
+        let footers = 
+        {
+            base_value: props.contract_info.base_contract_value,
+            co_value: props.contract_info.co_value,
+            revised_value:(Number(props.contract_info.co_value)+Number(props.contract_info.base_contract_value)),
+            prev_draws:Number(props.contract_info.prev_draws)+Number(props.contract_info.this_draw),
+            cur_draw:cur_draw_total,
+            balance:temp_balance
+        };
+        
+        if (props.saved_inputs.length>0){
+            for(let i=0; i<props.saved_inputs.length; i++){
+                cur_draw_total += Number(props.saved_inputs[i])
+                
+            }
+            temp_balance = Number(footers.revised_value)-Number(footers.prev_draws)-Number(cur_draw_total); 
+        }
+
+        footers.cur_draw = cur_draw_total; 
+        footers.balance = temp_balance; 
+
+        set_footer(footers); 
+    }
+
+  
+
+    const handle_input = (i) => {
+        let temp_line_items = line_items; 
+        let temp_footer = footer; 
+        //needs to update balance to finish for line item
+        //temp_line_items[i].balance = temp_line_items[i].revised_value-temp_line_items[i].prev_draws-inputs.current[i].getValue(); 
+
+        //needs to update work complete this period total
+        let temp_sum = Number(0); 
+        for (let a=0; a< inputs.current.length; a++){
+            temp_sum += Number(inputs.current[a].getValue())
+        }
+        temp_footer.cur_draw = temp_sum; 
+ 
+
+        //needs to update balance total for the period
+        temp_footer.balance = Number(temp_footer.balance) - Number(inputs.current[i].getValue()); 
+
+        set_line_items(temp_line_items); 
+        set_footer(temp_footer); 
+        
+        //set_trigger(!trigger); 
+        
+
+        //backup inputs to the parent component. This allows inputs to be preserved if leaving this section of the stepper
+        backup_inputs();   
+
+        set_user_input(true); 
+    }
+     
+    const currency = (val) =>{
+        return(
+            <CurrencyFormat 
+            value={val}
+            displayType={'text'} 
+            thousandSeparator={true} 
+            prefix={'$'} 
+            fixedDecimalScale={true} 
+            decimalScale={2}
+            renderText={value => <>{value}</>} 
+            />
+        )
+    }
+
     const backup_inputs = () => {
         let temp_arry = []; 
-        for (var i = 0; i<table_content.length; i++){
+        for (var i = 0; i<line_items.length; i++){
             temp_arry[i] = inputs.current[i].getValue()
         }
         //set_saved_inputs(temp_arry); 
-        props.update_inputs(temp_arry); 
-        console.log("temp_arry", temp_arry); 
+        props.update_inputs(temp_arry);  
     }
 
+    
+
+    /*
     const zero_inputs = () => {
         let temp_arry = []; 
         for (var i = 0; i<table_content.length; i++){
@@ -142,7 +184,9 @@ function Sov_table(props) {
         
         //build_balance(); 
     }
+    */
 
+    /*
     const bill_full = () =>{
         let temp_list = []; 
         for (var i = 0; i<table_content.length; i++){
@@ -158,166 +202,95 @@ function Sov_table(props) {
         set_balances(temp_list2); 
 
     }
+    */
 
-    const input_total = () => {
-        let sum = 0; 
-        for (var i = 0; i<props.saved_inputs.length; i++){
-            if(props.saved_inputs[i] == ""){
-                sum+= Number(0); 
-            }
-            else{
-                sum+=Number(props.saved_inputs[i]); 
-            }
-        }
-        return sum; 
+
+
+
+/*
+    description
+    base_value
+    co_prev
+    co_cur
+    revised_value
+    prev_draws
+    cur_draws
+    prev_payment
+    cur_payment
+    retention (.05 is typical)
+    balance (exluding retention)
+    cost_code
+*/
+
+
+    const build_table_body = (item, index) => {
+        return(
+            <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
+            {console.log("building table rows")}
+                <TableCell> {item.cost_code} </TableCell>
+                <TableCell> {item.description} </TableCell>
+                <TableCell > {currency(item.value)} </TableCell>
+                <TableCell> {currency(Number(item.co_prev)+Number(item.co_cur))} </TableCell>
+                <TableCell> {currency(item.revised_value)}</TableCell>
+                <TableCell> {currency(item.prev_draws)}</TableCell>
+                <TableCell > 
+                    <CurrencyTextField
+                        label="Amount"
+                        variant="outlined"
+                        value={(props.saved_inputs === []) ? 0 : props.saved_inputs[index]}
+                        currencySymbol="$"
+                        minimumValue="0"
+                        maximumValue = {max_input[index]} 
+                        //maximumValue = "12"
+                        outputFormat="string"
+                        decimalCharacter="."
+                        digitGroupSeparator=","
+                        
+                        leadingZero={"deny"}
+                        ref={(val) => (inputs.current[index] = val)}
+                        onChange={()=>handle_input(index)}
+                    />  
+                </TableCell>
+                <TableCell> 
+                    {
+                        props.saved_inputs === [] ? 
+                            currency(Number(item.revised_value)-Number(item.prev_draws)-Number(item.cur_draw)) 
+                            :
+                            currency(Number(item.revised_value)-Number(item.prev_draws)-Number(props.saved_inputs[index]))
+                    } 
+                
+                </TableCell>
+            </TableRow>
+        );
     }
 
-    const balance_total = () => {
-        console.log(balances); 
-        if(balances.length ==0){
-            return 0; 
-        }
+ 
 
-        let temp_balance = balances.reduce((prev,cur)=>prev+cur); 
-        props.balance(temp_balance);
-        return temp_balance; 
-    }
-
-    const build_table_body = (item,index) => {
-      
-            return(
-                <TableRow ref={(item) => (rows.current[index] = item)} key={index}> 
-                {console.log("building table rows")}
-                    <TableCell>
-                        {item.cost_code}
-                    </TableCell>
-                    <TableCell>
-                        {item.description}
-                        
-                    </TableCell>
-                    <TableCell >
-                        <CurrencyFormat 
-                            
-                            value={item.value} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                        
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                                //ref={(val) => (co_totals.current[index] = val)}
-                               
-                                value={co_sums[index]} 
-                                displayType={'text'} 
-                                thousandSeparator={true} 
-                                prefix={'$'} 
-                                fixedDecimalScale={true} 
-                                decimalScale={2}
-                        />
-                        
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                            value={Number(item.value)+Number(co_sums[index])} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                                value={props.prev_draws[index]} 
-                                displayType={'text'} 
-                                thousandSeparator={true} 
-                                prefix={'$'} 
-                                fixedDecimalScale={true} 
-                                decimalScale={2}
-                            />                    
-                    </TableCell>
-                    <TableCell >
-                        
-                        <CurrencyTextField
-                            label="Amount"
-                            variant="outlined"
-                            value={(props.saved_inputs === []) ? 0 : props.saved_inputs[index]}
-                            currencySymbol="$"
-                            minimumValue="0"
-                            maximumValue = {max_input[index]} 
-                            //maximumValue = "12"
-                            outputFormat="string"
-                            decimalCharacter="."
-                            digitGroupSeparator=","
-                            
-                            leadingZero={"deny"}
-                            ref={(val) => (inputs.current[index] = val)}
-                            onChange={()=>build_balance()}
-                        />  
-                    </TableCell>
-                    <TableCell>
-                        <CurrencyFormat 
-                            value={balances[index]} 
-                            displayType={'text'} 
-                            thousandSeparator={true} 
-                            prefix={'$'} 
-                            fixedDecimalScale={true} 
-                            decimalScale={2}
-                        />
-                    </TableCell>
-       
-                </TableRow>
-            );
-    }
+    const headers = ["Cost Code", "Description", "Base Value ($)", "Change Orders ($)", "Revised Value ($)", "Work Complete in Previous Periods ($)",
+                    "Work Complete This Period ($)", "Balance to Finish ($)"];
 
     return (
         <div> 
         Please provide the dollar amounts for each cost item that you intend to draw on for this pay period.  
         <br/>
         <br/> 
-        <Button variant="contained" onClick={()=>bill_full()}> Bill in Full </Button> <Button variant="contained" onClick={()=>zero_inputs()}> Clear All </Button> 
+        <Button variant="contained" onClick={()=>console.log("bill full")}> Bill in Full </Button> <Button variant="contained" onClick={()=>console.log("zero")}> Clear All </Button> 
         <br/> 
 
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead> 
                     <TableRow>
-                        <TableCell>
-                            <h4> Cost Code </h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4>Description</h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4> Value ($) </h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4> Change Orders ($) </h4>
-
-                        </TableCell>
-                        <TableCell>
-                            <h4>Revised Value ($)</h4> 
-
-                        </TableCell>
-                        <TableCell>
-                            <h4> Work Complete in Previous Periods ($) </h4> 
-                        </TableCell>
-                        <TableCell>
-                            <h4>Work Complete this Period ($) </h4>
-                        </TableCell>
-                        <TableCell>
-                            <h4>Balance to Finish ($) </h4>
-                        </TableCell>
+                        {headers.map((item) => <TableCell><h4>{item}</h4></TableCell>)}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {(table_content.length == 0) ? null : table_content.map(build_table_body)}
+                    {/*(table_content.length == 0) ? null : table_content.map(build_table_body)*/}
+                    {(line_items.length == 0) ? null : line_items.map(build_table_body)}
         
                 </TableBody>
+                {/*base_value, co_value, revised_value, prev_draws, cur_draw, balance */}
+
                 <TableFooter>
                     <TableRow>
                         <TableCell>
@@ -326,83 +299,26 @@ function Sov_table(props) {
                         <TableCell>
                             -
                         </TableCell>
+  
                         <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={total} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
+                            <h3>{currency(footer.base_value)}</h3> 
                         </TableCell>
                         <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={co_total} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
+                            <h3> {currency(footer.co_value)}</h3>                 
                         </TableCell>
                         <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={Number(total)+Number(co_total)} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
+                            <h3> {currency(footer.revised_value)}</h3>                 
+                        </TableCell>
+
+                        <TableCell>
+                            <h3> {currency(footer.prev_draws)}</h3>   
+                        
                         </TableCell>
                         <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={props.prev_draws.reduce((prev,cur)=>prev+cur)} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
+                            <h3> {currency(footer.cur_draw)} </h3>                  
                         </TableCell>
                         <TableCell>
-                            <h3>
-                                <CurrencyFormat 
-                                    value={input_total()} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
-                    
-                        </TableCell>
-                        <TableCell>
-                            <h3>
-                                {console.log("balances :", balances)}
-                                <CurrencyFormat 
-                                    value={balance_total()} 
-                                    displayType={'text'} 
-                                    thousandSeparator={true} 
-                                    prefix={'$'} 
-                                    fixedDecimalScale={true} 
-                                    decimalScale={2}
-                                />
-                            </h3> 
+                            <h3> {currency(footer.balance)} </h3>  
                         </TableCell>
                     </TableRow>
                 </TableFooter>
