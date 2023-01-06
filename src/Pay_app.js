@@ -37,41 +37,44 @@ function Pay_app() {
     const [loading, set_loading] = useState(true); 
     const [saved_inputs, set_saved_inputs] = useState([]); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
-    const [prev_draws, set_prev_draws] = useState([]); 
-    const [prev_draws_total, set_prev_draws_total] = useState(0); 
-    const [co_sums, set_co_sums] = useState([]); 
-    const [contract_total, set_contract_total] = useState(0); 
-    const [co_total, set_co_total] = useState(0); 
-    const [balance, set_balance] = useState(0); 
     const [bill_retention, set_bill_retention] = useState(false); 
-    const [this_draw_total, set_this_draw_total] = useState(0); 
+    const [modal_open, set_modal_open] = useState(false); 
+    const [balance, set_balance] = useState(Number(0)); 
+    
 
     const [line_items, set_line_items] = useState([]); 
     
 
-    
+    //FUNCTION TO LIFT STATE OF USER INPUTS IN THE SOV STEP UP. 
     const update_billed_to_date = (inputs) =>{
         set_saved_inputs(inputs); 
-        let temp = 0; 
-        
-        inputs.map((item) => temp += Number(item));        
-        set_this_draw_total(temp)
+        let draw_total = Number(0);
+        //CALCULATE TOTAL OF THE USER INPUTS
+        if(saved_inputs.length > 0){
+            for (let i=0; i < saved_inputs.length; i++){
+                draw_total += Number(saved_inputs[i]); 
+            }
+        }
+        set_balance(draw_total); 
+
+
     }
 
     
     const [current_step, set_current_step] = useState(0); 
+
     const preview = () => {
         return(
             <>
-            <div> Please review the application before continuing to the submission step. </div>
-            <Button onClick={()=>set_modal_open(true)}> 
-                Preview Application
-            </Button> <br/> 
+                <div> Please review the application before continuing to the submission step. </div>
+                <Button onClick={()=>set_modal_open(true)}> Preview Application </Button> <br/> 
             </>
 
         );
 
     }
+
+    //EACH SECTION TO BE USED FOR THE STEPPER. INCLUDES THE REACT COMPONENT TO RENDER FOR EACH SECTION.
     const steps = [       
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
@@ -81,136 +84,58 @@ function Pay_app() {
         {label: 'Submission' , content: <div></div>}
     ];
     
-    const [modal_open, set_modal_open] = useState(false); 
-    const [modal_index, set_modal_index] = useState(0); 
-    
-
-
-    //fetch the document from firebase
+   
+    //FETCH THE DATA
     useEffect( () => {
         const fetchData = async () =>{
+
+            //LOAD CONTRACT_INFO
             const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             set_contract_info(dataList.data()); 
             console.log(dataList.data()); 
-        
+            
+            //LOAD OWNER_INFO
             const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
             set_owner_info(dataList2.data()); 
 
+            //LOAD THE SOV DATA FOR THE CONTRACT
             const tempList = []; 
-
-
             const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
             dataList3.forEach((doc) => {
                 let tempDict = doc.data(); 
                 tempDict["id"] = doc.id; 
-                //tempDict["parent"] = doc.ref.parent.path.slice(0,-4); 
                 tempList.push(tempDict); 
-                //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
             });
-
-            console.log("tempList: ",tempList); 
             set_sov(tempList); 
-            //set_line_items(Sov_item_totals(sov,contract_info.app_count,0.05));
-            //console.log("LINE_ITEMS", line_items); 
             set_loading(false); 
-            //set_line_items(Sov_item_totals(dataList3,Number(dataList.app_count),0.05)); 
-            //console.log("LINE_ITEMS", line_items); 
-            
         }
         fetchData(); 
-        
-
-        
     }, []);  
 
     useEffect(() => {
-        //set_line_items(Sov_item_totals(sov,contract_info.app_count,0.05));
-        
-        get_previous_draws(); 
-        get_co_sums(); 
-        //console.log("hey hey", contract_info); 
-        set_contract_total(contract_info ? contract_info.base_contract_value : 0); 
-        set_co_total(contract_info ? contract_info.co_value : 0); 
-        set_line_items(contract_info != null && sov !=null ? Sov_item_totals(sov,contract_info.app_count,0.05) : []); 
-        
-        
+           set_line_items(contract_info != null && sov !=null ? Sov_item_totals(sov,contract_info.app_count,0.05) : []); 
     }, [loading, contract_info, sov]);
 
 
-    //TAKE THE SOV DATA AND CONVERT INTO LIST OF JSON OBJECTS TO BE USED INSIDE THE PAYMENT APPLICATION.
+    //TAKE THE SOV DATA AND CONVERT INTO LIST OF JSON OBJECTS REPRESENTING SUMMARY DATA FOR EACH INDIVIDUAL LINE ITEM
     useEffect(() => {
-        
-        console.log("RAN");
-        console.log("CONTRACT INFO", contract_info); 
         if(sov.length>0){
-            console.log("SOV", sov.length); 
-            console.log("SOV items", sov); 
-            console.log("APP_COUNT", contract_info.app_count); 
-
-            set_line_items(Sov_item_totals(sov,Number(contract_info.app_count),0.05)); 
-            
+             set_line_items(Sov_item_totals(sov,Number(contract_info.app_count),0.05)); 
         }
-
-     
-
-        
     }, [loading]);
     
 
-    
-    const get_previous_draws = () =>{
-        let temp_sums = []; 
-        let sum = 0; 
-        let total = 0; 
-        //console.log("this is the sov here: ", sov); 
-        for (var i = 0; i<sov.length; i++){
-           // console.log("sov", sov); 
-            if(sov[i].hasOwnProperty('pay_apps')){
-                if(sov[i].pay_apps.length >0){
-                    //sov[i].pay_apps.map(item=>sum = Number(sum) + Number(item)); 
-                    sov[i].pay_apps.map(item=>
-                        {sum = Number(sum) + (item ? Number(item):0)}); 
-                    temp_sums[i] = sum; 
-                    //console.log("here2:",sum);
-                    total +=sum; 
-                } 
-                else{
-                    temp_sums[i] = 0; 
-                }
-            }
-            else{
-                temp_sums.push(0); 
-            }
-            sum = 0; 
-        }
-        set_prev_draws(temp_sums);  
-        set_prev_draws_total(total); 
-        //set_prev_draws_total(total); 
-        console.log("total",total)
-        //console.log("prev draws total: ", total)
+
+    const submission_success = () => {
+        alert("Change Order Added Successfully. You will now be redirected to the contract page"); 
+        window.location='/contract/'+ String(id)
+
     }
 
 
-
-    const get_co_sums = () =>{
-        console.log("This is sov", sov); 
-        let temp_sums = []; 
-        let sum = 0; 
-        for (var i = 0; i<sov.length; i++){
-            if(sov[i].change_orders.length >0){
-                sov[i].change_orders.map(item=>sum = Number(sum) + Number(item.value)); 
-                temp_sums[i] = sum; 
-            } 
-            else{
-                temp_sums[i] = 0; 
-            }
-            sum = 0; 
-        }
-        set_co_sums(temp_sums);  
-    }
 
     const submit_pay_app = () => {
-        //make a copy of the current sov and append pay app values to each item
+        //MAKE A COPY OF THE CURRENT SOV AND APPEND APP AVALUES TO EACH LINE ITEM
         let temp_sov = sov; 
         temp_sov.map((item,index)=>{
             if(!item.pay_apps){
@@ -225,10 +150,15 @@ function Pay_app() {
                 item.pay_apps.push(saved_inputs[index])
             }
         });
-        console.log("updated sov", temp_sov); 
-        console.log("prev_draws_total", prev_draws_total); 
-        console.log("this_draw_total", this_draw_total); 
-        console.log("balance", balance); 
+
+        let draw_total = Number(0);
+        //CALCULATE TOTAL OF THE USER INPUTS
+        if(saved_inputs.length > 0){
+            for (let i=0; i < saved_inputs.length; i++){
+                draw_total += Number(saved_inputs[i]); 
+            }
+        }
+
 
         let batch = firestoreDB.batch(); 
         let contract_ref = firestoreDB.collection("contracts").doc(id); 
@@ -241,31 +171,29 @@ function Pay_app() {
         });
 
         let date = new Date();
-        //batch.set(sov_ref, {sov:temp_sov}); 
-        batch.update(contract_ref, {"prev_draws":Number(prev_draws_total)});
-        batch.update(contract_ref, {"this_draw":Number(this_draw_total)});
-        batch.update(contract_ref, {"balance":Number(balance)});
-        batch.update(contract_ref, {"balance":Number(balance)});
+        let rev_prev_draws = Number(contract_info.prev_draws)+Number(contract_info.this_draw);
+        let period_balance = Number(contract_info.base_contract_value)+Number(contract_info.co_value)-Number(rev_prev_draws)-Number(draw_total); 
+
+
+        batch.update(contract_ref, {"prev_draws":rev_prev_draws});
+        batch.update(contract_ref, {"this_draw":Number(draw_total)});
+        batch.update(contract_ref, {"balance":period_balance});
         batch.update(contract_ref, {"recent_task":"Added a payment application"});
         batch.update(contract_ref, {"update":date});
         batch.update(contract_ref, {"app_count":Number(contract_info.app_count + Number(1))});
         batch.commit().then(()=>{
-            alert("App Submitted"); 
+            submission_success();  
         })
         .catch((error) => {
             console.error("Error adding pay app", error); 
+            alert("Failed to submit payment application. Please try again later.")
         });
-
-        //backup pay_app status
-        //saved_inputs, prev_draws_total, this_draw_total, balance
-
 
     }
 
-    //need to adjust the array of payment applications inside each sov item to prepare it for passing into the Pay_app_viewer component
+    //RETURNS A CONVERTED VERSION OF THE SOV THAT INCLUDES THE USER INPUT DRAW AMOUNTS TO BE VIEWED IN THE PAY APP VIEWER
     const adjust_sov = () => {
         let temp_sov = sov; 
-        console.log("here is the temp_sov before :", sov)
         temp_sov.map((item,index)=>{
             if(saved_inputs[index] === ""){
                 item.pay_apps.push(0);
@@ -273,16 +201,11 @@ function Pay_app() {
             else{
                 item.pay_apps.push(Number(saved_inputs[index]));
             }
-           
         })
-
-        console.log("here is the temp sov: ", temp_sov)
         return(temp_sov);
-
-
     }
 
-
+    //LOGIC FOR THE STEPPER ELEMENTS
     const build_steps = (item,index) => {
         const button_builder = () => {
             if (index==0){
@@ -354,11 +277,10 @@ function Pay_app() {
             <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
    
                 <Paper > 
-                    {console.log("Here is the sov: ", sov)}
-                    {console.log("here are the inputs: ", saved_inputs)}
-
                     <Paper sx={{width:400}}> 
+                        {/*
                         <Pay_app_viewer draft={true} app_id={contract_info.app_count+1} contract_info={contract_info} owner_info={owner_info} sov={adjust_sov()}/>
+                        */}
                     </Paper>
                     : 
                     <> </>

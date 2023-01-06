@@ -2,26 +2,14 @@ import React, {useEffect,useState} from 'react';
 import {useParams} from "react-router-dom";
 import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import firebase from "./Firebase.js"; 
-import PDF_table from "./PDF_Viewer/PDF_table.js";
 import Pay_app_viewer_g702 from "./Pay_app_viewer/Pay_app_viewer_g702.js"; 
 import Pay_app_viewer_g703 from "./Pay_app_viewer/Pay_app_viewer_g703.js"; 
-//import { toolbarPlugin, ToolbarSlot } from "@react-pdf-viewer/toolbar";
 
-//Tables
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import TablePagination from '@mui/material/TablePagination';
-import { FormatBold } from '@material-ui/icons';
 
 
 //This component builds a pdf view of any payment applications. 
 //Requires the Document ID of the contract and the # for the payment application
-function Pay_app_viewer(props) {
+function Pay_app_draft_viewer(props) {
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const [contract_info, set_contract_info] = useState(); 
     const [owner_info, set_owner_info] = useState(); 
@@ -104,24 +92,7 @@ function Pay_app_viewer(props) {
 
   
 
-    const table_styles = StyleSheet.create({
-        table:{
-            flexWrap: "wrap",
-            flexDirection: "row"
-        },
-        row: {
-            flexDirection: "row",
-            alignItems: "center",
-          },
-          cell: {
-            width: "50%",
-          },
-          cell_content: {
-             fontSize: 20
-          }
-
-    }
-    );
+ 
 
 
     //build table data for g703 sheet
@@ -168,57 +139,7 @@ function Pay_app_viewer(props) {
     }
 
 
-    const styles = StyleSheet.create({
-        page_top: {
-            flexDirection:'row',
-            backgroundColor: '#ffffff'
-        },
-        row: {
-            flexDirection:'row'
-        },
-        section: {
-          margin: 10,
-          padding: 10,
-          flexGrow: 1
-        },
-        content: {
-            fontSize: 12,
-            fontWeight: "light"
-        },
-        header: {
-            fontWeight: "extrabold",
-            fontSize: 14,
-            marginBottom: 3,
-            marginTop: 3
-            
-        }
-    });
-    
-    //const build_
-    
-
-
-    /*
-    address_01
-    address_02
-    app_count
-    balance
-    base_contract_value
-    city
-    co_count
-    co_value
-    date
-    name
-    number
-    owner_id
-    owner_name
-    prev_draws
-    state
-    this_draw
-    zip
-
-
-    */
+ 
    
 
     //builds the content to be passed as a prop to the G702 sheet
@@ -408,4 +329,4 @@ function Pay_app_viewer(props) {
     )
 }
 
-export default Pay_app_viewer
+export default Pay_app_draft_viewer

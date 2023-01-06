@@ -18,12 +18,6 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
-//Forms
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import Input from '@mui/material/Input';
-
 
 
 
@@ -121,20 +115,23 @@ function Job_setup() {
     
     const submit_db = () =>{
         let temp_project = project_info;
-          //temp_project["sov"] = sov_data; 
-        //temp_project["owner"] = owner_info; 
+        let job_total = get_job_total(sov_data);
+
         firestoreDB.collection("owners").add(owner_info)
         .then((docRef) => {
             console.log("Owner Submission Successful");
             console.log("Owner Info is here: " + docRef.id)
             temp_project["owner_id"] = docRef.id; //need to add the id of the owner document, so we can easily retrieve owner info
             temp_project["owner_name"] = owner_info.name; 
-            temp_project["base_contract_value"] = get_job_total(sov_data); 
-            temp_project["co_count"] = 0; 
-            temp_project["co_value"] = 0; 
-            temp_project["app_count"] = 0; 
+            temp_project["base_contract_value"] = Number(job_total); 
+            temp_project["co_count"] = Number(0); 
+            temp_project["co_value"] = Number(0); 
+            temp_project["app_count"] = Number(0); 
             temp_project["update"] = new Date();
             temp_project["recent_task"] = "Added a new contract"; 
+            temp_project["balance"] = Number(job_total);
+            temp_project["prev_draws"] = Number(0);
+            temp_project["this_draw"] = Number(0); 
 
             firestoreDB.collection("contracts").add(temp_project)
             .then((docRef2) => {
@@ -179,48 +176,7 @@ function Job_setup() {
     }
     
 
-    /*
-    const submit_db = () =>{
-        let temp_project = project_info;
-        temp_project["sov"] = sov_data; 
 
-        firestoreDB.collection("contracts").add(temp_project)
-            .then((docRef)=>{
-                
-                console.log("submission of contract complete"); 
-                firestoreDB.collection("owners").doc(docRef.id).set(owner_info)
-                .then((docRef2)=>{
-                    console.log("submission of owner data complete")
-                })
-                .catch((error) => {
-                    console.error("Error adding owner"); 
-                }) ; 
-                 
-                firestoreDB.collection("change_orders").doc(docRef.id).set({})
-                .then((docRef3)=>{
-                    console.log("submission of change order data complete")
-                })
-                .catch((error) => {
-                    console.error("Error adding change order"); 
-                }) ; 
-                firestoreDB.collection("pay_apps").doc(docRef.id).set({})
-                .then((docRef3)=>{
-                    console.log("submission of pay app data complete")
-                })
-                .catch((error) => {
-                    console.error("Error adding pay apps"); 
-                }) ; 
-                
-
-            })
-            .catch((error) => {
-                console.error("Error adding contract info"); 
-            }); 
-
-    
-
-    }
-    */ 
 
     const build_steps = (item,index) => {
         const button_builder = () => {
