@@ -81,7 +81,7 @@ function Sov_table(props) {
         let temp_balance = (Number(props.contract_info.co_value)+Number(props.contract_info.base_contract_value)-Number(props.contract_info.prev_draws)-Number(props.contract_info.this_draw));
 
 
-        let footers = 
+        let temp_footer = 
         {
             base_value: props.contract_info.base_contract_value,
             co_value: props.contract_info.co_value,
@@ -91,18 +91,17 @@ function Sov_table(props) {
             balance:temp_balance
         };
         
+        //IF USE HAS PROVIDED INPUTS, WE NEED TO RECALCULATE TOTALS FOR WORK COMPLETE AND BALANCE
         if (props.saved_inputs.length>0){
             for(let i=0; i<props.saved_inputs.length; i++){
                 cur_draw_total += Number(props.saved_inputs[i])
-                
             }
-            temp_balance = Number(footers.revised_value)-Number(footers.prev_draws)-Number(cur_draw_total); 
+            temp_balance = Number(temp_footer.revised_value)-Number(temp_footer.prev_draws)-Number(cur_draw_total); 
         }
 
-        footers.cur_draw = cur_draw_total; 
-        footers.balance = temp_balance; 
-
-        set_footer(footers); 
+        temp_footer.cur_draw = cur_draw_total; 
+        temp_footer.balance = temp_balance; 
+        set_footer(temp_footer); 
     }
 
   
@@ -122,7 +121,8 @@ function Sov_table(props) {
  
 
         //needs to update balance total for the period
-        temp_footer.balance = Number(temp_footer.balance) - Number(inputs.current[i].getValue()); 
+        temp_footer.balance = Number(temp_footer.revised_value) - Number(temp_footer.prev_draws)- Number(temp_footer.cur_draw); 
+        
 
         set_line_items(temp_line_items); 
         set_footer(temp_footer); 
@@ -237,15 +237,13 @@ function Sov_table(props) {
                     <CurrencyTextField
                         label="Amount"
                         variant="outlined"
-                        value={(props.saved_inputs === []) ? 0 : props.saved_inputs[index]}
+                        value={props.saved_inputs.length ===0 ? 0 : props.saved_inputs[index]}
                         currencySymbol="$"
                         minimumValue="0"
-                        maximumValue = {max_input[index]} 
-                        //maximumValue = "12"
+                        maximumValue = {Number(item.revised_value)-Number(item.prev_draws)} 
                         outputFormat="string"
                         decimalCharacter="."
                         digitGroupSeparator=","
-                        
                         leadingZero={"deny"}
                         ref={(val) => (inputs.current[index] = val)}
                         onChange={()=>handle_input(index)}
@@ -253,8 +251,9 @@ function Sov_table(props) {
                 </TableCell>
                 <TableCell> 
                     {
-                        props.saved_inputs === [] ? 
-                            currency(Number(item.revised_value)-Number(item.prev_draws)-Number(item.cur_draw)) 
+                        props.saved_inputs.length ===0 ? 
+                            currency(Number(item.revised_value)-Number(item.prev_draws)) 
+                            
                             :
                             currency(Number(item.revised_value)-Number(item.prev_draws)-Number(props.saved_inputs[index]))
                     } 
