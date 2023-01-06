@@ -75,7 +75,7 @@ function Pay_app() {
     const steps = [       
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
-            content: <Sov_table line_items={line_items} contract_info={contract_info} sov_data={sov} prev_draws={prev_draws} prev_draws_total={prev_draws_total} co_sums={co_sums} saved_inputs={saved_inputs} update_inputs={update_billed_to_date} balance={(item)=>set_balance(item)} />},
+            content: <Sov_table line_items={line_items} contract_info={contract_info} saved_inputs={saved_inputs} update_inputs={update_billed_to_date} />},
         {label: 'Billing Details', content: <Billing_details  balance={balance} bill_retention={bill_retention} update_bill_retention={(item)=>set_bill_retention(item)}/>},
         {label: 'Preview', content: preview()},
         {label: 'Submission' , content: <div></div>}
