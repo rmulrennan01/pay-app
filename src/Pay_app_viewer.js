@@ -1,5 +1,7 @@
 import React, {useEffect,useState} from 'react';
 import {useParams} from "react-router-dom";
+import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
+import Totals_by_key from './Utilities/Totals_by_key.js';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import firebase from "./Firebase.js"; 
 import PDF_table from "./PDF_Viewer/PDF_table.js";
@@ -17,6 +19,7 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
 import { FormatBold } from '@material-ui/icons';
+import Sov_table from './Pay_app/Sov_table.js';
 
 
 //This component builds a pdf view of any payment applications. 
@@ -33,6 +36,9 @@ function Pay_app_viewer(props) {
     const [g703_data, set_g703_data] = useState([]); 
     const [g703_totals, set_g703_totals] = useState([]); 
 
+    const [line_items, set_line_items] = useState([]);
+    const [line_item_totals, set_line_item_totals] = useState({}); 
+
     //const {temp_id,temp_app_id} = useParams();
     const params = useParams(); 
     const [id, set_id] = useState(0); 
@@ -40,7 +46,7 @@ function Pay_app_viewer(props) {
     //const {id, app_id} = useParams();
 
 
- 
+    //params.id, params.app_id,
 
     useEffect( () => {
         //fetches from firebase
@@ -77,6 +83,8 @@ function Pay_app_viewer(props) {
             set_id(params.id); 
             set_app_id(params.app_id);
             fetchData(); 
+            //set_line_items(Sov_item_totals(sov,params.app_id,0.05)); 
+            //console.log("LINE_ITEMS", line_items); 
         }
         //case where this is a draft payment application to be previewed in the payment application process
         //app_id will be passed as a prop instead of being pulled form the url path
@@ -86,8 +94,19 @@ function Pay_app_viewer(props) {
             set_contract_info(props.contract_info);
             set_sov(props.sov); 
 
+
         }
     }, []);  
+
+    useEffect(() => {
+        set_line_items(sov !=null ? Sov_item_totals(sov,contract_info.app_count-1,0.05) : []);
+        console.log("LINE_ITEMS", line_items);  
+     }, [loading, contract_info, sov]);
+
+     useEffect(()=> {
+        set_line_item_totals(sov!=null ? Totals_by_key(line_items,'*'): []);
+        console.log("LINE_ITEM_TOTALS", line_item_totals); 
+     },[line_items])
 
     useEffect(()=>{
         if((sov !=null) && (contract_info !=null)){
@@ -377,14 +396,15 @@ function Pay_app_viewer(props) {
                 contract_info={contract_info}
                 owner_info={owner_info}
                 app_id={app_id}
+                line_items={line_items}
             />
 
             <Pay_app_viewer_g703
                 g703_data={g703_data}
                 g703_totals={g703_totals}
                 app_id={app_id}
-            
-            
+                line_items={line_items}
+                line_item_totals={line_item_totals}
             /> 
         </Document>
         </PDFViewer>

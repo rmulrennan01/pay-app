@@ -80,7 +80,7 @@ function App() {
         <Route path="*" element={<Job_setup />} /> 
         <Route path='/contract/:id' element={<Contract_page />} />
         <Route path='/pay_app/:id' element={<Pay_app />} />
-        <Route path='/pdf/:id/:app_id' element={<Pay_app_viewer />} />
+        <Route path='/pdf/:id/:app_id/:draft' element={<Pay_app_viewer />} />
        
         
 

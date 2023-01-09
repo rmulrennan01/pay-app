@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import { BorderColor } from '@material-ui/icons';
 import CurrencyFormat from 'react-currency-format';
 
 function Pay_app_viewer_g703(props) {
+    const [line_items, set_line_items] = useState(props.line_items); 
+    //const [totals, set_totals] = useState(props.line_item_totals); 
+
     const styles = StyleSheet.create({
         page: {
             flexDirection:'column',
@@ -46,15 +49,9 @@ function Pay_app_viewer_g703(props) {
             case "%":
                 return parseFloat(item).toFixed(2) + "%"; 
             default:
-                return "";
-            
+                return "";   
         }
-
-
-
     }
-
- 
 
 
     const build_rows = (data,header,row_height) =>{
@@ -71,53 +68,94 @@ function Pay_app_viewer_g703(props) {
                                 <Text style={[{fontSize:8},{border:1}, {width:column_widths[indt]},{height:row_height}]} key={indt+cell}>
                                      {cell_formatter(cell,type[indt])}
                                 </Text>
-                              
-
                             );
                             }
                         )} 
                     </View>
                     
                 )})
-
             }
             </View>
         );
+    }
+
+
+
+    //DEFINES CELL SIZES AND DISPLAYED UNIT TYPES FOR EACH COLUMN
+    const column_widths = [60,60,100,60,60,60,60,60,60,60,60,60];
+    const type = ["txt","txt","txt","$","$","$","$","$","$","%","$","$"] ;
+    const row_height= 20; 
+
+    //HELPER FUNCTION TO FORMAT EACH TABLE CELL. REDUCES AMOUNT OF REPEAT CODE.
+    const cell_formatter_2 = (item, type, cell_width, cell_height) =>{
+        switch(type){
+            case "txt":
+                return  <Text style={[{fontSize:8},{border:1}, {width:cell_width},{height:cell_height}]}>{item} </Text>
+            case "$":
+                return <Text style={[{fontSize:8},{border:1}, {width:cell_width},{height:cell_height}]}>{currency(item)} </Text>
+            case "%":
+                return <Text style={[{fontSize:8},{border:1}, {width:cell_width},{height:cell_height}]}>{parseFloat(item).toFixed(2) + "%"}</Text>
+            default:
+                return <Text style={[{fontSize:8},{border:1}, {width:cell_width},{height:cell_height}]}> </Text>
         }
-        
+    }
 
-    
 
-    
-    
-
-    const build_table = (data) => {
-        return(
-            <View style={styles.table}>
-                {build_rows(data[0])}
-            </View>
+    //BUILD CELLS FOR G703 TABLE
+    const build_table_body = (item,index) => {
+        let completed = Number(item.prev_draws)+Number(item.cur_draw); 
+        return (
+            <View style={[styles.row]} key={index+"row"}> 
+                {cell_formatter_2(item.cost_code,type[0], column_widths[0], row_height)}
+                {cell_formatter_2(index+1,type[1], column_widths[1], row_height)}
+                {cell_formatter_2(item.description,type[2], column_widths[2], row_height)}
+                {cell_formatter_2(item.value,type[3], column_widths[3], row_height)}
+                {cell_formatter_2(Number(item.co_prev)+Number(item.co_cur),type[4], column_widths[4], row_height)}
+                {cell_formatter_2(item.revised_value,type[5], column_widths[5], row_height)}
+                {cell_formatter_2(item.prev_draws,type[6], column_widths[6], row_height)}
+                {cell_formatter_2(item.cur_draw,type[7], column_widths[7], row_height)}
+                {cell_formatter_2(completed,type[8], column_widths[8], row_height)}
+                {cell_formatter_2(Number(completed)/Number(item.revised_value)*100,type[9], column_widths[9], row_height)}
+                {cell_formatter_2(item.balance,type[10], column_widths[10], row_height)}
+                {cell_formatter_2(item.retention,type[11], column_widths[11], row_height)}
+            </View> 
         )
     }
-    
 
-   /* return (
-        
-        <View style={styles.table}>
-            
-            <PDF_table_row
-                cell_data = {props.cell_data}
-                column_width = {props.column_width}
-                border = {props.border}
-            />
-
-        </View>
-        
-    )
-} */
-    const my_data = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18],[19,20,21],[22,23,24],[25,26,27],[28,29,30],[31,32,33],[34,35,36]];
     const table_headers = [['CODE','ITEM NO','DESCRIPTION OF WORK','SCHEDULED VALUE',"BUDGET ADJUSTMENTS & CO'S",'REVISED SCHEDULED VALUES',
-        'FROM PREVIOUS APPLICATION (D+E)','THIS PERIOD','TOTAL COMPLETED AND STORED TO DATE','%','BALANCE TO FINISH','RETAINAGE']];
+    'FROM PREVIOUS APPLICATION (D+E)','THIS PERIOD','TOTAL COMPLETED AND STORED TO DATE','%','BALANCE TO FINISH','RETAINAGE']];
     const column_labels = [['A','B','C','D','E','F','G','H','J','K','L','M']];
+    
+    
+    //BUILD FOOTER TOTALS FOR G703 TABLE
+    const build_table_footer = () => {
+        let totals = props.line_item_totals; 
+        let completed = Number(totals.prev_draws)+Number(totals.cur_draw);
+        let percent = Number(completed)/Number(totals.revised_value) *100; 
+        return(
+            <View style={[styles.row]} > 
+                {cell_formatter_2("",type[0], column_widths[0], row_height)}
+                {cell_formatter_2("",type[1], column_widths[1], row_height)}
+                {cell_formatter_2('GRAND TOTALS',type[2], column_widths[2], row_height)}
+                {cell_formatter_2(totals.value, type[3], column_widths[3], row_height)}
+                {cell_formatter_2(totals.co_cur+totals.co_prev,type[4], column_widths[4], row_height)}
+                {cell_formatter_2(totals.revised_value,type[5], column_widths[5], row_height)}
+                {cell_formatter_2(totals.prev_draws,type[6], column_widths[6], row_height)}
+                {cell_formatter_2(totals.cur_draw,type[7], column_widths[7], row_height)}
+                {cell_formatter_2(completed,type[8], column_widths[8], row_height)}
+                {cell_formatter_2(percent,type[9], column_widths[9], row_height)}
+                {cell_formatter_2(totals.balance,type[10], column_widths[10], row_height)}
+                {cell_formatter_2(totals.retention,type[11], column_widths[11], row_height)}
+            </View> 
+        )
+    }
+
+  
+        
+
+ 
+
+
     return (
         <Page size="A4" style={styles.page} orientation="landscape">
             <View style={[{height:50},{flexDirection:"row"}]}>
@@ -147,8 +185,9 @@ function Pay_app_viewer_g703(props) {
             <View>
                 {build_rows(column_labels,true,35)}
                 {build_rows(table_headers,true,35)}
-                {build_rows(props.g703_data,false,15)}
-                {build_rows([props.g703_totals],false, 15)}
+                {line_items.map(build_table_body)}
+                {build_table_footer()}
+               
             </View>
         </Page> 
 

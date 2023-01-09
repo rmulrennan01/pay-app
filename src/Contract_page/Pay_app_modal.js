@@ -51,7 +51,7 @@ function Pay_app_modal(props) {
 
     const open_pdf = () => {
         let new_tab = window.open('about:blank',"_blank"); 
-        new_tab.location = ('/pdf/'+ String(id)+ '/' + String(props.pay_app_id+1)); 
+        new_tab.location = ('/pdf/'+ String(id)+ '/' + String(props.pay_app_id+1)+'/' + "false"); 
 
     }
 
