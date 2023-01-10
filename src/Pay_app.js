@@ -191,17 +191,22 @@ function Pay_app() {
 
     }
 
-    //RETURNS A CONVERTED VERSION OF THE SOV THAT INCLUDES THE USER INPUT DRAW AMOUNTS TO BE VIEWED IN THE PAY APP VIEWER
+    //RETURNS A CONVERTED VERSION OF THE SOV THAT APPENDS THE USER INPUT DRAW AMOUNTS TO BE VIEWED IN THE PAY APP VIEWER
     const adjust_sov = () => {
         let temp_sov = sov; 
         temp_sov.map((item,index)=>{
+            if(!item.hasOwnProperty("pay_apps")){
+                temp_sov[index].pay_apps = [];
+            }
             if(saved_inputs[index] === ""){
-                item.pay_apps.push(0);
+                temp_sov[index].pay_apps.push(Number(0));
             }
             else{
-                item.pay_apps.push(Number(saved_inputs[index]));
+                temp_sov[index].pay_apps.push(Number(saved_inputs[index]));
+                console.log("TEMP_PAY_APP", saved_inputs[index])
             }
         })
+        console.log("TEMP_SOV", temp_sov); 
         return(temp_sov);
     }
 
@@ -278,9 +283,14 @@ function Pay_app() {
    
                 <Paper > 
                     <Paper sx={{width:400}}> 
-                        {/*
-                        <Pay_app_viewer draft={true} app_id={contract_info.app_count+1} contract_info={contract_info} owner_info={owner_info} sov={adjust_sov()}/>
-                        */}
+                        
+                        <Pay_app_viewer 
+                            draft={true} 
+                            app_id={contract_info.app_count+1} 
+                            contract_info={contract_info} 
+                            owner_info={owner_info} 
+                            sov={adjust_sov()}/>
+                        
                     </Paper>
                     : 
                     <> </>
