@@ -123,25 +123,6 @@ function Pay_app_viewer(props) {
 
   
 
-    const table_styles = StyleSheet.create({
-        table:{
-            flexWrap: "wrap",
-            flexDirection: "row"
-        },
-        row: {
-            flexDirection: "row",
-            alignItems: "center",
-          },
-          cell: {
-            width: "50%",
-          },
-          cell_content: {
-             fontSize: 20
-          }
-
-    }
-    );
-
 
     //build table data for g703 sheet
     const build_g703_data = (cost_item, index) => {
@@ -213,31 +194,7 @@ function Pay_app_viewer(props) {
         }
     });
     
-    //const build_
-    
-
-
-    /*
-    address_01
-    address_02
-    app_count
-    balance
-    base_contract_value
-    city
-    co_count
-    co_value
-    date
-    name
-    number
-    owner_id
-    owner_name
-    prev_draws
-    state
-    this_draw
-    zip
-
-
-    */
+  
    
 
     //builds the content to be passed as a prop to the G702 sheet
@@ -400,8 +357,6 @@ function Pay_app_viewer(props) {
             />
 
             <Pay_app_viewer_g703
-                g703_data={g703_data}
-                g703_totals={g703_totals}
                 app_id={app_id}
                 line_items={line_items}
                 line_item_totals={line_item_totals}
