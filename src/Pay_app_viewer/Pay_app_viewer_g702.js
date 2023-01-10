@@ -102,38 +102,10 @@ function Pay_app_viewer_g702(props) {
                 marginTop: 3
                 
             }
-
         });
-
-        /*
-                   { 
-           base_contract:props.contract_info.base_contract_value,
-           co_total:props.contract_info.co_value, 
-           total_contract:Number(props.contract_info.base_contract_value)+Number(props.contract_info.co_value),
-           completed:Number(props.this_draw_total)+Number(props.prev_draws_total), 
-           space:null,
-           retention:(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05, 
-           earned:Number(props.this_draw_total)+Number(props.prev_draws_total)-(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05,
-           prev_pay: props.prev_draws_total*.95,
-           due:Number(props.this_draw_total)+Number(props.prev_draws_total)-(Number(props.this_draw_total)+Number(props.prev_draws_total))*.05-props.prev_draws_total*.95, 
-           balance: props.balance
-
-        }
-
-
-        ​​
-            balance: 9643.100000000006
-            ​​base_contract: 37100
-            change_orders: 14000
-            payment: 30495
-            previous_payments: 26802
-            retention: 0
-            ​​revised_contract: 65600
-            this_draw: 32100
-        */
     
 
-    //function for formatting values to display on the pay app
+    //HELPER FUNCTION FOR FORMATTING VALUES TO DISPLAY IN A CURRENCY FORMAT
     const currency = (val) =>{
         return(
             <CurrencyFormat 
@@ -145,8 +117,6 @@ function Pay_app_viewer_g702(props) {
             decimalScale={2}
             renderText={value => <>{value}</>} 
             />
-            
-
         )
     }
 
@@ -212,23 +182,30 @@ function Pay_app_viewer_g702(props) {
 
                         </View>
                         <View style={styles.r3_c1_middle_right}>
-                            {console.log(props.draw_info)}
-                            <Text style={styles.content}>{currency(props.draw_info.base_contract)}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.change_orders_total)}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.revised_contract)}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.this_draw+props.draw_info.previous_payments)}</Text>
-                            <Text style={styles.content}>{props.draw_info.retention}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.ret_cur+props.draw_info.ret_prev)}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.this_draw+props.draw_info.previous_payments-props.draw_info.ret_cur-props.draw_info.ret_prev)} </Text>
+                           
+                            <Text style={styles.content}>{currency(props.line_item_totals.value)}</Text>
+                            <Text style={styles.content}>
+                                {currency(Number(props.line_item_totals.co_cur)+Number(props.line_item_totals.co_prev))}
+                            </Text>
+                            <Text style={styles.content}>{currency(props.line_item_totals.revised_value)}</Text>
+                            <Text style={styles.content}>{currency(Number(props.line_item_totals.cur_draw)+Number(props.line_item_totals.prev_draws))}</Text>
+                            <Text style={styles.content}>{props.retention*100}</Text>
+                            <Text style={styles.content}>{currency(props.line_item_totals.retention)}</Text>
+                            <Text style={styles.content}>
+                                {currency(Number(props.line_item_totals.cur_draw)+Number(props.line_item_totals.prev_draws)-Number(props.line_item_totals.retention))} 
+                            </Text>
                             <Text style={styles.content}>{" "}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.previous_payments-props.draw_info.ret_prev)} </Text>
+                            <Text style={styles.content}>
+                                {currency(Number(props.line_item_totals.prev_payment))} 
+                            </Text>
                             <Text style={styles.content}>{" "}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.payment)}</Text>
-                            <Text style={styles.content}>{currency(props.draw_info.revised_contract- props.draw_info.this_draw -props.draw_info.previous_payments + props.draw_info.ret_cur+props.draw_info.ret_prev)}</Text>
+                            <Text style={styles.content}>{currency(props.line_item_totals.cur_payment)}</Text>
+                            <Text style={styles.content}>{currency(Number(props.line_item_totals.balance)+Number(props.line_item_totals.retention))}</Text>
 
                         </View>
 
                     </View>
+                
                     <View style={styles.r3_c1_bottom}>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> CHANGE ORDER SUMMARY</Text>
@@ -237,23 +214,23 @@ function Pay_app_viewer_g702(props) {
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Total changes approved in previous months by Contractor</Text>
-                            <Text style={styles.table_c2}> {currency(props.draw_info.prev_pos_co)} </Text>
-                            <Text style={styles.table_c3}> {currency(-1*props.draw_info.prev_neg_co)} </Text>
+                            <Text style={styles.table_c2}> {currency(props.co_summary.co_prev_pos)} </Text>
+                            <Text style={styles.table_c3}> {currency(props.co_summary.co_prev_neg)} </Text>
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Total approved this Month</Text>
-                            <Text style={styles.table_c2}> {currency(props.draw_info.co_pos_total)} </Text>
-                            <Text style={styles.table_c3}> {currency(-1*props.draw_info.co_neg_total)} </Text>
+                            <Text style={styles.table_c2}> {currency(props.co_summary.co_cur_pos)} </Text>
+                            <Text style={styles.table_c3}> {currency(props.co_summary.co_cur_neg)} </Text>
                         </View>
                        
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Totals</Text>
-                            <Text style={styles.table_c2}> {currency(props.draw_info.co_pos_total+props.draw_info.prev_pos_co)} </Text>
-                            <Text style={styles.table_c3}> {currency(-1*props.draw_info.co_neg_total+props.draw_info.prev_neg_co)}</Text>
+                            <Text style={styles.table_c2}> {currency(props.co_summary.co_total_pos)} </Text>
+                            <Text style={styles.table_c3}> {currency(props.co_summary.co_total_neg)}</Text>
                         </View>
                         <View style={styles.table_row}>
                             <Text style={styles.table_c1}> Net Changes by Change Orders</Text>
-                            <Text style={styles.table_c2}> {currency(props.draw_info.change_orders_total)} </Text>
+                            <Text style={styles.table_c2}> {currency(props.co_summary.total)} </Text>
                             <Text style={styles.table_c3}> {" "} </Text>
                         </View>
 

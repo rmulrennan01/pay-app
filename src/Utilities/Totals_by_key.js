@@ -24,7 +24,7 @@ const Totals_by_key = (obj_list, key) => {
             let temp_obj = obj_list[i]; 
                 for (let k=0; k<key_list.length; k++){
                     let temp_key = key_list[k]; 
-                    console.log("TEMP_KEY", temp_key); 
+                    //console.log("TEMP_KEY", temp_key); 
                     if(total_list.hasOwnProperty(temp_key)){
                         total_list[temp_key] += Number(temp_obj[temp_key]);
                     }
