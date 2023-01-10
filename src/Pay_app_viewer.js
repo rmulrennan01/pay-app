@@ -99,7 +99,7 @@ function Pay_app_viewer(props) {
     }, []);  
 
     useEffect(() => {
-        set_line_items(sov !=null ? Sov_item_totals(sov,contract_info.app_count-1,0.05) : []);
+        set_line_items(sov !=null ? Sov_item_totals(sov,params.app_id-1,0.05) : []);
         console.log("LINE_ITEMS", line_items);  
      }, [loading, contract_info, sov]);
 

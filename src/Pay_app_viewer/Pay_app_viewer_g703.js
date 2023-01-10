@@ -5,7 +5,14 @@ import CurrencyFormat from 'react-currency-format';
 
 function Pay_app_viewer_g703(props) {
     const [line_items, set_line_items] = useState(props.line_items); 
-    //const [totals, set_totals] = useState(props.line_item_totals); 
+    const column_widths = [60,60,100,60,60,60,60,60,60,60,60,60];
+    const type = ["txt","txt","txt","$","$","$","$","$","$","%","$","$"] ;
+    const row_height= 20; 
+    const header_row_height = 50; 
+    const table_headers = ['COST CODE','ITEM NO','DESCRIPTION OF WORK','SCHEDULED VALUE',"BUDGET ADJUSTMENTS & CO'S",'REVISED SCHEDULED VALUES',
+    'FROM PREVIOUS APPLICATION (D+E)','THIS PERIOD','TOTAL COMPLETED AND STORED TO DATE','%','BALANCE TO FINISH','RETAINAGE'];
+    const column_labels = ['A','B','C','D','E','F','G','H','J','K','L','M'];
+
 
     const styles = StyleSheet.create({
         page: {
@@ -23,6 +30,7 @@ function Pay_app_viewer_g703(props) {
           }
     }); 
 
+    //RETURNS FORMATTED CURRENCY
     const currency = (val) =>{
         return(
             <CurrencyFormat 
@@ -34,60 +42,12 @@ function Pay_app_viewer_g703(props) {
             decimalScale={2}
             renderText={value => <>{value}</>} 
             />
-            
-
         )
     }
 
-    const cell_formatter = (item, type) =>{
-        let result = ""; 
-        switch(type){
-            case "txt":
-                return item; 
-            case "$":
-                return currency(item);
-            case "%":
-                return parseFloat(item).toFixed(2) + "%"; 
-            default:
-                return "";   
-        }
-    }
-
-
-    const build_rows = (data,header,row_height) =>{
-        let column_widths = [60,60,100,60,60,60,60,60,60,60,60,60];
-        let type = header ? new Array (12).fill("txt") : ["txt","txt","txt","$","$","$","$","$","$","%","$","$"] ;
-        return(
-            <View style={styles.table}>
-            {data.map((item,index)=>{
-                return (
-                    <View style={[styles.row]} key={index+"row"}>
-                        {item.map((cell,indt)=>{
-      
-                            return(
-                                <Text style={[{fontSize:8},{border:1}, {width:column_widths[indt]},{height:row_height}]} key={indt+cell}>
-                                     {cell_formatter(cell,type[indt])}
-                                </Text>
-                            );
-                            }
-                        )} 
-                    </View>
-                    
-                )})
-            }
-            </View>
-        );
-    }
-
-
-
-    //DEFINES CELL SIZES AND DISPLAYED UNIT TYPES FOR EACH COLUMN
-    const column_widths = [60,60,100,60,60,60,60,60,60,60,60,60];
-    const type = ["txt","txt","txt","$","$","$","$","$","$","%","$","$"] ;
-    const row_height= 20; 
 
     //HELPER FUNCTION TO FORMAT EACH TABLE CELL. REDUCES AMOUNT OF REPEAT CODE.
-    const cell_formatter_2 = (item, type, cell_width, cell_height) =>{
+    const cell_format = (item, type, cell_width, cell_height) =>{
         switch(type){
             case "txt":
                 return  <Text style={[{fontSize:8},{border:1}, {width:cell_width},{height:cell_height}]}>{item} </Text>
@@ -106,25 +66,37 @@ function Pay_app_viewer_g703(props) {
         let completed = Number(item.prev_draws)+Number(item.cur_draw); 
         return (
             <View style={[styles.row]} key={index+"row"}> 
-                {cell_formatter_2(item.cost_code,type[0], column_widths[0], row_height)}
-                {cell_formatter_2(index+1,type[1], column_widths[1], row_height)}
-                {cell_formatter_2(item.description,type[2], column_widths[2], row_height)}
-                {cell_formatter_2(item.value,type[3], column_widths[3], row_height)}
-                {cell_formatter_2(Number(item.co_prev)+Number(item.co_cur),type[4], column_widths[4], row_height)}
-                {cell_formatter_2(item.revised_value,type[5], column_widths[5], row_height)}
-                {cell_formatter_2(item.prev_draws,type[6], column_widths[6], row_height)}
-                {cell_formatter_2(item.cur_draw,type[7], column_widths[7], row_height)}
-                {cell_formatter_2(completed,type[8], column_widths[8], row_height)}
-                {cell_formatter_2(Number(completed)/Number(item.revised_value)*100,type[9], column_widths[9], row_height)}
-                {cell_formatter_2(item.balance,type[10], column_widths[10], row_height)}
-                {cell_formatter_2(item.retention,type[11], column_widths[11], row_height)}
+                {cell_format(item.cost_code,type[0], column_widths[0], row_height)}
+                {cell_format(index+1,type[1], column_widths[1], row_height)}
+                {cell_format(item.description,type[2], column_widths[2], row_height)}
+                {cell_format(item.value,type[3], column_widths[3], row_height)}
+                {cell_format(Number(item.co_prev)+Number(item.co_cur),type[4], column_widths[4], row_height)}
+                {cell_format(item.revised_value,type[5], column_widths[5], row_height)}
+                {cell_format(item.prev_draws,type[6], column_widths[6], row_height)}
+                {cell_format(item.cur_draw,type[7], column_widths[7], row_height)}
+                {cell_format(completed,type[8], column_widths[8], row_height)}
+                {cell_format(Number(completed)/Number(item.revised_value)*100,type[9], column_widths[9], row_height)}
+                {cell_format(item.balance,type[10], column_widths[10], row_height)}
+                {cell_format(item.retention,type[11], column_widths[11], row_height)}
             </View> 
         )
     }
 
-    const table_headers = [['CODE','ITEM NO','DESCRIPTION OF WORK','SCHEDULED VALUE',"BUDGET ADJUSTMENTS & CO'S",'REVISED SCHEDULED VALUES',
-    'FROM PREVIOUS APPLICATION (D+E)','THIS PERIOD','TOTAL COMPLETED AND STORED TO DATE','%','BALANCE TO FINISH','RETAINAGE']];
-    const column_labels = [['A','B','C','D','E','F','G','H','J','K','L','M']];
+ 
+
+    //BUILD HEADER TITLES FOR G703 TABLE
+    const build_table_headers = (data) => {
+        return (
+            <View style={[styles.row]} > 
+                {data.map((item,index) => {
+                    return cell_format(item, "txt", column_widths[index], header_row_height)
+                })}
+            </View> 
+
+        ); 
+    }
+
+
     
     
     //BUILD FOOTER TOTALS FOR G703 TABLE
@@ -134,28 +106,23 @@ function Pay_app_viewer_g703(props) {
         let percent = Number(completed)/Number(totals.revised_value) *100; 
         return(
             <View style={[styles.row]} > 
-                {cell_formatter_2("",type[0], column_widths[0], row_height)}
-                {cell_formatter_2("",type[1], column_widths[1], row_height)}
-                {cell_formatter_2('GRAND TOTALS',type[2], column_widths[2], row_height)}
-                {cell_formatter_2(totals.value, type[3], column_widths[3], row_height)}
-                {cell_formatter_2(totals.co_cur+totals.co_prev,type[4], column_widths[4], row_height)}
-                {cell_formatter_2(totals.revised_value,type[5], column_widths[5], row_height)}
-                {cell_formatter_2(totals.prev_draws,type[6], column_widths[6], row_height)}
-                {cell_formatter_2(totals.cur_draw,type[7], column_widths[7], row_height)}
-                {cell_formatter_2(completed,type[8], column_widths[8], row_height)}
-                {cell_formatter_2(percent,type[9], column_widths[9], row_height)}
-                {cell_formatter_2(totals.balance,type[10], column_widths[10], row_height)}
-                {cell_formatter_2(totals.retention,type[11], column_widths[11], row_height)}
+                {cell_format("",type[0], column_widths[0], row_height)}
+                {cell_format("",type[1], column_widths[1], row_height)}
+                {cell_format('GRAND TOTALS',type[2], column_widths[2], row_height)}
+                {cell_format(totals.value, type[3], column_widths[3], row_height)}
+                {cell_format(totals.co_cur+totals.co_prev,type[4], column_widths[4], row_height)}
+                {cell_format(totals.revised_value,type[5], column_widths[5], row_height)}
+                {cell_format(totals.prev_draws,type[6], column_widths[6], row_height)}
+                {cell_format(totals.cur_draw,type[7], column_widths[7], row_height)}
+                {cell_format(completed,type[8], column_widths[8], row_height)}
+                {cell_format(percent,type[9], column_widths[9], row_height)}
+                {cell_format(totals.balance,type[10], column_widths[10], row_height)}
+                {cell_format(totals.retention,type[11], column_widths[11], row_height)}
             </View> 
         )
     }
 
   
-        
-
- 
-
-
     return (
         <Page size="A4" style={styles.page} orientation="landscape">
             <View style={[{height:50},{flexDirection:"row"}]}>
@@ -183,8 +150,8 @@ function Pay_app_viewer_g703(props) {
 
             </View>
             <View>
-                {build_rows(column_labels,true,35)}
-                {build_rows(table_headers,true,35)}
+                {build_table_headers(column_labels)}
+                {build_table_headers(table_headers)}
                 {line_items.map(build_table_body)}
                 {build_table_footer()}
                
