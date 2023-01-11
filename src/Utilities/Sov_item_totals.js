@@ -63,7 +63,7 @@ const Sov_item_totals = (sov, app_num, retention) => {
                 for (let i = 0; i<app_num; i++){
                     draws_prev += Number(item.pay_apps[i]);
                 }
-                temp_line_item.prev_draws = draws_prev;
+                temp_line_item.prev_draws = Number(draws_prev);
                 temp_line_item.cur_draw = Number(item.pay_apps[app_num])
             }
         }

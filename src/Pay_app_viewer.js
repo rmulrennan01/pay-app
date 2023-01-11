@@ -61,19 +61,22 @@ function Pay_app_viewer(props) {
         }
         //USE CASE FOR VIEWING A DRAFT OF A PAYMENT APPLICATION. ALL DATA IS PASSED AS A PROP (I.E. NOT A PARAM)
         else {
+            console.log("BUILDING DRAFT PDF")
             set_app_id(props.app_id); 
             set_owner_info(props.owner_info);
             set_contract_info(props.contract_info);
             set_sov(props.sov); 
+            console.log("SOV INSIDE PAY APP VIEWER", props.sov)
+            console.log("APP_ID INSIDE PAY APP VIEWER", props.app_id)
         }
     }, []);  
 
     //TO LIMIT RE-RENDERS WE ONLY NEED TO BUILD THE LINE_ITEMS FOR THE CHILD COMPONENTS ONCE SOV, CONTRACT_INFO, AND OWNER_INFO ARE POPULATED
     useEffect(()=>{
         if((sov !=[]) && (contract_info !=[]) && (owner_info !=[])){
-            set_line_items(sov !=null ? Sov_item_totals(sov,params.app_id-1,0.05) : []);
+            set_line_items(sov !=null ? Sov_item_totals(sov,app_id-1,0.05) : []);
             get_co_summary(); 
-           
+            console.log("LINE_ITEMS_DRAFT", line_items)
         }
     }, [sov, contract_info, owner_info]); 
 
