@@ -41,8 +41,8 @@ function Pay_app() {
     const [modal_open, set_modal_open] = useState(false); 
     const [balance, set_balance] = useState(Number(0)); 
     const [preview_sov, set_preview_sov]  = useState([]); 
-    const [trigger, set_trigger] = useState(false); 
-
+    const [preview_contract_info, set_preview_contract_info] = useState({}); 
+    const [current_step, set_current_step] = useState(0); 
     const [line_items, set_line_items] = useState([]); 
     
 
@@ -50,43 +50,14 @@ function Pay_app() {
     const update_billed_to_date = (inputs) =>{
         set_saved_inputs(inputs); 
         let draw_total = Number(0);
-        let temp_sov = sov; 
         //CALCULATE TOTAL OF THE USER INPUTS
         if(saved_inputs.length > 0){
             for (let i=0; i < saved_inputs.length; i++){
                 draw_total += Number(saved_inputs[i]); 
-                /*
-                if(!temp_sov[i].hasOwnProperty("pay_apps")){
-                    temp_sov[i].pay_apps = [];
-                }
-    
-                if(saved_inputs === []){
-                    temp_sov[i].pay_apps.push(0);
-                }
-                else{
-                    temp_sov[i].pay_apps.push(inputs[i]);
-                    console.log("TEMP_PAY_APP", inputs[i])
-                }
-                */
-                
+
             }
         }
         set_balance(draw_total); 
-        //set_preview_sov(temp_sov); 
-   
-
-
-    }
-
-    
-    const [current_step, set_current_step] = useState(0); 
-
-    const handle_preview_click = () => {
-        adjust_data(); 
-        set_modal_open(true)
-        console.log("PREVIEW_SOV", preview_sov);
-        set_trigger(!trigger); 
-
     }
 
     const preview = () => {
@@ -95,10 +66,11 @@ function Pay_app() {
                 <div> Please review the application before continuing to the submission step. </div>
                 <Button onClick={()=>handle_preview_click()}> Preview Application </Button> <br/> 
             </>
-
         );
-
     }
+    
+  
+
 
     //EACH SECTION TO BE USED FOR THE STEPPER. INCLUDES THE REACT COMPONENT TO RENDER FOR EACH SECTION.
     const steps = [       
@@ -159,7 +131,6 @@ function Pay_app() {
     }
 
 
-
     const submit_pay_app = () => {
         //MAKE A COPY OF THE CURRENT SOV AND APPEND APP AVALUES TO EACH LINE ITEM
         let temp_sov = sov; 
@@ -217,11 +188,22 @@ function Pay_app() {
 
     }
 
-    //RETURNS A CONVERTED VERSION OF THE SOV & CONTRACT_INFO THAT APPENDS THE USER INPUT DRAW AMOUNTS TO BE VIEWED IN THE PAY APP VIEWER
+    //CALLED UPON CLICKING THE PREVIEW BUTTON
+    const handle_preview_click = () => {
+        adjust_data(); 
+        set_modal_open(true)
+        console.log("PREVIEW_SOV", preview_sov);
+    }
+
+
+
+    //CREATES A CONVERTED VERSION OF THE SOV & CONTRACT_INFO THAT APPENDS THE USER INPUT DRAW AMOUNTS
+    //THIS IS REQUIRED IN ORDER TO FEED TO THE PAY_APP_VIEWER
     const adjust_data = () => {
-        var temp_sov = sov; 
-        console.log("SAVED_INPUTS", saved_inputs)
-        console.log('TEMP_SOV_BEFORE', temp_sov); 
+        let temp_sov = sov; 
+        let temp_contract_info = contract_info; 
+        let temp_draw = Number(0); 
+
         
         for (let i=0; i<temp_sov.length; i++){
             //IF MISSING A PAY APP LIST - NEED TO ADD
@@ -235,12 +217,19 @@ function Pay_app() {
             else{
                 if(saved_inputs[i] != undefined){
                     temp_sov[i].pay_apps[contract_info.app_count]=saved_inputs[i];
-                    console.log("TEMP_PAY_APP", saved_inputs[i])
+                    temp_draw += Number(saved_inputs[i]);
                 }
             }
         }
-        console.log('TEMP_SOV AFTER', temp_sov); 
+
         set_preview_sov(temp_sov); 
+
+        temp_contract_info.prev_draws = Number(contract_info.prev_draws) + Number(contract_info.this_draw);
+        temp_contract_info.this_draw = Number(temp_draw); 
+        temp_contract_info.balance = Number(contract_info.balance) - Number(temp_draw); 
+        temp_contract_info.app_count = Number(contract_info.app_count); 
+        set_preview_contract_info(temp_contract_info); 
+
     }
 
 
@@ -323,7 +312,7 @@ function Pay_app() {
                             <Pay_app_viewer 
                             draft={true} 
                             app_id={contract_info.app_count+1} 
-                            contract_info={contract_info} 
+                            contract_info={preview_contract_info} 
                             owner_info={owner_info} 
                             sov={preview_sov}/>
                         }
