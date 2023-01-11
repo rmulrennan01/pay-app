@@ -125,7 +125,7 @@ function Pay_app() {
 
 
     const submission_success = () => {
-        alert("Change Order Added Successfully. You will now be redirected to the contract page"); 
+        alert("Pay App Added Successfully. You will now be redirected to the contract page"); 
         window.location='/contract/'+ String(id)
 
     }
