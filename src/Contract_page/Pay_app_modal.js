@@ -18,12 +18,20 @@ function Pay_app_modal(props) {
     const [sov, set_sov] = useState(props.sov_data); 
     const [edit_mode, set_edit_mode] = useState(false); 
     const {id} = useParams();
-    const [prev_draws, set_prev_draws] = useState([]); 
-    const [prev_draws_total, set_prev_draws_total] = useState(0); 
-    const [co_sums, set_co_sums] = useState([]);
+    const [contract_info, set_contract_info] = useState(props.contract_info); 
     const [saved_inputs, set_saved_inputs] = useState([]);  
-    const [balance, set_balance] = useState(0); 
     const [this_draw_total, set_this_draw_total] = useState(0); 
+    const [app_id, set_app_id] = useState(Number(props.pay_app_id)); 
+    const [trigger, set_trigger] = useState(true); 
+
+    /*
+    useEffect(() => {
+        set_sov(props.sov); 
+        set_app_id(Number(props.pay_app_id)); 
+        set_contract_info(props.contract_info); 
+
+    }, [])
+    */
     
     const update_billed_to_date = (inputs) =>{
         set_saved_inputs(inputs); 
@@ -32,17 +40,7 @@ function Pay_app_modal(props) {
         inputs.map((item) => temp += Number(item));        
         set_this_draw_total(temp)
     }
-    useEffect(() => {
-           
-       // get_previous_draws(); 
-        //get_co_sums(); 
-        console.log("loaded"); 
-        
-        //console.log("hey hey", contract_info); 
-       // set_contract_total(contract_info ? contract_info.base_contract_value : 0); 
-        //set_co_total(contract_info ? contract_info.co_value : 0); 
-        
-    }, [sov])
+ 
 
     const enable_edit_mode = () => {
         set_edit_mode(true); 
@@ -56,24 +54,40 @@ function Pay_app_modal(props) {
     }
 
     const edit_button = () => {
-        console.log("Here's the cheese", props.contract_info.app_count, props.pay_app_id+1); 
         if (edit_mode){
             return(
                 <Button variant="contained" onClick={()=>alert("Are you sure?")}> Save & Submit Changes </Button>
             );
         }
-        else if (!edit_mode && props.pay_app_id+1 === props.contract_info.app_count){
+        else if (!edit_mode && app_id+1 == contract_info.app_count){
             return( 
                 <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>
             );
         }
 
         return(
-            <Button variant="contained" onClick={()=>alert("Only the most recent payment application can be edited. To edit this application, all subsequent applications need to be deleted.")}> Edit Application </Button>
+            <Button variant="contained" disabled={true} onClick={()=>alert("Only the most recent payment application can be edited. To edit this application, all subsequent applications need to be deleted.")}> Edit Application </Button>
         )
 
 
     }
+
+    const handle_prev_click = () => {
+        console.log(app_id); 
+        if(Number(app_id) > 0){
+            set_app_id(app_id-1); 
+            set_trigger(!trigger); 
+            console.log("CLICKED")
+        }
+    }
+
+    const handle_next_click = () =>{
+        if(Number(app_id)+1 < contract_info.app_count){
+            set_app_id(app_id+1); 
+        }
+
+    }
+    
 
  
 
@@ -82,30 +96,23 @@ function Pay_app_modal(props) {
             <div>
                 
                 <Paper> 
-                    <h2>Pay App # {props.pay_app_id+1} </h2> <br></br>
+                    <h2>Pay App # {app_id+1} </h2> 
+                    
+                    <br></br>
                     <Button variant='contained' onClick={()=>open_pdf()}>View PDF</Button>
-                    {edit_button() }
-                    
-                    
-                    
+                    {edit_button()}                
+                    <Pay_app_modal_table
+                        key = {app_id}
+                        sov_data={sov} 
+                        pay_app_id={app_id}
+                        edit_mode={edit_mode}
+                        contract_info={contract_info}
+                    /> 
+                    <br></br>
+                    <Button variant='contained' disabled={app_id == 0 ? true : false} onClick={()=>handle_prev_click()}> {"<"} Prev</Button> <Button disabled={app_id+1 == Number(contract_info.app_count) ? true : false} onClick={()=>handle_next_click()} variant='contained' > Next {">"} </Button>
+
+                </Paper>
                 
-                </Paper> 
-                 
-                    
-
-                
-                 <Pay_app_modal_table
-                    sov_data={sov} 
-                    pay_app_id={props.pay_app_id}
-                    edit_mode={edit_mode}
-                    contract_info={props.contract_info}
-                 /> 
-                
-
-
-                
-
-
             </div>
         
         
