@@ -17,7 +17,6 @@ function Pay_app_viewer_g703(props) {
     const styles = StyleSheet.create({
         page: {
             flexDirection:'column',
-            backgroundColor: '#ffffff',
             margin: 10
         },
         table:{
@@ -124,38 +123,48 @@ function Pay_app_viewer_g703(props) {
 
   
     return (
-        <Page size="A4" style={styles.page} orientation="landscape">
-            <View style={[{height:50},{flexDirection:"row"}]}>
-                <Text>CONTINUATION SHEET</Text>
-            </View>
-            <View style={[{height:125},{flexDirection:"row"}]}>
+        <Page size="A4" orientation="landscape">
+        
+            {   props.draft ? 
+                <Text style={{zIndex:10, fontSize:200,  opacity:0.25, transform:'rotate(-45)', position:'absolute', marginLeft:100, marginTop:200}}>
+                    DRAFT
+                </Text>
+                :
+                null
+            }
+            <View style={styles.page} >
+                <View style={[{height:50},{flexDirection:"row"}]}>
+                    <Text>CONTINUATION SHEET</Text>
+                </View>
+                <View style={[{height:125},{flexDirection:"row"}]}>
+                    
+                    <View style={[{flexDirection:'column'}]}>
+                        <Text style={[{fontSize:8}]}>In tabulations below, amounts are stated to be the nearest dollar.</Text>
+                        <Text style={[{fontSize:8}]}>Use Column I on the Contracts wehre variable retainage for line items may apply</Text>
+                    </View>
+                    <View style={[{width:300}]}>
+
+                    </View>
+                    <View style={[{width:200},{flexDirection:'column'}]}>
+                        <Text style={[{fontSize:10}]}>Application #</Text>
+                        <Text style={[{fontSize:10}]}>Application Date:</Text>
+                        <Text style={[{fontSize:10}]}>Period To:</Text>
+                    </View>
+                    <View style={[{width:200},{flexDirection:'column'}]}>
+                        <Text style={[{fontSize:10}]}>{props.app_id}</Text>
+                        <Text style={[{fontSize:10}]}>TODO</Text>
+                        <Text style={[{fontSize:10}]}>TODO</Text>
+                    </View>
+
+                </View>
+                <View>
+                    {build_table_headers(column_labels)}
+                    {build_table_headers(table_headers)}
+                    {line_items.map(build_table_body)}
+                    {build_table_footer()}
                 
-                <View style={[{flexDirection:'column'}]}>
-                    <Text style={[{fontSize:8}]}>In tabulations below, amounts are stated to be the nearest dollar.</Text>
-                    <Text style={[{fontSize:8}]}>Use Column I on the Contracts wehre variable retainage for line items may apply</Text>
                 </View>
-                <View style={[{width:300}]}>
-
                 </View>
-                <View style={[{width:200},{flexDirection:'column'}]}>
-                    <Text style={[{fontSize:10}]}>Application #</Text>
-                    <Text style={[{fontSize:10}]}>Application Date:</Text>
-                    <Text style={[{fontSize:10}]}>Period To:</Text>
-                </View>
-                <View style={[{width:200},{flexDirection:'column'}]}>
-                    <Text style={[{fontSize:10}]}>{props.app_id}</Text>
-                    <Text style={[{fontSize:10}]}>TODO</Text>
-                    <Text style={[{fontSize:10}]}>TODO</Text>
-                </View>
-
-            </View>
-            <View>
-                {build_table_headers(column_labels)}
-                {build_table_headers(table_headers)}
-                {line_items.map(build_table_body)}
-                {build_table_footer()}
-               
-            </View>
         </Page> 
 
     )

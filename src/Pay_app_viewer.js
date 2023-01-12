@@ -24,6 +24,7 @@ function Pay_app_viewer(props) {
     const params = useParams(); 
     const [id, set_id] = useState(0); 
     const [app_id, set_app_id] = useState(0); 
+    const [draft, set_draft] = useState(false); 
 
 
 
@@ -66,6 +67,7 @@ function Pay_app_viewer(props) {
             set_owner_info(props.owner_info);
             set_contract_info(props.contract_info);
             set_sov(props.sov); 
+            set_draft(true); 
             console.log("SOV INSIDE PAY APP VIEWER", props.sov)
             console.log("APP_ID INSIDE PAY APP VIEWER", props.app_id)
         }
@@ -131,12 +133,14 @@ function Pay_app_viewer(props) {
                 line_item_totals={line_item_totals}
                 co_summary={co_summary}
                 retention={Number(0.05)}
+                draft={draft}
             />
 
             <Pay_app_viewer_g703
                 app_id={app_id}
                 line_items={line_items}
                 line_item_totals={line_item_totals}
+                draft={draft}
             /> 
         </Document>
         </PDFViewer>
