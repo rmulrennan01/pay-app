@@ -10,8 +10,7 @@ import Home from './Home.js';
 import Contract_browser from './Contract_browser.js'; 
 import Contract_page from './Contract_page.js'; 
 import Pay_app_viewer from './Pay_app_viewer.js'; 
-import Page_G702 from './Pay_app/Page_G702.js'; 
-import Page_G703 from "./Pay_app/Page_G703.js";
+
 
 
 function App() {

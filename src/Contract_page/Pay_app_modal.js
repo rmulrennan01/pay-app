@@ -10,6 +10,19 @@ import Slider from '@mui/material/Slider';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions';
 
 
 
@@ -23,6 +36,11 @@ function Pay_app_modal(props) {
     const [this_draw_total, set_this_draw_total] = useState(0); 
     const [app_id, set_app_id] = useState(Number(props.pay_app_id)); 
     const [trigger, set_trigger] = useState(true); 
+    const [submit_dialog_open, set_submit_dialog_open] = useState(false); 
+    const [delete_dialog_open, set_delete_dialog_open] = useState(false); 
+
+
+    
 
     /*
     useEffect(() => {
@@ -42,10 +60,7 @@ function Pay_app_modal(props) {
     }
  
 
-    const enable_edit_mode = () => {
-        set_edit_mode(true); 
-        alert("Please note: Making adjustments to this payment application will result in any subsequent payment applications being updated accordingly.");
-    }
+
 
     const open_pdf = () => {
         let new_tab = window.open('about:blank',"_blank"); 
@@ -56,21 +71,50 @@ function Pay_app_modal(props) {
     const edit_button = () => {
         if (edit_mode){
             return(
-                <Button variant="contained" onClick={()=>alert("Are you sure?")}> Save & Submit Changes </Button>
+                <Button variant="contained" onClick={()=>set_submit_dialog_open(true)} startIcon={<SaveIcon/>}> Save & Submit </Button>
             );
         }
         else if (!edit_mode && app_id+1 == contract_info.app_count){
             return( 
-                <Button variant="contained" onClick={()=>enable_edit_mode()}> Edit Application </Button>
+                <Button startIcon={<EditIcon/>} variant="contained" onClick={()=>set_edit_dialog_open(true)}> Edit </Button>
             );
         }
 
         return(
-            <Button variant="contained" disabled={true} onClick={()=>alert("Only the most recent payment application can be edited. To edit this application, all subsequent applications need to be deleted.")}> Edit Application </Button>
+            <Button startIcon={<EditIcon/>} variant="contained" disabled={true} onClick={()=>alert("Only the most recent payment application can be edited. To edit this application, all subsequent applications need to be deleted.")}> Edit </Button>
         )
 
-
     }
+
+    const delete_btn = () => {
+        if(Number(app_id)+1 == contract_info.app_count){
+            return (
+                <Button variant='contained' startIcon={<DeleteIcon />} onClick={()=>set_delete_dialog_open(true)}> Delete </Button>
+            )
+        }
+        else {
+            return(
+                <Button variant='contained' startIcon={<DeleteIcon />} disabled={true} > Delete </Button>
+            ); 
+        }
+    }
+
+    const prev_btn = () =>{
+        return(
+            <Button variant='contained' startIcon={<KeyboardArrowLeftIcon/>} disabled={app_id == 0 ? true : false} onClick={()=>handle_prev_click()}>Prev</Button>
+        )
+    }
+
+    const next_btn = () =>{
+        return(
+            <Button endIcon={<KeyboardArrowRightIcon/>} disabled={app_id+1 == Number(contract_info.app_count) ? true : false} onClick={()=>handle_next_click()} variant='contained' > Next</Button>
+        )
+    }
+
+
+
+
+
 
     const handle_prev_click = () => {
         console.log(app_id); 
@@ -87,6 +131,90 @@ function Pay_app_modal(props) {
         }
 
     }
+
+    const enable_edit_mode = () =>{
+        set_edit_dialog_open(false); 
+        set_edit_mode(true); 
+
+    }
+
+    const [edit_dialog_open, set_edit_dialog_open] = useState(false); 
+    //DIALOG MODAL FOR EDITING PAY APP
+    const edit_dialog = () => {
+        return(
+            <Dialog
+            open={edit_dialog_open}
+            
+            keepMounted
+            onClose={()=>set_edit_dialog_open(false)}
+            aria-describedby="alert-dialog-slide-description"
+            >
+            <DialogTitle>{"You are about to edit an existing application"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description">
+                By clicking ok, you will be able to edit the most recent payment application.
+                To edit prior applications, the most recent application must be deleted.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={()=>set_edit_dialog_open(false)}>Cancel</Button>
+                <Button onClick={()=>enable_edit_mode()}>Ok</Button>
+            </DialogActions>
+            </Dialog>
+        )
+    }
+
+    
+
+    //DIALOG MODAL TO SHOW WHEN USER CLICKS SUBMIT FOR EDITS ON THE MOST RECENT PAYMENT APPLICATION
+    const submit_dialog = () => {
+        return(
+            <Dialog
+            open={submit_dialog_open}
+            
+            keepMounted
+            onClose={()=>set_submit_dialog_open(false)}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>{"Submit to database?"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                By clicking submit, the changes made to this payment application
+                will replace the existing application. These changes cannot be undone.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={()=>set_submit_dialog_open(false)}>Cancel</Button>
+                <Button onClick={console.log("SAVED_INPUTS", saved_inputs)}>Submit</Button>
+            </DialogActions>
+          </Dialog>
+        )
+    }
+
+    //DIALOG MODAL TO VERIFY THAT USER WANTS TO DELETE THE PAY APP FROM THE DATABASE
+    const delete_dialog = () => {
+        return(
+            <Dialog
+            open={delete_dialog_open}
+            
+            keepMounted
+            onClose={()=>set_delete_dialog_open(false)}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>{"Are you sure?"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                By clicking delete, this payment application will be permanently deleted.
+                This action cannot be undone.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={()=>set_delete_dialog_open(false)}>Cancel</Button>
+                <Button onClick={console.log("SAVED_INPUTS", saved_inputs)}>Delete</Button>
+            </DialogActions>
+          </Dialog>
+        )
+    }
     
 
  
@@ -94,13 +222,15 @@ function Pay_app_modal(props) {
     return (
             //path='/pay_app/pdf/:id/:app_id' 
             <div>
-                
+                {submit_dialog()}
+                {delete_dialog()}
+                {edit_dialog()}
                 <Paper> 
                     <h2>Pay App # {app_id+1} </h2> 
                     
                     <br></br>
-                    <Button variant='contained' onClick={()=>open_pdf()}>View PDF</Button>
-                    {edit_button()}                
+                    <Button variant='contained' startIcon={<PictureAsPdfIcon/>} onClick={()=>open_pdf()}>View PDF</Button> {edit_button()} {delete_btn()}      
+                            
                     <Pay_app_modal_table
                         key = {app_id}
                         sov_data={sov} 
@@ -109,7 +239,7 @@ function Pay_app_modal(props) {
                         contract_info={contract_info}
                     /> 
                     <br></br>
-                    <Button variant='contained' disabled={app_id == 0 ? true : false} onClick={()=>handle_prev_click()}> {"<"} Prev</Button> <Button disabled={app_id+1 == Number(contract_info.app_count) ? true : false} onClick={()=>handle_next_click()} variant='contained' > Next {">"} </Button>
+                    {prev_btn()} {next_btn()} 
 
                 </Paper>
                 

@@ -6,8 +6,7 @@ import Totals_by_key from './Utilities/Totals_by_key.js';
 
 import Sov_table from './Pay_app/Sov_table.js'; 
 import Billing_details from './Pay_app/Billing_details.js'; 
-import Page_G702 from './Pay_app/Page_G702.js'; 
-import Page_G703 from './Pay_app/Page_G703.js'; 
+
 import Change_orders from './Pay_app/Change_orders.js';
 import Pay_app_viewer from './Pay_app_viewer.js';  
 
