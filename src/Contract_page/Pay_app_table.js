@@ -13,6 +13,7 @@ import TableRow from '@mui/material/TableRow';
 
 import CurrencyFormat from 'react-currency-format';
 import Period_totals from '../Utilities/Period_totals';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
 
@@ -106,7 +107,7 @@ function Pay_app_table(props) {
     <div>
       {console.log("PERIOD TOTALS", period_summary)}
       
-      <Button variant="contained" onClick={()=>window.location='/pay_app/'+ String(props.id)}> Create Application </Button>
+      <Button startIcon= {<AddCircleIcon/>} variant="contained" onClick={()=>window.location='/pay_app/'+ String(props.id)}> Create Application </Button>
         <Table>
           <TableHead> 
             <TableRow> 

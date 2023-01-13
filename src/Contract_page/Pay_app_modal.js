@@ -36,8 +36,7 @@ function Pay_app_modal(props) {
     const [this_draw_total, set_this_draw_total] = useState(0); 
     const [app_id, set_app_id] = useState(Number(props.pay_app_id)); 
     const [trigger, set_trigger] = useState(true); 
-    const [submit_dialog_open, set_submit_dialog_open] = useState(false); 
-    const [delete_dialog_open, set_delete_dialog_open] = useState(false); 
+
 
 
     
@@ -165,7 +164,7 @@ function Pay_app_modal(props) {
     }
 
     
-
+    const [submit_dialog_open, set_submit_dialog_open] = useState(false); 
     //DIALOG MODAL TO SHOW WHEN USER CLICKS SUBMIT FOR EDITS ON THE MOST RECENT PAYMENT APPLICATION
     const submit_dialog = () => {
         return(
@@ -191,6 +190,7 @@ function Pay_app_modal(props) {
         )
     }
 
+    const [delete_dialog_open, set_delete_dialog_open] = useState(false); 
     //DIALOG MODAL TO VERIFY THAT USER WANTS TO DELETE THE PAY APP FROM THE DATABASE
     const delete_dialog = () => {
         return(

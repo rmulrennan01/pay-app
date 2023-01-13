@@ -26,6 +26,9 @@ import { getScopedCssBaselineUtilityClass } from '@mui/material';
 import CurrencyFormat from 'react-currency-format';
 import Sov_table from './Pay_app/Sov_table.js';
 
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 
 function Contract_page(props) {
@@ -358,15 +361,15 @@ function Contract_page(props) {
             <br/> 
             <br/>
             <Tabs value={tab}  centered>
-                <Tab label={<h3>Payment Applications</h3>} onClick={()=>set_tab(0)}/>   
-                <Tab label={<h3>Schedule of Values</h3>} onClick={()=>set_tab(1)}/>
-                <Tab label={<h3>Change Orders</h3>} onClick={()=>set_tab(2)}/>
+                <Tab label={<Button endIcon={<AttachMoneyIcon/>}><h3>Payment Applications</h3></Button>} onClick={()=>set_tab(0)}/>   
+                <Tab label={<Button endIcon={<ReceiptLongIcon/>}><h3>Schedule of Values</h3> </Button>} onClick={()=>set_tab(1)}/>
+                <Tab label={<Button endIcon={<CurrencyExchangeIcon/>}><h3>Change Orders</h3></Button>} onClick={()=>set_tab(2)}/>
                 
             </Tabs>
             
-            {tab==0 ? <Paper>  <h3> Payment Applications </h3> {pay_apps()}<br/> </Paper>  : <></>  }
-            {tab==1 ? <Paper>  <h3> Contract Summary </h3> {job_sov()}<br/> </Paper>  : <></>  }
-            {tab==2 ? <Paper>  <h3> Change Orders </h3> <Button variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
+            {tab==0 ? <Paper>   {pay_apps()}<br/> </Paper>  : <></>  }
+            {tab==1 ? <Paper>   {job_sov()}<br/> </Paper>  : <></>  }
+            {tab==2 ? <Paper>   <Button variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
             
             
 
