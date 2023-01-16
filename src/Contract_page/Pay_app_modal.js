@@ -223,7 +223,7 @@ function Pay_app_modal(props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={()=>set_delete_dialog_open(false)}>Cancel</Button>
-                <Button >Delete</Button>
+                <Button onClick={()=>props.delete_pay_app()}>Delete</Button>
             </DialogActions>
           </Dialog>
         )

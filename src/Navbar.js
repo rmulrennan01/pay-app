@@ -17,7 +17,7 @@ function Navbar() {
 
                 <Hidden xsDown>
                     
-                        <Link className='Navbar__Button' href="/" underline="none">Home</Link> 
+                        <Link className='Navbar__Button' href="/" underline="none">Dashboard</Link> 
                         <Link className='Navbar__Button' href="/contract_browser" underline="none"> Contracts </Link> 
                         <Link className='Navbar__Button' href="/job_setup"  underline="none">New Job</Link> 
                         <Link className='Navbar__Button'  underline="none">About</Link> 

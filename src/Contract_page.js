@@ -99,6 +99,9 @@ function Contract_page(props) {
         batch.update(contract_ref, {"co_value":Number(contract_info.co_value)+Number(data.value)}); //DONE
         batch.update(contract_ref, {"co_count":Number(contract_info.co_count)+Number(1)}); //DONE
         batch.update(contract_ref, {"balance":Number(balance)}); //DONE
+        batch.update(contract_ref, {"update":new Date()}); //DONE
+        batch.update(contract_ref, {"recent_task":"Added a change order for "+ data.description}); //DONE
+
 
         batch.commit().then(()=>{
             console.log("updated co total successfully"); 
@@ -131,6 +134,9 @@ function Contract_page(props) {
         let balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.prev_draws) - rev_draw;
         batch.update(contract_ref, {"balance":balance});//DONE
         batch.update(contract_ref, {"this_draw":rev_draw});//DONE
+        batch.update(contract_ref, {"update":new Date()}); //DONE
+        batch.update(contract_ref, {"recent_task":"Edited the most recent payment application"}); //DONE
+        
   
 
         batch.commit().then(()=>{
@@ -143,10 +149,56 @@ function Contract_page(props) {
             alert("Failed to submit changes to the payment application. Please try again later or contact support.")
         });
 
+    }
+
+    const delete_pay_app = () => {
+        let batch = firestoreDB.batch(); 
+        let contract_ref = firestoreDB.collection("contracts").doc(id);
+
+        //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
+        let temp_sov = sov; 
+        let this_draw = Number(0); 
+
+        for (let i=0; i<temp_sov.length; i++){
+            temp_sov[i].pay_apps.pop(); //REMOVE THE LAST APP VALUE
+            let temp_apps = temp_sov[i].pay_apps; 
+            this_draw += Number(temp_apps[temp_apps.length-1]) //NEED TO TOTAL THE LAST APP VALUE
+            
+            //GENERATE BATCH ITEM FOR EACH SOV
+            let temp_sov_ref = contract_ref.collection("sov").doc(temp_sov[i].id);
+            batch.update(temp_sov_ref, {"pay_apps":temp_sov[i].pay_apps});//DONE
+
+        }
+        let prev_draw = Number(contract_info.prev_draws) - Number(this_draw); 
+        let balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(this_draw) - Number(prev_draw); 
+        
+        //UPDATE THIS_DRAW & BALANCE IN THE CONTRACT_INFO 
+        batch.update(contract_ref, {"balance":balance});//DONE
+        batch.update(contract_ref, {"this_draw":this_draw});//DONE
+        batch.update(contract_ref, {"prev_draws":prev_draw});//DONE
+        batch.update(contract_ref, {"update":new Date()}); //DONE
+        batch.update(contract_ref, {"recent_task":"Deleted the most recent payment application"}); //DONE
+        batch.update(contract_ref, {"app_count": Number(contract_info.app_count)-1}); 
+        
+
+        batch.commit().then(()=>{
+            console.log("Payment application deleted successfully"); 
+            alert("Payment application deleted successfully."); 
+            window.location.reload(false);
+        })
+        .catch((error) => {
+            console.error("Error deleting payment applicaiton", error); 
+            alert("Failed to delete payment application. Please try again later or contact support.")
+        });
+
+
 
     }
 
 
+    const delete_co = () =>{
+
+    }
 
 
     const job_info = () => {
@@ -374,7 +426,18 @@ function Contract_page(props) {
                 {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal contract_info={contract_info} sov_data={sov} close_modal={()=>set_co_modal_open(false)} submit={submit_co}/> }
             </Modal>
             <Modal open={pay_modal_open} onClose={()=>set_pay_modal_open(false)}  >
-                {loading? <Paper> <CircularProgress/> </Paper> : <Pay_app_modal pay_app_id={pay_app_id} contract_info={contract_info} sov_data={sov}  close_modal={()=>set_pay_modal_open(false)} submit={submit_app_changes}/> }
+                {
+                    loading ? 
+                    <Paper> <CircularProgress/> </Paper> 
+                    : 
+                    <Pay_app_modal 
+                        pay_app_id={pay_app_id} 
+                        contract_info={contract_info} 
+                        sov_data={sov}  
+                        close_modal={()=>set_pay_modal_open(false)} 
+                        submit={submit_app_changes}
+                        delete_pay_app={delete_pay_app}
+                    /> }
             </Modal>
 
         </>

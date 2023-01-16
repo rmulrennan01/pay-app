@@ -225,7 +225,8 @@ function Pay_app() {
 
         temp_contract_info.prev_draws = Number(contract_info.prev_draws) + Number(contract_info.this_draw);
         temp_contract_info.this_draw = Number(temp_draw); 
-        temp_contract_info.balance = Number(contract_info.balance) - Number(temp_draw); 
+        //temp_contract_info.balance = Number(contract_info.balance) - Number(temp_draw); 
+        temp_contract_info.balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - temp_contract_info.prev_draws - temp_contract_info.this_draw;
         temp_contract_info.app_count = Number(contract_info.app_count); 
         set_preview_contract_info(temp_contract_info); 
 

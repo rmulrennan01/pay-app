@@ -19,7 +19,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 function Pay_app_table(props) {
   const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  
-    "Previous Work Complete", "Work Complete This Period", "Payment This Period (Work Complete Less Retention)", "Remaining Balance Including Retention"];
+    "Previous Work Complete", "Work Complete This Period", "Payment This Period (Work Complete Less Retention)", "Remaining Balance"];
   const [no_apps, set_no_apps] = useState(false); 
 
   const [period_summary, set_period_summary] = useState([]);
@@ -96,7 +96,7 @@ function Pay_app_table(props) {
         </TableCell>
 
         <TableCell>
-          {currency(Number(item.retention)+Number(item.balance))} 
+          {currency(item.balance)} 
         </TableCell>
         
       </TableRow>
