@@ -158,7 +158,9 @@ function Contract_page(props) {
         //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
         let temp_sov = sov; 
         let this_draw = Number(0); 
-
+        let prev_draw = Number(0); 
+        let balance = Number(0); 
+        
         for (let i=0; i<temp_sov.length; i++){
             temp_sov[i].pay_apps.pop(); //REMOVE THE LAST APP VALUE
             let temp_apps = temp_sov[i].pay_apps; 
@@ -169,8 +171,15 @@ function Contract_page(props) {
             batch.update(temp_sov_ref, {"pay_apps":temp_sov[i].pay_apps});//DONE
 
         }
-        let prev_draw = Number(contract_info.prev_draws) - Number(this_draw); 
-        let balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(this_draw) - Number(prev_draw); 
+        if(contract_info.app_count == 1){
+            prev_draw = Number(0); 
+            balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value); 
+            this_draw = Number(0); 
+        }
+        else{
+            prev_draw = Number(contract_info.prev_draws) - Number(this_draw); 
+            balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(this_draw) - Number(prev_draw); 
+        }
         
         //UPDATE THIS_DRAW & BALANCE IN THE CONTRACT_INFO 
         batch.update(contract_ref, {"balance":balance});//DONE
