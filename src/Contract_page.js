@@ -137,8 +137,6 @@ function Contract_page(props) {
         batch.update(contract_ref, {"update":new Date()}); //DONE
         batch.update(contract_ref, {"recent_task":"Edited the most recent payment application"}); //DONE
         
-  
-
         batch.commit().then(()=>{
             console.log("updated app changes successfully"); 
             alert("Changes to most recent application updated successfully!"); 
@@ -169,7 +167,6 @@ function Contract_page(props) {
             //GENERATE BATCH ITEM FOR EACH SOV
             let temp_sov_ref = contract_ref.collection("sov").doc(temp_sov[i].id);
             batch.update(temp_sov_ref, {"pay_apps":temp_sov[i].pay_apps});//DONE
-
         }
         if(contract_info.app_count == 1){
             prev_draw = Number(0); 
@@ -189,7 +186,6 @@ function Contract_page(props) {
         batch.update(contract_ref, {"recent_task":"Deleted the most recent payment application"}); //DONE
         batch.update(contract_ref, {"app_count": Number(contract_info.app_count)-1}); 
         
-
         batch.commit().then(()=>{
             console.log("Payment application deleted successfully"); 
             alert("Payment application deleted successfully."); 
@@ -199,19 +195,46 @@ function Contract_page(props) {
             console.error("Error deleting payment applicaiton", error); 
             alert("Failed to delete payment application. Please try again later or contact support.")
         });
-
-
-
     }
 
 
-    const delete_co = () =>{
+    const delete_co = (sov_id,index) =>{
+        let batch = firestoreDB.batch(); 
+        let contract_ref = firestoreDB.collection("contracts").doc(id);
+        let sov_ref = contract_ref.collection("sov").doc(sov_id);
+        let co_val = Number(0); 
 
+        let co_list = [];
+        for (let i=0; i<sov.length; i++){
+            if(sov[i].id == sov_id){
+                co_list = sov[i].change_orders; 
+                co_val = co_list[index].value; 
+                break;
+            }
+        }
+
+        co_list.splice(index,1); 
+        batch.update(sov_ref, {"change_orders":co_list});//DONE
+        batch.update(contract_ref, {"co_value":Number(contract_info.co_value)-Number(co_val)}); //DONE
+        batch.update(contract_ref, {"co_count":Number(contract_info.co_count)-Number(1)}); //DONE
+        batch.update(contract_ref, {"balance":Number(contract_info.balance)-Number(co_val)}); //DONE
+        batch.update(contract_ref, {"update":new Date()}); //DONE
+        batch.update(contract_ref, {"recent_task":"Deleted a change order."}); //DONE
+
+
+        batch.commit().then(()=>{
+            console.log("Change Order deleted successfully"); 
+            alert("Change order deleted successfully."); 
+            window.location.reload(false);
+        })
+        .catch((error) => {
+            console.error("Error deleting change order.", error); 
+            alert("Failed to delete change order. Please try again later or contact support.")
+        });
     }
 
 
     const job_info = () => {
-
         if(loading){
             return(
                 <Paper>
@@ -329,7 +352,7 @@ function Contract_page(props) {
         else {
             return(
                 <Paper>
-                    <Change_order_table sov={sov} contract_info={contract_info}/> 
+                    <Change_order_table sov={sov} contract_info={contract_info} delete_co={delete_co}/> 
                 </Paper>
             ); 
         }
