@@ -67,6 +67,8 @@ function Pay_app_modal(props) {
 
     }
 
+  
+
     const edit_button = () => {
         if (edit_mode){
             return(
@@ -163,6 +165,17 @@ function Pay_app_modal(props) {
         )
     }
 
+
+    const submit_changes = () => {
+        if(saved_inputs.length ==0){
+            let temp_array = new Array(sov.length).fill(0); 
+            props.submit(temp_array); 
+        }
+        else{
+            props.submit(saved_inputs); 
+        }
+    }
+
     
     const [submit_dialog_open, set_submit_dialog_open] = useState(false); 
     //DIALOG MODAL TO SHOW WHEN USER CLICKS SUBMIT FOR EDITS ON THE MOST RECENT PAYMENT APPLICATION
@@ -184,7 +197,7 @@ function Pay_app_modal(props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={()=>set_submit_dialog_open(false)}>Cancel</Button>
-                <Button onClick={console.log("SAVED_INPUTS", saved_inputs)}>Submit</Button>
+                <Button onClick={()=>submit_changes()}>Submit</Button>
             </DialogActions>
           </Dialog>
         )
@@ -210,7 +223,7 @@ function Pay_app_modal(props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={()=>set_delete_dialog_open(false)}>Cancel</Button>
-                <Button onClick={console.log("SAVED_INPUTS", saved_inputs)}>Delete</Button>
+                <Button >Delete</Button>
             </DialogActions>
           </Dialog>
         )
@@ -237,6 +250,8 @@ function Pay_app_modal(props) {
                         pay_app_id={app_id}
                         edit_mode={edit_mode}
                         contract_info={contract_info}
+                        saved_inputs={(item)=>set_saved_inputs(item)}
+                        submit_changes = {submit_changes}
                     /> 
                     <br></br>
                     {prev_btn()} {next_btn()} 

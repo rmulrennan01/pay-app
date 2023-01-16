@@ -30,6 +30,9 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
+import AddCircleIcon from '@mui/icons-material/AddCircle'; 
+
+
 
 function Contract_page(props) {
     const [contract_info, set_contract_info] = useState(); 
@@ -80,48 +83,9 @@ function Contract_page(props) {
     }, []);  
 
 
-    /*
-    const submit_db = (cost_code) =>{
-        firestoreDB.collection("contracts").document(id).collection("sov").add(owner_info)
-        .then((docRef) => {
-            console.log("Owner Submission Successful");
-            
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-        });
-    }
-    */
-
+  
+    //SUBMIT A NEW CHANGE ORDER
     const submit_co = (sov_id, data) => {
-        //add the change order to the appropriate sov data item
-        /*
-        firestoreDB.collection("contracts").doc(id).collection("sov").doc(sov_id).update({
-
-            "change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: data.value, pay_app: data.pay_app})
-        })
-        .then((docRef) => {
-            console.log("added CO successfully"); 
-        })
-        .catch((error) => {
-            console.error("Error adding change order info", error); 
-        });
-        //update the change order quantitiy count and change order dollar total
-        const delta = firebase.firestore.FieldValue.increment(data.value); 
-        firestoreDB.collection("contracts").doc(id).update({
-            "co_value": delta
-        })
-        .then((docRef) => {
-            console.log("updated co total successfully"); 
-            alert("Change Order Added Successfully"); 
-            window.location.reload(false);
-            
-        })
-        .catch((error) => {
-            console.error("Error updating change order total", error); 
-        });
-        */
-
         let rev_contract = Number(contract_info.base_contract_value) + Number(contract_info.co_value) + Number(data.value); 
         let balance = Number(rev_contract) - Number(contract_info.prev_draws) - Number(contract_info.this_draw); 
         
@@ -145,11 +109,42 @@ function Contract_page(props) {
             console.error("Error adding change order", error); 
             alert("Failed to submit change order. Please try again later or contact support.")
         });
-
-
-
-        
     } 
+
+    //SUBMIT A REVISION TO A PAY APPLICATION
+    const submit_app_changes = (inputs) =>{
+        let batch = firestoreDB.batch(); 
+        let contract_ref = firestoreDB.collection("contracts").doc(id);
+
+        //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
+        let temp_sov = sov; 
+        let rev_draw = Number(0); 
+        for (let i=0; i<temp_sov.length; i++){
+            let temp_sov_ref = contract_ref.collection("sov").doc(temp_sov[i].id);
+            temp_sov[i].pay_apps.pop(); 
+            temp_sov[i].pay_apps.push(Number(inputs[i]));
+            batch.update(temp_sov_ref, {"pay_apps":temp_sov[i].pay_apps});//DONE
+            rev_draw += Number(inputs[i]);
+        }
+ 
+        //UPDATE THIS_DRAW & BALANCE IN THE CONTRACT_INFO 
+        let balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.prev_draws) - rev_draw;
+        batch.update(contract_ref, {"balance":balance});//DONE
+        batch.update(contract_ref, {"this_draw":rev_draw});//DONE
+  
+
+        batch.commit().then(()=>{
+            console.log("updated app changes successfully"); 
+            alert("Changes to most recent application updated successfully!"); 
+            window.location.reload(false);
+        })
+        .catch((error) => {
+            console.error("Error updating payment applicaiton", error); 
+            alert("Failed to submit changes to the payment application. Please try again later or contact support.")
+        });
+
+
+    }
 
 
 
@@ -369,7 +364,7 @@ function Contract_page(props) {
             
             {tab==0 ? <Paper>   {pay_apps()}<br/> </Paper>  : <></>  }
             {tab==1 ? <Paper>   {job_sov()}<br/> </Paper>  : <></>  }
-            {tab==2 ? <Paper>   <Button variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
+            {tab==2 ? <Paper>   <Button startIcon= {<AddCircleIcon/>} variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
             
             
 
@@ -379,7 +374,7 @@ function Contract_page(props) {
                 {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal contract_info={contract_info} sov_data={sov} close_modal={()=>set_co_modal_open(false)} submit={submit_co}/> }
             </Modal>
             <Modal open={pay_modal_open} onClose={()=>set_pay_modal_open(false)}  >
-                {loading? <Paper> <CircularProgress/> </Paper> : <Pay_app_modal pay_app_id={pay_app_id} contract_info={contract_info} sov_data={sov}  close_modal={()=>set_pay_modal_open(false)} submit={submit_co}/> }
+                {loading? <Paper> <CircularProgress/> </Paper> : <Pay_app_modal pay_app_id={pay_app_id} contract_info={contract_info} sov_data={sov}  close_modal={()=>set_pay_modal_open(false)} submit={submit_app_changes}/> }
             </Modal>
 
         </>

@@ -100,30 +100,31 @@ function Pay_app_modal_table(props) {
     //This adjusts the line items to accomodate user input when editing an existing payment application.
     const adjust_line_items = () => {
         let line_item_copy = line_items; 
-
         for (let i=0; i<line_item_copy.length; i++){
             line_item_copy[i].cur_payment = inputs.current[i].getValue()* (1-Number(retention)); 
             let draws = Number(line_item_copy[i].prev_draws) + Number(inputs.current[i].getValue()); 
             line_item_copy[i].balance = Number(line_item_copy[i].revised_value) - Number(draws);
             line_item_copy[i].retention = draws * (Number(retention)); 
         }
-
         set_line_items(line_item_copy); 
-
-
     }
 
 
     const backup_inputs = () => {
         let temp_arry = []; 
         for (var i = 0; i<sov.length; i++){
-            temp_arry[i] = inputs.current[i].getValue()
+            temp_arry[i] = inputs.current[i].getValue();
         }
-        //set_saved_inputs(temp_arry); 
-        props.update_inputs(temp_arry); 
-        //console.log("temp_arry", temp_arry); 
+        props.saved_inputs(temp_arry); 
     }
 
+    const handle_input = () => {
+        adjust_totals(); 
+        backup_inputs();
+    }
+
+
+  
 
 
     const build_table_body = (item,index) => {
@@ -154,7 +155,7 @@ function Pay_app_modal_table(props) {
                         <CurrencyTextField
                             label="Amount"
                             variant="outlined"
-                            value={0}
+                            value={"0"}
                             currencySymbol="$"
                             minimumValue="0"
                             maximumValue = {item.revised_value-item.prev_draws} 
@@ -164,7 +165,7 @@ function Pay_app_modal_table(props) {
                             digitGroupSeparator=","
                             leadingZero={"deny"}
                             ref={(val) => (inputs.current[index] = val)}
-                            onChange={()=>adjust_totals()}
+                            onChange={()=>handle_input()}
                         />  
                         
                         :
