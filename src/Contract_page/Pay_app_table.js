@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import Button from '@mui/material/Button';
 import "./Pay_app_table.css"; 
 import Sov_item_totals from "../Utilities/Sov_item_totals.js"; 
+import Paper from '@mui/material/Paper';
+
 
 //Tables
 import Table from '@mui/material/Table';
@@ -66,6 +68,19 @@ function Pay_app_table(props) {
       )
     }
 
+    const no_app_message = () => {
+      return(
+        <div>
+          
+          No payment applications have been submitted.
+  
+
+        </div>
+
+
+      )
+    }
+
     
     const build_table_body = (item,index) => {
       console.log("item", item); 
@@ -115,11 +130,13 @@ function Pay_app_table(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/*(no_apps) ? console.log("it's here") : period_info.map(build_table_body)*/}
-            {(no_apps) && period_summary.length > 0  ? console.log("it's here") : period_summary.map(build_table_body)}
+           
+            {(no_apps) && period_summary.length > 0  ? null : period_summary.map(build_table_body)}
           </TableBody>
 
         </Table>
+
+      {!(no_apps)  ? no_app_message() : null}
     </div>
   )
 }

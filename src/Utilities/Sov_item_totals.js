@@ -24,10 +24,12 @@ const Sov_item_totals = (sov, app_num, retention) => {
         let temp_line_item = {};
         temp_line_item.description = item.description;
         temp_line_item.value = item.value; 
-        temp_line_item.cost_code = item.cost_code; 
+        temp_line_item.cost_code = item.cost_code;
+        temp_line_item.co_prev = Number(0); 
+        temp_line_item.co_cur = Number(0);  
         
         //Calculate total change orders for all previous and current pay periods
-        if(item.hasOwnProperty("change_orders") && item.change_orders !==0){
+        if(item.hasOwnProperty("change_orders") && (item.change_orders !==0 || item.change_orders !== [])){
             let prev_co = Number(0); 
             let cur_co = Number(0);
             item.change_orders.map((co) => {
@@ -42,14 +44,13 @@ const Sov_item_totals = (sov, app_num, retention) => {
 
             })
         }
-        else{
-            temp_line_item.co_prev = Number(0); 
-            temp_line_item.co_cur = Number(0); 
-        }
+
 
         //Calculate Revised line item contract amount
         temp_line_item.revised_value = temp_line_item.value + temp_line_item.co_prev + temp_line_item.co_cur;
 
+        temp_line_item.prev_draws = Number(0);
+        temp_line_item.cur_draw = Number(0);
         //Calculate previous and current draw amount for each cost item
         if(item.hasOwnProperty("pay_apps")){
             let draws_prev = Number(0); 
@@ -66,10 +67,6 @@ const Sov_item_totals = (sov, app_num, retention) => {
                 temp_line_item.prev_draws = Number(draws_prev);
                 temp_line_item.cur_draw = Number(item.pay_apps[app_num])
             }
-        }
-        else {
-            temp_line_item.prev_draws = Number(0);
-            temp_line_item.cur_draw = Number(0);
         }
 
         //Calculate payments

@@ -49,7 +49,6 @@ function Billing_Details(props) {
             }; 
         set_retention(temp_data.retention); 
         props.update_billing_info(temp_data); 
-        console.log(ref_due_date.current)
     }
 
     return (
@@ -59,7 +58,7 @@ function Billing_Details(props) {
             <Slider 
                 defaultValue={retention} 
                 min={0} 
-                max={30} 
+                max={20} 
                 aria-label="Default" 
                 valueLabelDisplay="on" 
                 valueLabelFormat={(val)=>val+'%'}
@@ -71,7 +70,7 @@ function Billing_Details(props) {
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                defaultValue= ""
+                defaultValue= "20th"
                 value={due_date}
                 onChange={update_due_date}
                 ref={ref_due_date}

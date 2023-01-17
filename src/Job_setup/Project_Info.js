@@ -62,13 +62,12 @@ function Project_Info(props) {
             />
             <br/><br/>
             Contract Date:  <br/>
-            <DatePicker 
-                selected={start_date} 
-                onChange={(date) => set_start_date(date)} 
-                
-
-                
-            /> 
+            <div style={{ position: 'relative', zIndex: '100' }}>
+                <DatePicker 
+                    selected={start_date} 
+                    onChange={(date) => set_start_date(date)}                     
+                />
+            </div> 
 
             <br/><br/>
             <TextField 

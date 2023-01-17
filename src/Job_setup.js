@@ -53,7 +53,7 @@ function Job_setup() {
     }
     ); 
 
-    const [billing_info, set_billing_info] = useState({retention: 5, due_date: "20th"});
+    const [billing_info, set_billing_info] = useState({retention: Number(5), due_date: "20th"});
     
     const update_sov = (replacement) => {
         set_sov_data(replacement); 
@@ -132,6 +132,8 @@ function Job_setup() {
             temp_project["balance"] = Number(job_total);
             temp_project["prev_draws"] = Number(0);
             temp_project["this_draw"] = Number(0); 
+            temp_project["retention"] = Number(billing_info.retention)/Number(100);
+            temp_project["due_date"] = billing_info.due_date; 
 
             firestoreDB.collection("contracts").add(temp_project)
             .then((docRef2) => {
@@ -146,21 +148,15 @@ function Job_setup() {
 
                 batch.commit()
                 .then((docRef3)=>{
-                    console.log("submission of sov data complete")
+                    console.log("submission of sov data complete");
+                    alert("New contract added successfully"); 
+                    window.location='/contract_browser'; 
                 })
                 .catch((error) => {
                     console.error("Error adding sov"); 
                 }) ; 
 
-                firestoreDB.collection("contracts").doc(docRef2.id).collection("pay_apps").add({"Hello":"World"})
-                .then((docRef5)=>{
-                    console.log("submission of pay app data complete")
-                    alert("New contract added successfully"); 
-                    window.location='/contract_browser'; 
-                })
-                .catch((error) => {
-                    console.error("Error adding pay apps"); 
-                }) ; 
+                
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);

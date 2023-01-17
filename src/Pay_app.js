@@ -110,7 +110,8 @@ function Pay_app() {
     }, []);  
 
     useEffect(() => {
-           set_line_items(contract_info != null && sov !=null ? Sov_item_totals(sov,contract_info.app_count,0.05) : []); 
+           set_line_items(contract_info != null && sov !=null ? Sov_item_totals(sov,contract_info.app_count,contract_info.retention) : []); 
+           console.log('LINE_ITEMS', line_items); 
     }, [loading, contract_info, sov]);
 
 

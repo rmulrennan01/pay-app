@@ -33,7 +33,7 @@ function Sov_table(props) {
     const get_balances = () => {
         let cur_draw_total = 0; 
         let temp_balance = (Number(props.contract_info.co_value)+Number(props.contract_info.base_contract_value)-Number(props.contract_info.prev_draws)-Number(props.contract_info.this_draw));
-
+        
 
         let temp_footer = 
         {
@@ -142,17 +142,18 @@ function Sov_table(props) {
                 <TableCell> {item.cost_code} </TableCell>
                 <TableCell> {item.description} </TableCell>
                 <TableCell > {currency(item.value)} </TableCell>
-                <TableCell> {currency(Number(item.co_prev)+Number(item.co_cur))} </TableCell>
-                <TableCell> {currency(item.revised_value)}</TableCell>
-                <TableCell> {currency(item.prev_draws)}</TableCell>
+                <TableCell > {currency(Number(item.co_prev)+Number(item.co_cur))} </TableCell>
+                <TableCell > {currency(item.revised_value)}</TableCell>
+                <TableCell > {currency(item.prev_draws)}</TableCell>
                 <TableCell > 
+
                     <CurrencyTextField
                         label="Amount"
                         variant="outlined"
                         value={props.saved_inputs.length ===0 ? 0 : props.saved_inputs[index]}
                         currencySymbol="$"
                         minimumValue="0"
-                        maximumValue = {Number(item.revised_value)-Number(item.prev_draws)} 
+                        maximumValue = {(Number(item.revised_value)-Number(item.prev_draws)).toString()}
                         outputFormat="string"
                         decimalCharacter="."
                         digitGroupSeparator=","
@@ -161,7 +162,7 @@ function Sov_table(props) {
                         onChange={()=>handle_input(index)}
                     />  
                 </TableCell>
-                <TableCell> 
+                <TableCell > 
                     {
                         props.saved_inputs.length ===0 ? 
                             currency(Number(item.revised_value)-Number(item.prev_draws)) 

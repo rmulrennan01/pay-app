@@ -62,12 +62,14 @@ function Change_order_table(props) {
         for (let i=0; i<props.sov.length; i++){
             let sov_item = props.sov[i];
             let cost_code = sov_item.cost_code;
+            let desc = sov_item.description;
             let id = sov_item.id; 
 
             if(sov_item.hasOwnProperty("change_orders") && sov_item.change_orders !=0){
                 sov_item.change_orders.map( (item,index) => {
                   
                     item.cost_code = cost_code; 
+                    item.cost_code_description = desc; 
                     item.id = id; 
                     item.internal_index = index; 
                     temp_co_list.push(item); 
@@ -173,6 +175,9 @@ function Change_order_table(props) {
                 {item.cost_code}
             </TableCell>
             <TableCell>
+                {item.cost_code_description}
+            </TableCell>
+            <TableCell>
                 {item.description}
                 
             </TableCell>
@@ -194,7 +199,8 @@ function Change_order_table(props) {
     const headers = [
         {label:"Pay Period", key:"pay_app"},
         {label: "Cost Code", key:"cost_code"},
-        {label: "Description", key:"description"},
+        {label: "Cost Code Description", key: "cost_code_description"},
+        {label: "Change Order Description", key:"description"},
         {label: "Value", key: "value"},
         ];
 
