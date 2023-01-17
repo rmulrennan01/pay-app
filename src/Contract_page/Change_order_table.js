@@ -186,7 +186,7 @@ function Change_order_table(props) {
             
             </TableCell>
             <TableCell>
-                <Button startIcon={<DeleteIcon/>} onClick={()=>handle_delete_click(item.id, index)}> </Button>
+                <Button startIcon={<DeleteIcon/>} onClick={()=>handle_delete_click(item.id, item.internal_index)}> </Button>
             </TableCell>
 
         </TableRow>
