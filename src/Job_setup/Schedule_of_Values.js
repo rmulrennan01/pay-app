@@ -17,7 +17,7 @@ import Input from '@mui/material/Input';
 //Tables
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell'; 
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -76,7 +76,7 @@ function Schedule_of_Values(props) {
             cost_code:ref_cost_code.current.value, 
             description:ref_description.current.value,
             value:Number(value),
-            change_orders:0,
+            change_orders:[],
             pay_apps:[]
             
             }

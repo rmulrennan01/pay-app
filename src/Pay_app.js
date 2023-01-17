@@ -102,6 +102,8 @@ function Pay_app() {
                 tempDict["id"] = doc.id; 
                 tempList.push(tempDict); 
             });
+            console.log("sov at fetch", tempList); 
+
             set_sov(tempList); 
             set_loading(false); 
         }
@@ -130,55 +132,32 @@ function Pay_app() {
 
 
     const submit_pay_app = () => {
-        //MAKE A COPY OF THE CURRENT SOV AND APPEND APP AVALUES TO EACH LINE ITEM
-        let temp_sov = sov; 
+        let batch = firestoreDB.batch(); 
+        let contract_ref = firestoreDB.collection("contracts").doc(id); 
+        let sov_ref = contract_ref.collection("sov"); 
+        let temp_sov = []; 
         let draw_total = Number(0);
+
+        console.log('SOV', sov); 
+
+        //batch.update(sov_ref, {"change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: Number(data.value), pay_app: Number(data.pay_app)})});//DONE
+
         
-        for (let i = 0; i<temp_sov.length; i++){
+        for (let i = 0; i<sov.length; i++){
             if(saved_inputs[i] ==""){
-                temp_sov[i].pay_apps.push(Number(0)); 
+                //temp_sov[i].pay_apps.push(Number(0)); 
+                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(0))});
             }
             else{
-                temp_sov[i].pay_apps.push(Number(saved_inputs[i]))
+                //temp_sov[i].pay_apps.push(Number(saved_inputs[i]))
+                //console.log('saved inputs', saved_inputs)
+                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(saved_inputs[i]))}); 
+
             }
             draw_total += Number(saved_inputs[i]); 
         }
         
-
-        /*
-        temp_sov.map((item,index)=>{
-
-            if(saved_inputs[index]==""){
-                temp_sov[index].pay_apps.push(Number(0))
-
-            }
-            else{
-                console.log("Saved_inputs[index]", saved_inputs[index])
-                temp_sov[index].pay_apps.push(Number(saved_inputs[index]))
-            }
-        });
-        */
-
-        /*
-        //CALCULATE TOTAL OF THE USER INPUTS
-        if(saved_inputs.length > 0){
-            for (let i=0; i < saved_inputs.length; i++){
-                draw_total += Number(saved_inputs[i]); 
-            }
-        }
-        */
-
-
-        let batch = firestoreDB.batch(); 
-        let contract_ref = firestoreDB.collection("contracts").doc(id); 
-        let sov_ref = contract_ref.collection("sov"); 
         
-        //edited
-        temp_sov.map((item) => {
-            batch.update(sov_ref.doc(item.id), {"pay_apps": item.pay_apps}); 
-
-
-        });
 
         let date = new Date();
         let rev_prev_draws = Number(contract_info.prev_draws)+Number(contract_info.this_draw);
@@ -191,6 +170,9 @@ function Pay_app() {
         batch.update(contract_ref, {"recent_task":"Added a payment application"});
         batch.update(contract_ref, {"update":date});
         batch.update(contract_ref, {"app_count":Number(contract_info.app_count + Number(1))});
+
+         
+        console.log('saved inputs', saved_inputs)
         batch.commit().then(()=>{
             submission_success();  
         })
@@ -198,6 +180,7 @@ function Pay_app() {
             console.error("Error adding pay app", error); 
             alert("Failed to submit payment application. Please try again later.")
         });
+        
 
     }
 

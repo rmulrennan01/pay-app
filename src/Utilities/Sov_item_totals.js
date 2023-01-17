@@ -16,7 +16,6 @@
 const Sov_item_totals = (sov, app_num, retention) => {
  
     const sov_list = []; 
-    console.log("SOV inside utility", sov); 
     
     
 
@@ -29,7 +28,7 @@ const Sov_item_totals = (sov, app_num, retention) => {
         temp_line_item.co_cur = Number(0);  
         
         //Calculate total change orders for all previous and current pay periods
-        if(item.change_orders.length > 0){
+        if(item.change_orders.length > 0 ){
             let prev_co = Number(0); 
             let cur_co = Number(0);
             item.change_orders.map((co) => {
