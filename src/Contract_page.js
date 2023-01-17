@@ -418,8 +418,7 @@ function Contract_page(props) {
     
     return (
         <>
-            {loading? null : console.log(Sov_item_totals(sov,3,0.05))}
-            {loading? null : console.log(Totals_by_key(Sov_item_totals(sov,3,0.05),"prev_draws"))}
+
             <Grid container spacing={2}>
                 <Grid item xs = {6}>
                     {job_info()}

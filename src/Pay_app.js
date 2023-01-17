@@ -89,7 +89,6 @@ function Pay_app() {
             //LOAD CONTRACT_INFO
             const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             set_contract_info(dataList.data()); 
-            console.log(dataList.data()); 
             
             //LOAD OWNER_INFO
             const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
@@ -111,7 +110,6 @@ function Pay_app() {
 
     useEffect(() => {
            set_line_items(contract_info != null && sov !=null ? Sov_item_totals(sov,contract_info.app_count,contract_info.retention) : []); 
-           console.log('LINE_ITEMS', line_items); 
     }, [loading, contract_info, sov]);
 
 
@@ -134,34 +132,49 @@ function Pay_app() {
     const submit_pay_app = () => {
         //MAKE A COPY OF THE CURRENT SOV AND APPEND APP AVALUES TO EACH LINE ITEM
         let temp_sov = sov; 
-        temp_sov.map((item,index)=>{
-            if(!item.pay_apps){
-                
-                item["pay_apps"] =[]
+        let draw_total = Number(0);
+        
+        for (let i = 0; i<temp_sov.length; i++){
+            if(saved_inputs[i] ==""){
+                temp_sov[i].pay_apps.push(Number(0)); 
             }
+            else{
+                temp_sov[i].pay_apps.push(Number(saved_inputs[i]))
+            }
+            draw_total += Number(saved_inputs[i]); 
+        }
+        
+
+        /*
+        temp_sov.map((item,index)=>{
+
             if(saved_inputs[index]==""){
-                item.pay_apps.push(0)
+                temp_sov[index].pay_apps.push(Number(0))
 
             }
             else{
-                item.pay_apps.push(saved_inputs[index])
+                console.log("Saved_inputs[index]", saved_inputs[index])
+                temp_sov[index].pay_apps.push(Number(saved_inputs[index]))
             }
         });
+        */
 
-        let draw_total = Number(0);
+        /*
         //CALCULATE TOTAL OF THE USER INPUTS
         if(saved_inputs.length > 0){
             for (let i=0; i < saved_inputs.length; i++){
                 draw_total += Number(saved_inputs[i]); 
             }
         }
+        */
 
 
         let batch = firestoreDB.batch(); 
         let contract_ref = firestoreDB.collection("contracts").doc(id); 
         let sov_ref = contract_ref.collection("sov"); 
         
-        sov.map((item,) => {
+        //edited
+        temp_sov.map((item) => {
             batch.update(sov_ref.doc(item.id), {"pay_apps": item.pay_apps}); 
 
 
@@ -192,7 +205,7 @@ function Pay_app() {
     const handle_preview_click = () => {
         adjust_data(); 
         set_modal_open(true)
-        console.log("PREVIEW_SOV", preview_sov);
+        
     }
 
 
@@ -294,7 +307,6 @@ function Pay_app() {
 
     return (
         <div>
-            {console.log('LINE_ITEMS', line_items)}
 
             <Stepper activeStep={current_step} orientation="vertical">
                 {steps.map(build_steps)}
