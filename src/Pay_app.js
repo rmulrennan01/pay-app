@@ -196,8 +196,8 @@ function Pay_app() {
     //CREATES A CONVERTED VERSION OF THE SOV & CONTRACT_INFO THAT APPENDS THE USER INPUT DRAW AMOUNTS
     //THIS IS REQUIRED IN ORDER TO FEED TO THE PAY_APP_VIEWER
     const adjust_data = () => {
-        let temp_sov = sov; 
-        let temp_contract_info = contract_info; 
+        let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
+        let temp_contract_info = JSON.parse(JSON.stringify(contract_info)); //CREATE A DEEP COPY
         let temp_draw = Number(0); 
 
         

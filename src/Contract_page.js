@@ -207,7 +207,7 @@ function Contract_page(props) {
         let co_list = [];
         for (let i=0; i<sov.length; i++){
             if(sov[i].id == sov_id){
-                co_list = sov[i].change_orders; 
+                co_list = JSON.parse(JSON.stringify(sov[i].change_orders)); //CREATE DEEP COPY
                 console.log('INDEX', index)
                 co_val = co_list[index].value; 
                 break;
