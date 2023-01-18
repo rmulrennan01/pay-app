@@ -43,7 +43,8 @@ function Pay_app() {
     const [preview_contract_info, set_preview_contract_info] = useState({}); 
     const [current_step, set_current_step] = useState(0); 
     const [line_items, set_line_items] = useState([]); 
-    
+    const [app_date, set_app_date] = useState(new Date)
+    const [end_date, set_end_date] = useState(new Date((new Date).getFullYear(),(new Date).getMonth()+1,0))
 
     //FUNCTION TO LIFT STATE OF USER INPUTS IN THE SOV STEP UP. 
     const update_billed_to_date = (inputs) =>{

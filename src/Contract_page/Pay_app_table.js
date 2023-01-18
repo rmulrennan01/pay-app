@@ -120,7 +120,6 @@ function Pay_app_table(props) {
 
   return (
     <div>
-      {console.log("PERIOD TOTALS", period_summary)}
       
       <Button startIcon= {<AddCircleIcon/>} variant="contained" onClick={()=>window.location='/pay_app/'+ String(props.id)}> Create Application </Button>
         <Table>

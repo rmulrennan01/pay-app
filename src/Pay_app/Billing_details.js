@@ -1,9 +1,7 @@
 
 import React, {useState,useRef} from 'react';
-import TextField from '@mui/material/TextField';
-import Slider from '@mui/material/Slider';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import DatePicker from "react-datepicker";
+
 
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -20,10 +18,7 @@ function Billing_details(props) {
     // const [retention, set_retention] = useState(); 
      const [retention, set_retention] = useState(props.bill_retention); 
 
-     const full_draw_check = () =>{
-        
-        
-         
+     const full_draw_check = () =>{         
         if (Number(props.balance) == 0){
             return(
                 <div>
@@ -53,9 +48,33 @@ function Billing_details(props) {
             )
 
         }
-        
+    }
 
-        
+
+    const [app_date, set_app_date] = useState(new Date); 
+    const app_date_picker = () => {
+        return(
+            <div style={{ position: 'relative', zIndex: '2' }}>
+                <DatePicker 
+                    selected={app_date} 
+                    onChange={(date) => set_app_date(date)}                     
+                />
+            </div> 
+
+        )
+    }
+
+    const [end_date, set_end_date] = useState(new Date((new Date).getFullYear(),(new Date).getMonth()+1,0)); 
+    const end_date_picker = () => {
+        return(
+            <div style={{ position: 'relative', zIndex: '1' }}>
+                <DatePicker 
+                    selected={end_date} 
+                    onChange={(date) => set_end_date(date)}                     
+                />
+            </div> 
+
+        )
     }
 
  
@@ -63,8 +82,14 @@ function Billing_details(props) {
 
      return (
          <div>
-        
-             {full_draw_check()}
+            Select the date you want to be displayed as the application date:
+            {app_date_picker()}
+            <br></br>
+            Select the date for when this application period ends:
+            {end_date_picker()}
+            
+            <br></br>
+            {full_draw_check()}
          </div>
      )
  }

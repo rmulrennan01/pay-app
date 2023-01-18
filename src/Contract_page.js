@@ -4,6 +4,9 @@ import firebase from "./Firebase.js";
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { PieChart, PieArcSeries } from 'reaviz';
+import {BarList, BarListSeries} from 'reaviz';
+
+
 import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
 import Totals_by_key from './Utilities/Totals_by_key.js'; 
 
@@ -31,6 +34,8 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 import AddCircleIcon from '@mui/icons-material/AddCircle'; 
+import { AccountBalanceWalletOutlined } from '@material-ui/icons';
+import { blue } from '@mui/material/colors';
 
 
 
@@ -234,6 +239,21 @@ function Contract_page(props) {
         });
     }
 
+    const currency = (val) =>{
+        return(
+            <CurrencyFormat 
+            value={val}
+            displayType={'text'} 
+            thousandSeparator={true} 
+            prefix={'$'} 
+            fixedDecimalScale={true} 
+            decimalScale={2}
+            renderText={value => <>{value}</>} 
+            />
+            
+  
+        )
+      }
 
     const job_info = () => {
         if(loading){
@@ -383,12 +403,15 @@ function Contract_page(props) {
 
 
         return (
-          <PieChart
-            width={450}
-            height={350}
-            data={data}
-            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
-          />
+            <>
+                <h3>Value</h3>
+                <PieChart
+                    width={450}
+                    height={350}
+                    data={data}
+                    series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
+                />
+            </>
         );
 
     }
@@ -396,22 +419,70 @@ function Contract_page(props) {
     const chart_draws = () => {
         const data = []
         data.push({ key: 'Open Balance ($)', data: contract_info.balance });
-        data.push({ key: 'Previous Draws ($)', data: contract_info.prev_draws }); 
-        data.push({key: 'Current Draw ($)', data: contract_info.this_draw}); 
+        data.push({ key: 'Billed ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.balance) }); 
                
         return (
-          <PieChart
-            width={450}
-            height={350}
-            data={data}
-            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
-          />
+            <>
+                <h3>Billing</h3>
+                <PieChart
+                    width={450}
+                    height={350}
+                    data={data}
+                    
+                    series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
+                />
+            </>
         );
 
     }
 
-  
 
+    const info_bar = () =>{
+
+
+    }
+ 
+
+/*
+    const info_bar = () => {
+        const data = []
+        data.push({ key: 'Open Balance ($)', data: contract_info.balance });
+        data.push({ key: 'Billed ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.balance) }); 
+               
+        return (
+            <>
+                <style>
+                    {`
+                        .value {
+                        width: 200px;
+                        height: 50px; 
+                        }
+                    `}
+                </style>
+                <BarList
+                    style={{ width: 350 }}
+                    data={[
+                        { key: 'Base Contract ($)', data: contract_info.base_contract_value },
+                        { key: 'Change Orders ($)', data: contract_info.co_value },
+                        { key: 'Contract Total ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) }
+                        
+                    ]}
+
+                    series={
+                        <BarListSeries
+                          valueFormat={data => currency(data)}
+                          labelPosition="end"
+                          valueClassName="value"
+                        />
+                      }
+
+                />
+            </>
+        );
+    }
+
+  
+*/
 
     
 
@@ -424,15 +495,17 @@ function Contract_page(props) {
                     {job_info()}
                 </Grid>
                 <Grid item xs = {6}>
-                    {job_summary()}
+                    {/*job_summary()*/}
+               
+                    <Paper>{loading ? <CircularProgress/> : null} </Paper>
                     
 
                 </Grid>
                 <Grid item xs = {6}>
-                    <Paper>{loading? <CircularProgress/> : chart_contract()}</Paper>
+                    <Paper>{loading ? <CircularProgress/> : chart_contract()}</Paper>
                 </Grid>
                 <Grid item xs = {6}>
-                    <Paper>{loading? <CircularProgress/> : chart_draws()}</Paper>
+                    <Paper>{loading ? <CircularProgress/> : chart_draws()}</Paper>
                 </Grid>
 
 
