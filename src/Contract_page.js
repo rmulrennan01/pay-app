@@ -120,7 +120,7 @@ function Contract_page(props) {
         let contract_ref = firestoreDB.collection("contracts").doc(id);
 
         //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
-        let temp_sov = sov; 
+        let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
         let rev_draw = Number(0); 
         for (let i=0; i<temp_sov.length; i++){
             let temp_sov_ref = contract_ref.collection("sov").doc(temp_sov[i].id);
@@ -154,7 +154,7 @@ function Contract_page(props) {
         let contract_ref = firestoreDB.collection("contracts").doc(id);
 
         //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
-        let temp_sov = sov; 
+        let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
         let this_draw = Number(0); 
         let prev_draw = Number(0); 
         let balance = Number(0); 

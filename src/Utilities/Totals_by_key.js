@@ -19,7 +19,7 @@ const Totals_by_key = (obj_list, key) => {
 
     //CASE FOR WHEN THE KEY PROVIDED IS A LIST OF MULTIPLE KEYS REPRESENTED BY A STRING
     if(typeof(key) == 'string' && key === '*'){
-        let key_list = Object.keys(obj_list[0]);
+        let key_list = Object.keys(obj_list[0]); //GET ALL KEYS
         for (let i = 0; i<obj_list.length; i++){
             let temp_obj = obj_list[i]; 
                 for (let k=0; k<key_list.length; k++){

@@ -23,7 +23,7 @@ const Period_totals = (base_contract, sov, app_num, retention) => {
     //loop through each sov item
     for (let i = 0; i<sov.length; i++){
         
-        let item = sov[i]; 
+        let item = JSON.parse(JSON.stringify(sov[i]));; //CREATE A DEEP COPY
 
         //Get total of change orders for period i
         if(item.hasOwnProperty("change_orders") && item.change_orders !==0){
