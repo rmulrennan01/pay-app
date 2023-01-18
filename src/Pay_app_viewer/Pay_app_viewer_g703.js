@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import { BorderColor } from '@material-ui/icons';
 import CurrencyFormat from 'react-currency-format';
+import Date_string from '../Utilities/Date_string.js'; 
+
 
 function Pay_app_viewer_g703(props) {
     const [line_items, set_line_items] = useState(props.line_items); 
@@ -146,14 +148,14 @@ function Pay_app_viewer_g703(props) {
 
                     </View>
                     <View style={[{width:200},{flexDirection:'column'}]}>
-                        <Text style={[{fontSize:10}]}>Application #</Text>
-                        <Text style={[{fontSize:10}]}>Application Date:</Text>
-                        <Text style={[{fontSize:10}]}>Period To:</Text>
+                        <Text style={[{fontSize:10}]}>Application # </Text>
+                        <Text style={[{fontSize:10}]}>Application Date: </Text>
+                        <Text style={[{fontSize:10}]}>Period To: </Text>
                     </View>
                     <View style={[{width:200},{flexDirection:'column'}]}>
                         <Text style={[{fontSize:10}]}>{props.app_id}</Text>
-                        <Text style={[{fontSize:10}]}>TODO</Text>
-                        <Text style={[{fontSize:10}]}>TODO</Text>
+                        <Text style={[{fontSize:10}]}>{Date_string(props.app_date)}</Text>
+                        <Text style={[{fontSize:10}]}>{Date_string(props.end_date)}</Text>
                     </View>
 
                 </View>

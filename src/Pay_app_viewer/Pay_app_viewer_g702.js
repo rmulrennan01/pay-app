@@ -122,20 +122,7 @@ function Pay_app_viewer_g702(props) {
         )
     }
 
-    //HELPER FUNCTION TO CONVERT BOTH DATE AND TIMESTAMPS INTO MM/DD/YYYY 
-    const date_to_string = (val) =>{
-        
-        let temp_date = new Date; 
-        if(!(val instanceof Date)){
-            temp_date = new Date(val.seconds*1000); 
-        }
-        else{
-            temp_date = val; 
-        }
 
-        return Number(temp_date.getMonth())+Number(1)+'/'+temp_date.getDate()+'/'+temp_date.getFullYear(); 
-
-    }
 
     return (
         <Page size="A4" orientation="landscape">
