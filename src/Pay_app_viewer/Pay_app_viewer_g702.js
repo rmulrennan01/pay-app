@@ -2,6 +2,8 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import { BorderColor } from '@material-ui/icons';
 import CurrencyFormat from 'react-currency-format';
+import Date_string from '../Utilities/Date_string.js'; 
+
 
 
 
@@ -120,6 +122,21 @@ function Pay_app_viewer_g702(props) {
         )
     }
 
+    //HELPER FUNCTION TO CONVERT BOTH DATE AND TIMESTAMPS INTO MM/DD/YYYY 
+    const date_to_string = (val) =>{
+        
+        let temp_date = new Date; 
+        if(!(val instanceof Date)){
+            temp_date = new Date(val.seconds*1000); 
+        }
+        else{
+            temp_date = val; 
+        }
+
+        return Number(temp_date.getMonth())+Number(1)+'/'+temp_date.getDate()+'/'+temp_date.getFullYear(); 
+
+    }
+
     return (
         <Page size="A4" orientation="landscape">
             {   props.draft ? 
@@ -152,10 +169,10 @@ function Pay_app_viewer_g702(props) {
                     </View> 
                     <View style={styles.r2_section}>
                         <Text style={styles.content}> APPLICATION NO: {props.app_id}</Text>
-                        <Text style={styles.content}> PERIOD TO: </Text>
+                        <Text style={styles.content}> PERIOD TO: {Date_string(props.end_date)} </Text>
                         <Text style={styles.content}> CONTRACT FOR: </Text>
-                        <Text style={styles.content}> CONTRACT DATE: </Text>
-                        <Text style={styles.content}> PROJECT NO: </Text>
+                        <Text style={styles.content}> CONTRACT DATE: {Date_string(props.contract_info.date)}</Text>
+                        <Text style={styles.content}> PROJECT NO: {props.contract_info.number}</Text>
                     </View> 
                     <View style={styles.r2_section}>
                         <Text style={styles.content}> DISTRIBUTION TO: </Text>

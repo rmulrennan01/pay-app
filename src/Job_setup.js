@@ -134,6 +134,8 @@ function Job_setup() {
             temp_project["this_draw"] = Number(0); 
             temp_project["retention"] = Number(billing_info.retention)/Number(100);
             temp_project["due_date"] = billing_info.due_date; 
+            temp_project["pay_app_dates"] = [];
+            
 
             firestoreDB.collection("contracts").add(temp_project)
             .then((docRef2) => {

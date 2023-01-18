@@ -23,9 +23,8 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-import { Bathtub } from '@material-ui/icons';
-import Pay_app_modal_table from './Contract_page/Pay_app_modal_table.js';
-//import Billing_details from './Job_setup/Billing_Details.js';
+
+
 
 
 function Pay_app() {
@@ -44,7 +43,6 @@ function Pay_app() {
     const [current_step, set_current_step] = useState(0); 
     const [line_items, set_line_items] = useState([]); 
     const [app_date, set_app_date] = useState(new Date)
-    const [end_date, set_end_date] = useState(new Date((new Date).getFullYear(),(new Date).getMonth()+1,0))
 
     //FUNCTION TO LIFT STATE OF USER INPUTS IN THE SOV STEP UP. 
     const update_billed_to_date = (inputs) =>{
@@ -77,7 +75,13 @@ function Pay_app() {
         {label: 'Getting Started', content: <div>If you wish to bill in full immediately, click the skip button below.</div>},
             {label: 'Work Completed', 
             content: <Sov_table line_items={line_items} contract_info={contract_info} saved_inputs={saved_inputs} update_inputs={update_billed_to_date} />},
-        {label: 'Billing Details', content: <Billing_details  balance={balance} bill_retention={bill_retention} update_bill_retention={(item)=>set_bill_retention(item)}/>},
+        {label: 'Billing Details', content: 
+            <Billing_details 
+                set_app_date={set_app_date} 
+                app_date = {app_date}
+                balance={balance} 
+                bill_retention={bill_retention} 
+                update_bill_retention={(item)=>set_bill_retention(item)}/>},
         {label: 'Preview', content: preview()},
         {label: 'Submission' , content: <div></div>}
     ];
@@ -154,6 +158,7 @@ function Pay_app() {
                 //console.log('saved inputs', saved_inputs)
                 batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(saved_inputs[i]))}); 
 
+
             }
             draw_total += Number(saved_inputs[i]); 
         }
@@ -171,6 +176,8 @@ function Pay_app() {
         batch.update(contract_ref, {"recent_task":"Added a payment application"});
         batch.update(contract_ref, {"update":date});
         batch.update(contract_ref, {"app_count":Number(contract_info.app_count + Number(1))});
+        batch.update(contract_ref, {"pay_app_dates": firebase.firestore.FieldValue.arrayUnion(app_date)}); 
+
 
          
         console.log('saved inputs', saved_inputs)
@@ -291,6 +298,7 @@ function Pay_app() {
 
     return (
         <div>
+            {    console.log('END OF MONTH', new Date(app_date.getFullYear(),app_date.getMonth()+1,0)) }
 
             <Stepper activeStep={current_step} orientation="vertical">
                 {steps.map(build_steps)}
@@ -311,7 +319,10 @@ function Pay_app() {
                             app_id={contract_info.app_count+1} 
                             contract_info={preview_contract_info} 
                             owner_info={owner_info} 
-                            sov={preview_sov}/>
+                            sov={preview_sov}
+                            app_date={app_date}
+                            end_date={new Date(app_date.getFullYear(),app_date.getMonth()+1,0)}
+                            />
                         }
                     </Paper>
                     : 

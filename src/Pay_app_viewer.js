@@ -25,7 +25,8 @@ function Pay_app_viewer(props) {
     const [id, set_id] = useState(0); 
     const [app_id, set_app_id] = useState(0); 
     const [draft, set_draft] = useState(false); 
-
+    const [app_date, set_app_date] = useState(new Date); 
+    const [end_date, set_end_date] = useState(new Date((new Date).getFullYear(),(new Date).getMonth()+1,0)); 
 
 
     //NEED TO EITHER FETCH DATA FROM THE DATABASE IF LOADING AN EXISTING APPLICATION OR USE PROPS PASSED IN FOR VIEWING A DRAFT APPLICATION 
@@ -35,6 +36,18 @@ function Pay_app_viewer(props) {
             if(params !== undefined){
                 const dataList = await firestoreDB.collection("contracts").doc(params.id).get(); //updated
                 set_contract_info(dataList.data()); 
+                let date = dataList.data().pay_app_dates[Number(params.app_id)-1];
+                let temp_date = new Date; 
+                //CONVERT FROM GOOGLE TIMESTAMP TO DATE OBJECT
+                if(!(date instanceof Date)){
+                    temp_date = new Date(date.seconds*1000); 
+                }
+                else{
+                    temp_date = new Date(date); 
+                }
+                set_app_date(temp_date);
+                set_end_date(new Date(temp_date.getFullYear(),temp_date.getMonth()+1,0));
+
             
                 const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
                 set_owner_info(dataList2.data()); 
@@ -67,9 +80,10 @@ function Pay_app_viewer(props) {
             set_owner_info(props.owner_info);
             set_contract_info(props.contract_info);
             set_sov(props.sov); 
+            set_app_date(props.app_date); 
+            set_end_date(new Date(props.app_date.getFullYear(),props.app_date.getMonth()+1,0)); 
             set_draft(true); 
-            console.log("SOV INSIDE PAY APP VIEWER", props.sov)
-            console.log("APP_ID INSIDE PAY APP VIEWER", props.app_id)
+
         }
     }, []);  
 
@@ -134,6 +148,8 @@ function Pay_app_viewer(props) {
                 co_summary={co_summary}
                 retention={Number(0.05)}
                 draft={draft}
+                app_date={app_date}
+                end_date={end_date}
             />
 
             <Pay_app_viewer_g703
@@ -141,6 +157,8 @@ function Pay_app_viewer(props) {
                 line_items={line_items}
                 line_item_totals={line_item_totals}
                 draft={draft}
+                app_date={app_date}
+                end_date={end_date}
             /> 
         </Document>
         </PDFViewer>

@@ -160,6 +160,8 @@ function Contract_page(props) {
 
         //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
         let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
+        let app_dates = JSON.parse(JSON.stringify(contract_info.pay_app_dates)); //CREATE A DEEP COPY
+        app_dates.pop(); 
         let this_draw = Number(0); 
         let prev_draw = Number(0); 
         let balance = Number(0); 
@@ -190,6 +192,8 @@ function Contract_page(props) {
         batch.update(contract_ref, {"update":new Date()}); //DONE
         batch.update(contract_ref, {"recent_task":"Deleted the most recent payment application"}); //DONE
         batch.update(contract_ref, {"app_count": Number(contract_info.app_count)-1}); 
+        batch.update(contract_ref, {"pay_app_dates": app_dates}); 
+
         
         batch.commit().then(()=>{
             console.log("Payment application deleted successfully"); 

@@ -51,31 +51,19 @@ function Billing_details(props) {
     }
 
 
-    const [app_date, set_app_date] = useState(new Date); 
     const app_date_picker = () => {
         return(
             <div style={{ position: 'relative', zIndex: '2' }}>
                 <DatePicker 
-                    selected={app_date} 
-                    onChange={(date) => set_app_date(date)}                     
+                    selected={props.app_date} 
+                    onChange={(date) => props.set_app_date(date)}                     
                 />
             </div> 
 
         )
     }
 
-    const [end_date, set_end_date] = useState(new Date((new Date).getFullYear(),(new Date).getMonth()+1,0)); 
-    const end_date_picker = () => {
-        return(
-            <div style={{ position: 'relative', zIndex: '1' }}>
-                <DatePicker 
-                    selected={end_date} 
-                    onChange={(date) => set_end_date(date)}                     
-                />
-            </div> 
 
-        )
-    }
 
  
 
@@ -84,9 +72,7 @@ function Billing_details(props) {
          <div>
             Select the date you want to be displayed as the application date:
             {app_date_picker()}
-            <br></br>
-            Select the date for when this application period ends:
-            {end_date_picker()}
+
             
             <br></br>
             {full_draw_check()}
