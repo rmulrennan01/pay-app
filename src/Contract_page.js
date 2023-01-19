@@ -4,7 +4,7 @@ import firebase from "./Firebase.js";
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { PieChart, PieArcSeries } from 'reaviz';
-import {BarList, BarListSeries} from 'reaviz';
+import Date_string from './Utilities/Date_string.js'; 
 
 
 import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
@@ -40,8 +40,8 @@ import { blue } from '@mui/material/colors';
 
 
 function Contract_page(props) {
-    const [contract_info, set_contract_info] = useState(); 
-    const [owner_info, set_owner_info] = useState(); 
+    const [contract_info, set_contract_info] = useState([]); 
+    const [owner_info, set_owner_info] = useState([]); 
     const [sov, set_sov] = useState(); 
     const [loading, set_loading] = useState(true); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
@@ -56,10 +56,12 @@ function Contract_page(props) {
 
 
     //fetch the document from firebase
-    React.useEffect( () => {
+    useEffect( () => {
         const fetchData = async () =>{
             const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             set_contract_info(dataList.data()); 
+            set_deadlines(get_deadlines(dataList.data().due_date))
+
             //console.log(dataList.data()); 
         
             const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
@@ -79,6 +81,7 @@ function Contract_page(props) {
 
             //console.log(tempList); 
             set_sov(tempList); 
+           //get_deadlines();
             set_loading(false); 
             
         }
@@ -86,6 +89,7 @@ function Contract_page(props) {
 
         
     }, []);  
+
 
 
   
@@ -343,6 +347,9 @@ function Contract_page(props) {
                 <h3> 
                     Payment Applications Completed: {contract_info.app_count}
                 </h3>
+                <h3> 
+                    Your next application is due {deadlines.days == 1 ? 'tomorrow': null} {deadlines.days ==0 ? 'today' : null} {deadlines.days >1 ? 'in '+ deadlines.days : null} {deadlines.days > 1 ? 'days': null}
+                </h3>
 
             </Paper>
         )
@@ -417,6 +424,37 @@ function Contract_page(props) {
                 />
             </>
         );
+
+    }
+
+    const [deadlines, set_deadlines] = useState({}); 
+    const get_deadlines = (due_date) => {
+        /*
+        ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th",
+        "13th","14th", "15th", "16th", "17th", "18th", "19th", "20th", "21st", "22nd", "23rd", "24th", "25th", "26th",
+        "27th", "28th", "Last"]; 
+        */
+        let temp_date = due_date;
+        let due = new Date; 
+        if(temp_date === "Last"){
+            due = new Date((new Date).getFullYear(),(new Date).getMonth()+1,0);
+        }
+        else{
+            temp_date = temp_date.slice(0, temp_date.length-2); 
+            due = new Date((new Date).getFullYear(), (new Date).getMonth(),temp_date);
+        }
+
+        let remaining_days = due - new Date; 
+        remaining_days = Number(remaining_days)/Number(86400000);
+        remaining_days = Number(remaining_days.toFixed(0))+1;
+
+
+
+
+        //set_deadlines({days:remaining_days, date:Date_string(due)});
+        
+        //set_deadlines({days:remaining_days, date:Date_string(due)});
+        return {days:remaining_days, date:Date_string(due)}
 
     }
 
@@ -501,7 +539,7 @@ function Contract_page(props) {
                 <Grid item xs = {6}>
                     {/*job_summary()*/}
                
-                    <Paper>{loading ? <CircularProgress/> : null} </Paper>
+                    <Paper>{loading ? <CircularProgress/> : job_summary()} </Paper>
                     
 
                 </Grid>
