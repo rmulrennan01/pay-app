@@ -4,15 +4,20 @@ import { BarChart, BarSeries, Bar } from 'reaviz';
 
 function Bar_chart(props) {
 
- 
- 
+    const today = new Date(); 
+    const prev_mo_1 = new Date(today.getFullYear(),today.getMonth()-1);
+    const prev_mo_2 = new Date(prev_mo_1.getFullYear(),prev_mo_1.getMonth()-1);
+    const prev_mo_3 = new Date(prev_mo_2.getFullYear(),prev_mo_2.getMonth()-1);
+
     
     const data=[
-        { key: 'DLP', data: 13 },
-        { key: 'SIEM', data: 2 },
-        { key: 'Endpoint', data: 7 },
-        { key: 'Extra', data: 17 }
+        { key: prev_mo_3.toDateString().split(" ")[1], data: 52 },
+        { key: prev_mo_2.toDateString().split(" ")[1], data: 7 },
+        { key: prev_mo_1.toDateString().split(" ")[1], data: 20 },
+        { key: today.toDateString().split(" ")[1], data: 17 },
       ]; 
+
+    
 
 
     return (
