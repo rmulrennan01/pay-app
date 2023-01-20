@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react'
 import Paper from '@mui/material/Paper';
 import Pay_app_modal_table from './Pay_app_modal_table.js'; 
 import {useParams} from "react-router-dom";
+import Date_string from '../Utilities/Date_string.js'; 
 
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 
@@ -240,6 +241,7 @@ function Pay_app_modal(props) {
                 {edit_dialog()}
                 <Paper> 
                     <h2>Pay App # {app_id+1} </h2> 
+                    <h2>Application Date: {Date_string(contract_info.pay_app_dates[app_id])}</h2> 
                     
                     <br></br>
                     <Button variant='contained' startIcon={<PictureAsPdfIcon/>} onClick={()=>open_pdf()}>View PDF</Button> {edit_button()} {delete_btn()}      

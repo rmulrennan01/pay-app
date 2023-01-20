@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'; 
 import Button from '@mui/material/Button';
+import Date_string from '../Utilities/Date_string.js'; 
 import "./Pay_app_table.css"; 
 import Sov_item_totals from "../Utilities/Sov_item_totals.js"; 
 import Paper from '@mui/material/Paper';
@@ -21,7 +22,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 function Pay_app_table(props) {
   const table_headers = ["#", "Base Contract", "Change Orders", "Revised Contract",  
-    "Previous Work Complete", "Work Complete This Period", "Payment This Period (Work Complete Less Retention)", "Remaining Balance"];
+    "Previous Work Complete", "Work Complete This Period", "Payment This Period (Work Complete Less Retention)", "Remaining Balance", "App Date"];
   const [no_apps, set_no_apps] = useState(false); 
 
   const [period_summary, set_period_summary] = useState([]);
@@ -112,6 +113,9 @@ function Pay_app_table(props) {
 
         <TableCell>
           {currency(item.balance)} 
+        </TableCell>
+        <TableCell>
+          {Date_string(props.contract_info.pay_app_dates[index])} 
         </TableCell>
         
       </TableRow>
