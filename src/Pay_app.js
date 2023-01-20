@@ -149,7 +149,7 @@ function Pay_app() {
 
         
         for (let i = 0; i<sov.length; i++){
-            if(saved_inputs[i] ==""){
+            if(saved_inputs[i] =="" || saved_inputs == '' || saved_inputs[i] == NaN || saved_inputs[i] == undefined || saved_inputs[i] == null){
                 //temp_sov[i].pay_apps.push(Number(0)); 
                 batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(0))});
             }
@@ -180,7 +180,6 @@ function Pay_app() {
 
 
          
-        console.log('saved inputs', saved_inputs)
         batch.commit().then(()=>{
             submission_success();  
         })

@@ -212,7 +212,6 @@ function Home() {
                 </Paper>
             </Paper>
             <Paper>
-                <Bar_chart />
             </Paper>
 
 

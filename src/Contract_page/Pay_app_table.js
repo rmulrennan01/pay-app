@@ -25,102 +25,83 @@ function Pay_app_table(props) {
     "Previous Work Complete", "Work Complete This Period", "Payment This Period (Work Complete Less Retention)", "Remaining Balance", "App Date"];
   const [no_apps, set_no_apps] = useState(false); 
 
-  const [period_summary, set_period_summary] = useState([]);
+  const [period_summary, set_period_summary] = useState(props.period_summary);
+
+  const open_modal = (ind) =>{
+    props.set_pay_app_id(ind); 
+    props.open_modal()
+  }
 
 
-  //contract_info={contract_info} sov={sov}
+  //function for formatting values to display on the pay app
+  const currency = (val) =>{
+    return(
+        <CurrencyFormat 
+        value={val}
+        displayType={'text'} 
+        thousandSeparator={true} 
+        prefix={'$'} 
+        fixedDecimalScale={true} 
+        decimalScale={2}
+        renderText={value => <>{value}</>} 
+        />
+        
 
-  useEffect(() => {
-    build_table_data(); 
-  
-  }, []); 
+    )
+  }
 
- 
-
-    const open_modal = (ind) =>{
-      props.set_pay_app_id(ind); 
-      props.open_modal()
-    }
-
-    //format the data from the sov to be used in the pay app table
-    const build_table_data = () => {
-      let temp_period_summary = []; 
-
-      for (let i = 0; i<props.contract_info.app_count; i++){
-        temp_period_summary.push(Period_totals(props.contract_info.base_contract_value,props.sov,i+1,0.05));
-      }
-      set_period_summary(temp_period_summary); 
-    }
-
-    //function for formatting values to display on the pay app
-    const currency = (val) =>{
-      return(
-          <CurrencyFormat 
-          value={val}
-          displayType={'text'} 
-          thousandSeparator={true} 
-          prefix={'$'} 
-          fixedDecimalScale={true} 
-          decimalScale={2}
-          renderText={value => <>{value}</>} 
-          />
-          
-
-      )
-    }
-
-    const no_app_message = () => {
-      return(
-        <div>
-          
-          No payment applications have been submitted.
-  
-
-        </div>
+  const no_app_message = () => {
+    return(
+      <div>
+        
+        No payment applications have been submitted.
 
 
-      )
-    }
+      </div>
+
+
+    )
+  }
 
     
-    const build_table_body = (item,index) => {
-      console.log("item", item); 
+  const build_table_body = (item,index) => {
+    console.log("item", item); 
+    
+    return(
+
+    <TableRow className="Pay_app_table__row" onClick={()=>open_modal(index)}>
+      <TableCell>
+        {index+1}
+      </TableCell>
+      <TableCell> 
+        {currency(item.base_contract)}
+      </TableCell>
+      <TableCell>
+        {currency(item.co)}
+      </TableCell>
+      <TableCell> 
+        {currency(item.revised_value)}
+      </TableCell>
+      <TableCell> 
+        {currency(item.prev_draws)}
+      </TableCell>
+      <TableCell> 
+        {currency(item.cur_draw)}
+      </TableCell>
+      <TableCell> 
+        {currency(item.payment)}
+      </TableCell>
+
+      <TableCell>
+        {currency(item.balance)} 
+      </TableCell>
+      <TableCell>
+        {Date_string(props.contract_info.pay_app_dates[index])} 
+      </TableCell>
       
-      return(
-
-      <TableRow className="Pay_app_table__row" onClick={()=>open_modal(index)}>
-        <TableCell>
-          {index+1}
-        </TableCell>
-        <TableCell> 
-          {currency(item.base_contract)}
-        </TableCell>
-        <TableCell>
-          {currency(item.co)}
-        </TableCell>
-        <TableCell> 
-          {currency(item.revised_value)}
-        </TableCell>
-        <TableCell> 
-          {currency(item.prev_draws)}
-        </TableCell>
-        <TableCell> 
-          {currency(item.cur_draw)}
-        </TableCell>
-        <TableCell> 
-          {currency(item.payment)}
-        </TableCell>
-
-        <TableCell>
-          {currency(item.balance)} 
-        </TableCell>
-        <TableCell>
-          {Date_string(props.contract_info.pay_app_dates[index])} 
-        </TableCell>
-        
-      </TableRow>
-      )
-    }
+    </TableRow>
+    )
+  }
 
   return (
     <div>
@@ -134,7 +115,7 @@ function Pay_app_table(props) {
           </TableHead>
           <TableBody>
            
-            {(no_apps) && period_summary.length > 0  ? null : period_summary.map(build_table_body)}
+            {(no_apps) && props.period_summary.length > 0  ? null : props.period_summary.map(build_table_body)}
           </TableBody>
 
         </Table>

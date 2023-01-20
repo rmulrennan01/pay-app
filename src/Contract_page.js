@@ -5,7 +5,8 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { PieChart, PieArcSeries } from 'reaviz';
 import Date_string from './Utilities/Date_string.js'; 
-
+import Bar_chart from './Utilities/Bar_chart.js'; 
+import Period_totals from './Utilities/Period_totals';
 
 import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
 import Totals_by_key from './Utilities/Totals_by_key.js'; 
@@ -42,7 +43,7 @@ import { blue } from '@mui/material/colors';
 function Contract_page(props) {
     const [contract_info, set_contract_info] = useState([]); 
     const [owner_info, set_owner_info] = useState([]); 
-    const [sov, set_sov] = useState(); 
+    const [sov, set_sov] = useState([]); 
     const [loading, set_loading] = useState(true); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const {id} = useParams(); 
@@ -89,6 +90,12 @@ function Contract_page(props) {
 
         
     }, []);  
+
+
+    useEffect( () => {
+        build_table_data();
+        
+    }, [contract_info, sov]); 
 
 
 
@@ -261,7 +268,20 @@ function Contract_page(props) {
             
   
         )
-      }
+    }
+
+    const [period_summary, set_period_summary] = useState([]);
+    //BUILDS PAY PERIOD TOTALS    
+    const build_table_data = () => {
+        let temp_period_summary = []; 
+    
+        for (let i = 0; i<contract_info.app_count; i++){
+            temp_period_summary.push(Period_totals(contract_info.base_contract_value,sov,i+1,contract_info.retention));
+        }
+        console.log('SUMMARY', temp_period_summary)
+        set_period_summary(temp_period_summary); 
+    }
+
 
     const job_info = () => {
         if(loading){
@@ -401,7 +421,7 @@ function Contract_page(props) {
         else {
             return(
                 <Paper>
-                    <Pay_app_table id={id} contract_info={contract_info} sov={sov} set_pay_app_id={set_pay_app_id} open_modal={()=>set_pay_modal_open(true)}/> 
+                    <Pay_app_table id={id} period_summary={period_summary} contract_info={contract_info} sov={sov} set_pay_app_id={set_pay_app_id} open_modal={()=>set_pay_modal_open(true)}/> 
                 </Paper>
             ); 
         }
@@ -484,49 +504,7 @@ function Contract_page(props) {
 
     }
  
-
-/*
-    const info_bar = () => {
-        const data = []
-        data.push({ key: 'Open Balance ($)', data: contract_info.balance });
-        data.push({ key: 'Billed ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.balance) }); 
-               
-        return (
-            <>
-                <style>
-                    {`
-                        .value {
-                        width: 200px;
-                        height: 50px; 
-                        }
-                    `}
-                </style>
-                <BarList
-                    style={{ width: 350 }}
-                    data={[
-                        { key: 'Base Contract ($)', data: contract_info.base_contract_value },
-                        { key: 'Change Orders ($)', data: contract_info.co_value },
-                        { key: 'Contract Total ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) }
-                        
-                    ]}
-
-                    series={
-                        <BarListSeries
-                          valueFormat={data => currency(data)}
-                          labelPosition="end"
-                          valueClassName="value"
-                        />
-                      }
-
-                />
-            </>
-        );
-    }
-
-  
-*/
-
-    
+   
 
     
     return (
@@ -547,11 +525,13 @@ function Contract_page(props) {
                     <Paper>{loading ? <CircularProgress/> : chart_contract()}</Paper>
                 </Grid>
                 <Grid item xs = {6}>
-                    <Paper>{loading ? <CircularProgress/> : chart_draws()}</Paper>
+                    {/*<Paper>{loading ? <CircularProgress/> : chart_draws()}</Paper> */}
+                    
                 </Grid>
 
 
             </Grid>
+            {loading? <CircularProgress/> : <Bar_chart data={period_summary} key={'cur_draw'} dates={contract_info.pay_app_dates}/>}
             <br/> 
             <br/>
             <Tabs value={tab}  centered>
