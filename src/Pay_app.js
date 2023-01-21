@@ -23,6 +23,7 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import { CollectionsOutlined } from '@material-ui/icons';
 
 
 
@@ -130,6 +131,7 @@ function Pay_app() {
 
 
     const submission_success = () => {
+        console.log("submission", saved_inputs); 
         alert("Pay App Added Successfully. You will now be redirected to the contract page"); 
         window.location='/contract/'+ String(id)
 
@@ -140,28 +142,47 @@ function Pay_app() {
         let batch = firestoreDB.batch(); 
         let contract_ref = firestoreDB.collection("contracts").doc(id); 
         let sov_ref = contract_ref.collection("sov"); 
-        let temp_sov = []; 
+        //let temp_sov = [JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
         let draw_total = Number(0);
-
-        console.log('SOV', sov); 
-
-        //batch.update(sov_ref, {"change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: Number(data.value), pay_app: Number(data.pay_app)})});//DONE
-
-        
-        for (let i = 0; i<sov.length; i++){
-            if(saved_inputs[i] =="" || saved_inputs == '' || saved_inputs[i] == NaN || saved_inputs[i] == undefined || saved_inputs[i] == null){
-                //temp_sov[i].pay_apps.push(Number(0)); 
-                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(0))});
+        console.log('SAVED_INPUTS', saved_inputs)
+        //LOOP THROUGH AND CREATE A NEW PAY APP LIST TO INCLUDE INPUTS AND UPDATE
+        for (let i=0; i<sov.length; i++){
+            let temp_apps = [];
+            temp_apps.push(...sov[i].pay_apps) //SHALLOW COPY
+            console.log('TEST-INPUT', saved_inputs[i]); 
+            if(saved_inputs.length === 0){
+                temp_apps.push(Number(0));
+            }
+            else if(saved_inputs[i] == ""){
+                temp_apps.push(Number(0));
             }
             else{
-                //temp_sov[i].pay_apps.push(Number(saved_inputs[i]))
-                //console.log('saved inputs', saved_inputs)
-                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(saved_inputs[i]))}); 
+                temp_apps.push(Number(saved_inputs[i]));
+                draw_total += Number(saved_inputs[i]); 
+            }
+            batch.update(sov_ref.doc(sov[i].id), {"pay_apps": temp_apps}); 
 
+        }
+
+        /*
+        for (let i = 0; i<sov.length; i++){
+
+            if(saved_inputs.length === 0){
+                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(0))}); 
+                
+            }
+            else if(saved_inputs[i].isEmpty()){
+                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(0))}); 
 
             }
-            draw_total += Number(saved_inputs[i]); 
+  
+            else{
+                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(saved_inputs[i]))}); 
+                draw_total += Number(saved_inputs[i]); 
+
+            }
         }
+        */
         
         
 
