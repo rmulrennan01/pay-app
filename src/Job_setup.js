@@ -127,8 +127,8 @@ function Job_setup() {
             temp_project["co_count"] = Number(0); 
             temp_project["co_value"] = Number(0); 
             temp_project["app_count"] = Number(0); 
-            temp_project["update"] = new Date();
-            temp_project["recent_task"] = "Added a new contract"; 
+            temp_project["update"] = [new Date()];
+            temp_project["recent_task"] = ["Added a new contract"]; 
             temp_project["balance"] = Number(job_total);
             temp_project["prev_draws"] = Number(0);
             temp_project["this_draw"] = Number(0); 

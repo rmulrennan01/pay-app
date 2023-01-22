@@ -52,10 +52,10 @@ function Bar_chart(props) {
 
 
     const data=[
-        { key: prev_mo_3.toDateString().split(" ")[1], data: result[0] },
-        { key: prev_mo_2.toDateString().split(" ")[1], data: result[1] },
-        { key: prev_mo_1.toDateString().split(" ")[1], data: result[2] },
-        { key: today.toDateString().split(" ")[1], data: result[3] },
+        { key: prev_mo_3.toDateString().split(" ")[1] + ' ($)', data: result[0] },
+        { key: prev_mo_2.toDateString().split(" ")[1] + ' ($)', data: result[1] },
+        { key: prev_mo_1.toDateString().split(" ")[1] + ' ($)', data: result[2] },
+        { key: today.toDateString().split(" ")[1] + ' ($)', data: result[3] },
       ]; 
 
     

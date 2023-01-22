@@ -65,7 +65,7 @@ function Pay_app_table(props) {
 
     
   const build_table_body = (item,index) => {
-    console.log("item", item); 
+    
     
     return(
 

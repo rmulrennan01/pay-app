@@ -98,7 +98,6 @@ function Contract_page(props) {
     }, [contract_info, sov]); 
 
 
-
   
     //SUBMIT A NEW CHANGE ORDER
     const submit_co = (sov_id, data) => {
@@ -115,8 +114,18 @@ function Contract_page(props) {
         batch.update(contract_ref, {"co_value":Number(contract_info.co_value)+Number(data.value)}); //DONE
         batch.update(contract_ref, {"co_count":Number(contract_info.co_count)+Number(1)}); //DONE
         batch.update(contract_ref, {"balance":Number(balance)}); //DONE
-        batch.update(contract_ref, {"update":new Date()}); //DONE
-        batch.update(contract_ref, {"recent_task":"Added a change order for "+ data.description}); //DONE
+
+        //RECENT TASKS
+        let temp_update = [...contract_info.update];
+        temp_update.push(new Date); 
+        let temp_tasks = [...contract_info.recent_task];
+        temp_tasks.push("Added a change order for "+ data.description)
+        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
+            temp_update.shift();
+            temp_tasks.shift();
+        }
+        batch.update(contract_ref, {"update":temp_update}); //DONE
+        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
 
 
         batch.commit().then(()=>{
@@ -150,8 +159,19 @@ function Contract_page(props) {
         let balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.prev_draws) - rev_draw;
         batch.update(contract_ref, {"balance":balance});//DONE
         batch.update(contract_ref, {"this_draw":rev_draw});//DONE
-        batch.update(contract_ref, {"update":new Date()}); //DONE
-        batch.update(contract_ref, {"recent_task":"Edited the most recent payment application"}); //DONE
+
+        //RECENT TASKS
+        let temp_update = [...contract_info.update];
+        temp_update.push(new Date); 
+        let temp_tasks = [...contract_info.recent_task];
+        temp_tasks.push("Edited the most recent payment application")
+        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
+            temp_update.shift();
+            temp_tasks.shift();
+        }
+        batch.update(contract_ref, {"update":temp_update}); //DONE
+        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
+
         
         batch.commit().then(()=>{
             console.log("updated app changes successfully"); 
@@ -329,48 +349,23 @@ function Contract_page(props) {
         
         return(
             <Paper>
-                <h3>Base Contract: <span> 
-                    <CurrencyFormat 
-                        value={contract_info.base_contract_value} 
-                        displayType={'text'} 
-                        thousandSeparator={true} 
-                        prefix={'$'} 
-                        fixedDecimalScale={true} 
-                        decimalScale={2}
-                    /> 
-                </span> 
-                </h3> 
-                <h3>Change Orders: <span> 
-                    <CurrencyFormat 
-                        value={contract_info.co_value} 
-                        displayType={'text'} 
-                        thousandSeparator={true} 
-                        prefix={'$'} 
-                        fixedDecimalScale={true} 
-                        decimalScale={2}
-                    /> 
-                </span> 
-                
-                </h3> 
-                <h3>Contract Total: <span> 
-                    <CurrencyFormat 
-                        value={Number(contract_info.base_contract_value)+Number(contract_info.co_value)} 
-                        displayType={'text'} 
-                        thousandSeparator={true} 
-                        prefix={'$'} 
-                        fixedDecimalScale={true} 
-                        decimalScale={2}
-                    /> 
-                </span> 
-                
-                </h3> 
+                <h3>Base Contract: </h3> 
+                {currency(contract_info.base_contract_value)}
+   
+                <h3>Change Orders: </h3> 
+                {currency(contract_info.co_value)}
+           
+                <h3>Contract Total: </h3> 
+                {currency(Number(contract_info.base_contract_value)+Number(contract_info.co_value))} 
+            
                 <h3> 
-                    Payment Applications Completed: {contract_info.app_count}
+                    Payment Applications Completed: 
                 </h3>
+                {contract_info.app_count}
                 <h3> 
-                    Your next application is due {deadlines.days == 1 ? 'tomorrow': null} {deadlines.days ==0 ? 'today' : null} {deadlines.days >1 ? 'in '+ deadlines.days : null} {deadlines.days > 1 ? 'days': null}
+                    Your next application is due: 
                 </h3>
-
+                {deadlines.days == 1 ? 'tomorrow': null} {deadlines.days ==0 ? 'today' : null} {deadlines.days >1 ? 'in '+ deadlines.days : null} {deadlines.days > 1 ? 'days': null} {deadlines.days < 0 ? deadlines.next_date : null}
             </Paper>
         )
         }
@@ -435,7 +430,6 @@ function Contract_page(props) {
 
         return (
             <>
-                <h3>Value</h3>
                 <PieChart
                     width={450}
                     height={350}
@@ -468,13 +462,15 @@ function Contract_page(props) {
         remaining_days = Number(remaining_days)/Number(86400000);
         remaining_days = Number(remaining_days.toFixed(0))+1;
 
+        let next_date = new Date(due); 
+        next_date.setMonth(next_date.getMonth()+1);
 
 
 
         //set_deadlines({days:remaining_days, date:Date_string(due)});
         
         //set_deadlines({days:remaining_days, date:Date_string(due)});
-        return {days:remaining_days, date:Date_string(due)}
+        return {days:remaining_days, date:Date_string(due), next_date:Date_string(next_date) }
 
     }
 
@@ -485,7 +481,6 @@ function Contract_page(props) {
                
         return (
             <>
-                <h3>Billing</h3>
                 <PieChart
                     width={450}
                     height={350}
@@ -498,13 +493,20 @@ function Contract_page(props) {
 
     }
 
+    const recent_activity = () =>{
+        //TODO
 
-    const info_bar = () =>{
+        return(
+            <>
+                <h3> Activity Log</h3>
+            
+            </>
+
+        )
+
 
 
     }
- 
-   
 
     
     return (
@@ -512,26 +514,37 @@ function Contract_page(props) {
 
             <Grid container spacing={2}>
                 <Grid item xs = {6}>
-                    {job_info()}
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            {job_info()}
+                        </Grid>
+                        <Grid item xs={6}>
+                            {loading ? <CircularProgress/> : job_summary()}
+                        </Grid>
+
+                    </Grid>
                 </Grid>
-                <Grid item xs = {6}>
-                    {/*job_summary()*/}
+
+
+                <Grid item xs = {3}>
+                    <Paper>
+                        <h3>Billing</h3>
+                        {loading ? <CircularProgress/> : chart_draws()}
+                    </Paper> 
+                    
+                </Grid>
+                <Grid item xs = {3}>
+                    <Paper> 
+                        <h3>Recent Billing</h3>
+                        {loading? <CircularProgress/> : <Bar_chart data={period_summary} key_name={'cur_draw'} dates={contract_info.pay_app_dates}/>}
+                    </Paper> 
                
-                    <Paper>{loading ? <CircularProgress/> : job_summary()} </Paper>
                     
 
-                </Grid>
-                <Grid item xs = {6}>
-                    <Paper>{loading ? <CircularProgress/> : chart_contract()}</Paper>
-                </Grid>
-                <Grid item xs = {6}>
-                    {/*<Paper>{loading ? <CircularProgress/> : chart_draws()}</Paper> */}
-                    
                 </Grid>
 
 
             </Grid>
-            {loading? <CircularProgress/> : <Bar_chart data={period_summary} key_name={'cur_draw'} dates={contract_info.pay_app_dates}/>}
             <br/> 
             <br/>
             <Tabs value={tab}  centered>
