@@ -531,7 +531,7 @@ function Contract_page(props) {
 
 
             </Grid>
-            {loading? <CircularProgress/> : <Bar_chart data={period_summary} key={'cur_draw'} dates={contract_info.pay_app_dates}/>}
+            {loading? <CircularProgress/> : <Bar_chart data={period_summary} key_name={'cur_draw'} dates={contract_info.pay_app_dates}/>}
             <br/> 
             <br/>
             <Tabs value={tab}  centered>

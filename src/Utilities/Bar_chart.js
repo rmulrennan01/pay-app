@@ -14,10 +14,12 @@ function Bar_chart(props) {
 
     const app_index = [-1,-1,-1,-1];
     const dates = props.dates;
-    /*
+
+    //const example = new Date(dates[0].seconds*1000 + dates[0].nanoseconds/100000) 
+    
     //FIND INDEXES OF APPS THAT HAVE MATCHING DATES AS CURRENT AND PREVIOUS THREE MONTHS
     for (let i = dates.length-1; i>-1; i--){
-        let temp = dates[i].toDate();
+        let temp = new Date(dates[i].seconds*1000 + dates[i].nanoseconds/100000) 
         if(temp.getMonth() == today.getMonth() && temp.getFullYear() == today.getFullYear()){
             app_index[3] = i; 
         }
@@ -32,22 +34,23 @@ function Bar_chart(props) {
             break; 
         }
     }
-    */
+    
     
     console.log('index', app_index);
 
     let result = [0,0,0,0];
     for (let i = 0; i < app_index.length; i++){
         if(app_index[i] === -1){
-            result.push(Number(0))
+            result[i]=(Number(0))
         }
         else{
-            console.log(props.data[app_index[i]])
-            //result.push(Number(1)); 
-            result.push(Number(props.data[app_index[i]][props.key]))
+            result[i] = (Number(props.data[app_index[i]][props.key_name]))
         }
     }
     
+    console.log('result', result); 
+
+
     const data=[
         { key: prev_mo_3.toDateString().split(" ")[1], data: result[0] },
         { key: prev_mo_2.toDateString().split(" ")[1], data: result[1] },
