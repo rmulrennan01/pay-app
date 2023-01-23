@@ -33,6 +33,7 @@ function Home() {
             set_contracts(temp_array); 
             sort_dates(contracts); 
             build_deadlines();
+            get_tasks(temp_array); 
             set_loading(false);         
     
              
@@ -98,9 +99,26 @@ function Home() {
             due = new Date((new Date).getFullYear(), (new Date).getMonth(),temp_date);
         }
 
-        let remaining_days = due - new Date; 
-        remaining_days = Number(remaining_days)/Number(86400000);
-        remaining_days = Number(remaining_days.toFixed(0))+1;
+        let today = new Date; 
+        let remaining_days = due - today;  
+
+        if(due.getDay() == today.getDay()){
+            remaining_days = Number(0); 
+            due = today; 
+        }
+        else if(remaining_days < 0){
+            due.setMonth(due.getMonth()+1); 
+            remaining_days = due - new Date; 
+            remaining_days = Number(remaining_days)/Number(86400000);
+            remaining_days = Number(remaining_days.toFixed(0))+1;
+
+        }
+        else{
+            remaining_days = due - new Date;
+            remaining_days = Number(remaining_days)/Number(86400000);
+            remaining_days = Number(remaining_days.toFixed(0))+1;
+
+        }
 
         //return {days:remaining_days, date:Date_string(due)}
         return {days:remaining_days, date:Date_string(due)}; 
@@ -140,9 +158,10 @@ function Home() {
         set_upcoming_apps(upcoming); 
     }
 
+    
     //BUILDS TASKS TABLE
     const display_tasks = (item, index) => {
-        if(index < 10 && item.hasOwnProperty("update") && item.hasOwnProperty("recent_task")){
+        if(index < 10){
             return(
                 <TableRow key={index+"recent"}  onClick={()=>window.location='/contract/'+ String(item.id)} className="home__row">
                     <TableCell className="home__data">
@@ -152,13 +171,56 @@ function Home() {
                         {item.recent_task}
                     </TableCell>
                     <TableCell className="home__data">
-                        {item.hasOwnProperty("update") ? item.update.toDate().toString() : null}
+                        {item.date.toDate().toString()}
                     </TableCell>
                 </TableRow>
 
             )
         }
     }
+    
+
+
+
+    const [task_list, set_task_list] = useState([]); 
+    const get_tasks = (contract_list) => {
+        let tasks = []; 
+        for (let i = 0; i< contract_list.length; i++){
+            for (let k = 0; k < contract_list[i].recent_task.length; k++){
+                let temp = {}
+                temp.recent_task = contract_list[i].recent_task[k]; 
+                temp.date = contract_list[i].update[k]; 
+                temp.id = contract_list[i].id;    
+                temp.name = contract_list[i].name;  
+                tasks.push(temp);      
+            }
+        }
+
+        //SORT
+        tasks = tasks.sort(function(a,b){
+            let x = a["date"];
+            let y = b["date"];
+            if (x<y){
+                return -1;
+            }
+            if (x>y){
+                return 1; 
+            }
+            
+        return 0;
+        });
+        set_task_list(tasks); 
+    }
+
+
+
+        
+        
+        //JSON.parse(JSON.stringify(sov[i].change_orders)); 
+
+
+
+    
 
     const display_due_dates = (item,index) => {
         return(
@@ -190,7 +252,7 @@ function Home() {
                         <TableCell className="home__data"> <h3>Date</h3></TableCell>
                     </TableRow>
                     <TableBody>
-                        {loading ? <CircularProgress /> : contracts.map(display_tasks)}
+                        {loading ? <CircularProgress /> : task_list.map(display_tasks)}
                     </TableBody>
                 </Table>
                 </Paper>
@@ -216,7 +278,6 @@ function Home() {
 
 
            {loading ? null : console.log(contracts)}
-           {loading ? null : console.log(contracts[0].update.toDate())}
            
            
 

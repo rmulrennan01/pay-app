@@ -52,7 +52,7 @@ function Contract_page(props) {
     const [pdf_modal_open, set_pdf_modal_open] = useState(false); 
     const [pay_app_id, set_pay_app_id] = useState(0); 
     const [tab, set_tab] = useState(0);   
-   
+    const [account, set_account] = useState(); 
 
 
 
@@ -82,6 +82,11 @@ function Contract_page(props) {
 
             //console.log(tempList); 
             set_sov(tempList); 
+
+            //const dataList4 = await firestoreDB.collection("account").get();
+            //set_account(dataList4);
+            //console.log('account', dataList4[0].id);  
+
            //get_deadlines();
             set_loading(false); 
             
@@ -107,6 +112,7 @@ function Contract_page(props) {
         let batch = firestoreDB.batch(); 
         let contract_ref = firestoreDB.collection("contracts").doc(id); 
         let sov_ref = contract_ref.collection("sov").doc(sov_id);
+        //let account_ref = contract_ref.collection("account").doc(account_id); 
     
         //BATCH UPDATE WITH THE CO -> MUST UPDATE CO_COUNT; CO_VALUE; BALANCE; CO INSIDE SOV
 
@@ -172,6 +178,13 @@ function Contract_page(props) {
         batch.update(contract_ref, {"update":temp_update}); //DONE
         batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
 
+        /*
+        let temp_activity = JSON.parse(JSON.stringify(contract_info.activity)); //DEEP COPY
+        batch.update(contract_ref)
+        if(activity.length > 25){
+            temp_activity.shift();
+        }
+        */
         
         batch.commit().then(()=>{
             console.log("updated app changes successfully"); 
@@ -220,10 +233,21 @@ function Contract_page(props) {
         batch.update(contract_ref, {"balance":balance});//DONE
         batch.update(contract_ref, {"this_draw":this_draw});//DONE
         batch.update(contract_ref, {"prev_draws":prev_draw});//DONE
-        batch.update(contract_ref, {"update":new Date()}); //DONE
-        batch.update(contract_ref, {"recent_task":"Deleted the most recent payment application"}); //DONE
         batch.update(contract_ref, {"app_count": Number(contract_info.app_count)-1}); 
         batch.update(contract_ref, {"pay_app_dates": app_dates}); 
+
+
+        //RECENT TASKS
+        let temp_update = [...contract_info.update];
+        temp_update.push(new Date); 
+        let temp_tasks = [...contract_info.recent_task];
+        temp_tasks.push("Deleted the most recent payment application")
+        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
+            temp_update.shift();
+            temp_tasks.shift();
+        }
+        batch.update(contract_ref, {"update":temp_update}); //DONE
+        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
 
         
         batch.commit().then(()=>{
@@ -259,8 +283,19 @@ function Contract_page(props) {
         batch.update(contract_ref, {"co_value":Number(contract_info.co_value)-Number(co_val)}); //DONE
         batch.update(contract_ref, {"co_count":Number(contract_info.co_count)-Number(1)}); //DONE
         batch.update(contract_ref, {"balance":Number(contract_info.balance)-Number(co_val)}); //DONE
-        batch.update(contract_ref, {"update":new Date()}); //DONE
-        batch.update(contract_ref, {"recent_task":"Deleted a change order."}); //DONE
+
+
+        //RECENT TASKS
+        let temp_update = [...contract_info.update];
+        temp_update.push(new Date); 
+        let temp_tasks = [...contract_info.recent_task];
+        temp_tasks.push("Deleted a change order.")
+        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
+            temp_update.shift();
+            temp_tasks.shift();
+        }
+        batch.update(contract_ref, {"update":temp_update}); //DONE
+        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
 
 
         batch.commit().then(()=>{
@@ -306,14 +341,14 @@ function Contract_page(props) {
     const job_info = () => {
         if(loading){
             return(
-                <Paper>
+                <Paper sx={{height:1/3}}>
                     <CircularProgress/> 
                 </Paper>
                 );
         }
         else {
             return(
-                <Paper>
+                <Paper sx={{height:1/3}}>
                     
                     <h3>  Contract: </h3>  
                     {contract_info.name} <br/>
@@ -340,7 +375,7 @@ function Contract_page(props) {
     const job_summary = () =>{
         if(loading){
             return(
-                <Paper>
+                <Paper sx={{height:1/2}}>
                     <CircularProgress/> 
                 </Paper>
                 );
@@ -348,7 +383,7 @@ function Contract_page(props) {
         else{
         
         return(
-            <Paper>
+            <Paper sx={{height:1/2}}>
                 <h3>Base Contract: </h3> 
                 {currency(contract_info.base_contract_value)}
    
@@ -497,10 +532,10 @@ function Contract_page(props) {
         //TODO
 
         return(
-            <>
+            <Paper>
                 <h3> Activity Log</h3>
             
-            </>
+            </Paper>
 
         )
 
@@ -513,9 +548,9 @@ function Contract_page(props) {
         <>
 
             <Grid container spacing={2}>
-                <Grid item xs = {6}>
+                <Grid item xs = {6} >
                     <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid item xs={6} >
                             {job_info()}
                         </Grid>
                         <Grid item xs={6}>

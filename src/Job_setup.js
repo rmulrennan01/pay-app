@@ -127,14 +127,17 @@ function Job_setup() {
             temp_project["co_count"] = Number(0); 
             temp_project["co_value"] = Number(0); 
             temp_project["app_count"] = Number(0); 
-            temp_project["update"] = [new Date()];
-            temp_project["recent_task"] = ["Added a new contract"]; 
+            temp_project["update"] = [];
+            temp_project.update.push(new Date());
+            temp_project["recent_task"] = []
+            temp_project.recent_task.push("Added a new contract"); 
             temp_project["balance"] = Number(job_total);
             temp_project["prev_draws"] = Number(0);
             temp_project["this_draw"] = Number(0); 
             temp_project["retention"] = Number(billing_info.retention)/Number(100);
             temp_project["due_date"] = billing_info.due_date; 
             temp_project["pay_app_dates"] = [];
+     
             
 
             firestoreDB.collection("contracts").add(temp_project)
