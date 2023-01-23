@@ -164,26 +164,7 @@ function Pay_app() {
 
         }
 
-        /*
-        for (let i = 0; i<sov.length; i++){
 
-            if(saved_inputs.length === 0){
-                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(0))}); 
-                
-            }
-            else if(saved_inputs[i].isEmpty()){
-                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(0))}); 
-
-            }
-  
-            else{
-                batch.update(sov_ref.doc(sov[i].id), {"pay_apps": firebase.firestore.FieldValue.arrayUnion(Number(saved_inputs[i]))}); 
-                draw_total += Number(saved_inputs[i]); 
-
-            }
-        }
-        */
-        
         
 
         let date = new Date();
@@ -194,12 +175,20 @@ function Pay_app() {
         batch.update(contract_ref, {"prev_draws":rev_prev_draws});
         batch.update(contract_ref, {"this_draw":Number(draw_total)});
         batch.update(contract_ref, {"balance":period_balance});
-        batch.update(contract_ref, {"recent_task":"Added a payment application"});
-        batch.update(contract_ref, {"update":date});
         batch.update(contract_ref, {"app_count":Number(contract_info.app_count + Number(1))});
         batch.update(contract_ref, {"pay_app_dates": firebase.firestore.FieldValue.arrayUnion(app_date)}); 
 
-
+        //RECENT TASKS
+        let temp_update = [...contract_info.update];
+        temp_update.push(new Date); 
+        let temp_tasks = [...contract_info.recent_task];
+        temp_tasks.push("Submitted a payment application")
+        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
+            temp_update.shift();
+            temp_tasks.shift();
+        }
+        batch.update(contract_ref, {"update":temp_update}); //DONE
+        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
          
         batch.commit().then(()=>{
             submission_success();  

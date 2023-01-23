@@ -7,6 +7,7 @@ import { PieChart, PieArcSeries } from 'reaviz';
 import Date_string from './Utilities/Date_string.js'; 
 import Bar_chart from './Utilities/Bar_chart.js'; 
 import Period_totals from './Utilities/Period_totals';
+import Skeleton from '@mui/material/Skeleton';
 
 import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
 import Totals_by_key from './Utilities/Totals_by_key.js'; 
@@ -38,7 +39,13 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { AccountBalanceWalletOutlined } from '@material-ui/icons';
 import { blue } from '@mui/material/colors';
 
-
+//Tables
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 function Contract_page(props) {
     const [contract_info, set_contract_info] = useState([]); 
@@ -56,50 +63,36 @@ function Contract_page(props) {
 
 
 
-    //fetch the document from firebase
+    //FETCH THE CONTRACT AND OWNER INFO FROM THE DATABASE -> PULL ID FROM USEPARAMS()
     useEffect( () => {
         const fetchData = async () =>{
             const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             set_contract_info(dataList.data()); 
             set_deadlines(get_deadlines(dataList.data().due_date))
 
-            //console.log(dataList.data()); 
+           
         
             const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
             set_owner_info(dataList2.data()); 
 
             const tempList = []; 
 
-
             const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
             dataList3.forEach((doc) => {
                 let tempDict = doc.data(); 
                 tempDict["id"] = doc.id; 
-                //tempDict["parent"] = doc.ref.parent.path.slice(0,-4); 
                 tempList.push(tempDict); 
-                //console.log("HERE:" , doc.ref.parent.path.slice(0,-4)); 
             });
-
-            //console.log(tempList); 
             set_sov(tempList); 
-
-            //const dataList4 = await firestoreDB.collection("account").get();
-            //set_account(dataList4);
-            //console.log('account', dataList4[0].id);  
-
-           //get_deadlines();
             set_loading(false); 
-            
         }
         fetchData(); 
-
-        
     }, []);  
 
 
     useEffect( () => {
         build_table_data();
-        
+        get_activities();
     }, [contract_info, sov]); 
 
 
@@ -112,16 +105,14 @@ function Contract_page(props) {
         let batch = firestoreDB.batch(); 
         let contract_ref = firestoreDB.collection("contracts").doc(id); 
         let sov_ref = contract_ref.collection("sov").doc(sov_id);
-        //let account_ref = contract_ref.collection("account").doc(account_id); 
     
         //BATCH UPDATE WITH THE CO -> MUST UPDATE CO_COUNT; CO_VALUE; BALANCE; CO INSIDE SOV
-
         batch.update(sov_ref, {"change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: Number(data.value), pay_app: Number(data.pay_app)})});//DONE
         batch.update(contract_ref, {"co_value":Number(contract_info.co_value)+Number(data.value)}); //DONE
         batch.update(contract_ref, {"co_count":Number(contract_info.co_count)+Number(1)}); //DONE
         batch.update(contract_ref, {"balance":Number(balance)}); //DONE
 
-        //RECENT TASKS
+        //UPDATE RECENT TASKS
         let temp_update = [...contract_info.update];
         temp_update.push(new Date); 
         let temp_tasks = [...contract_info.recent_task];
@@ -339,73 +330,50 @@ function Contract_page(props) {
 
 
     const job_info = () => {
-        if(loading){
-            return(
-                <Paper sx={{height:1/3}}>
-                    <CircularProgress/> 
-                </Paper>
-                );
-        }
-        else {
-            return(
-                <Paper sx={{height:1/3}}>
-                    
-                    <h3>  Contract: </h3>  
-                    {contract_info.name} <br/>
-                    {contract_info.address_01} <br/>
-                    {contract_info.address_02!=""? <>{contract_info.address_02} <br/> </>:<></>}
-                    {contract_info.city}, {contract_info.state} {contract_info.zip}
-                    <br/> <br/> 
-                    
-                    <h3> Owner: </h3> 
-                    {owner_info.name} <br/>
-                    {owner_info.address_01} <br/>
-                    {owner_info.address_02!=""? <>{owner_info.address_02} <br/> </>:<></>}
-                    
-                    {owner_info.city}, {owner_info.state} {owner_info.zip}
 
-                </Paper>
-            ); 
+        return(
 
-        }
+            <Grid container spacing={2}>
+                <Grid item xs = {6} >
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} >
+                            <h3>  Contract: </h3>  
+                            {contract_info.name} <br/>
+                            {contract_info.address_01} <br/>
+                            {contract_info.address_02!=""? <>{contract_info.address_02} <br/> </>:<></>}
+                            {contract_info.city}, {contract_info.state} {contract_info.zip}
+
+                        </Grid>
+                        <Grid item xs={12} >
+                            <h3> Owner: </h3> 
+                            {owner_info.name} <br/>
+                            {owner_info.address_01} <br/>
+                            {owner_info.address_02!=""? <>{owner_info.address_02} <br/> </>:<></>}
+                            
+                            {owner_info.city}, {owner_info.state} {owner_info.zip}
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={6}>
+                    <h3>Base Contract: </h3> 
+                    {currency(contract_info.base_contract_value)}
+    
+                    <h3>Change Orders: </h3> 
+                    {currency(contract_info.co_value)}
+            
+                    <h3>Contract Total: </h3> 
+                    {currency(Number(contract_info.base_contract_value)+Number(contract_info.co_value))} 
+
+                </Grid>
+            </Grid>
+
+        ); 
+
+        
     }
 
     
-
-    const job_summary = () =>{
-        if(loading){
-            return(
-                <Paper sx={{height:1/2}}>
-                    <CircularProgress/> 
-                </Paper>
-                );
-        }
-        else{
-        
-        return(
-            <Paper sx={{height:1/2}}>
-                <h3>Base Contract: </h3> 
-                {currency(contract_info.base_contract_value)}
-   
-                <h3>Change Orders: </h3> 
-                {currency(contract_info.co_value)}
-           
-                <h3>Contract Total: </h3> 
-                {currency(Number(contract_info.base_contract_value)+Number(contract_info.co_value))} 
-            
-                <h3> 
-                    Payment Applications Completed: 
-                </h3>
-                {contract_info.app_count}
-                <h3> 
-                    Your next application is due: 
-                </h3>
-                {deadlines.days == 1 ? 'tomorrow': null} {deadlines.days ==0 ? 'today' : null} {deadlines.days >1 ? 'in '+ deadlines.days : null} {deadlines.days > 1 ? 'days': null} {deadlines.days < 0 ? deadlines.next_date : null}
-            </Paper>
-        )
-        }
-    }
-
+    //BOTTOM TAB FOR SOV
     const job_sov = () => {
         if(loading){
             return(
@@ -422,7 +390,8 @@ function Contract_page(props) {
             ); 
         }
     }
-
+    
+    //BOTTOM TAB FOR CHANGE ORDERS
     const change_orders = () => {
         if(loading){
             return(
@@ -440,6 +409,7 @@ function Contract_page(props) {
         }
     }
 
+    //BUTTOM TAB FOR PAY APPS
     const pay_apps = () => {
         if(loading){
             return(
@@ -457,24 +427,37 @@ function Contract_page(props) {
         }
     }
 
-    const chart_contract = () => {
-        const data = []
-        data.push({ key: 'Base Contract ($)', data: contract_info.base_contract_value });
-        data.push({ key: 'Change Orders ($)', data: contract_info.co_value });
 
 
-        return (
-            <>
-                <PieChart
-                    width={450}
-                    height={350}
-                    data={data}
-                    series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
-                />
-            </>
-        );
-
+    //CONSTRUCTS AN ARRAY OF JSON OBJECTS TO BE USED FOR MAP FUNCTION TO RENDER TASK LIST
+    const [activity_list, set_activity_list] = useState([]); 
+    const get_activities = () =>{
+        console.log('RAN', contract_info); 
+        let data = [];
+        if(contract_info.length != 0){
+            console.log('ran 2'); 
+            for (let i = 0; i<contract_info.update.length; i++){
+                data.push({description:contract_info.recent_task[i], date:Date_string(contract_info.update[i])})
+            }
+        }
+        set_activity_list(data); 
     }
+
+
+    const recent_task_table = (item) => {
+        console.log('TEXT', item); 
+        return(
+            <TableRow>
+                <TableCell>
+                    {item.description}
+                </TableCell>
+                <TableCell>
+                    {item.date}
+                </TableCell>
+            </TableRow>
+        )
+    }
+
 
     const [deadlines, set_deadlines] = useState({}); 
     const get_deadlines = (due_date) => {
@@ -499,14 +482,7 @@ function Contract_page(props) {
 
         let next_date = new Date(due); 
         next_date.setMonth(next_date.getMonth()+1);
-
-
-
-        //set_deadlines({days:remaining_days, date:Date_string(due)});
-        
-        //set_deadlines({days:remaining_days, date:Date_string(due)});
         return {days:remaining_days, date:Date_string(due), next_date:Date_string(next_date) }
-
     }
 
     const chart_draws = () => {
@@ -516,83 +492,118 @@ function Contract_page(props) {
                
         return (
             <>
-                <PieChart
-                    width={450}
-                    height={350}
-                    data={data}
-                    
-                    series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
-                />
+                <div
+                style={{
+                position: 'absolute',
+                height: '250px',
+                width: '350px',
+                alignItems: 'center',
+                display: 'flex',
+                justifyContent: 'center'
+                }}
+                >
+                    <div style={{ position: 'absolute', top: 0, left: 0 }}>                
+                        <PieChart
+                            width={450}
+                            height={350}
+                            data={data}
+                            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
+                        />
+                    </div>
+                    <h2 style={{  color: 'black', position: 'absolute', top: 0, left: 0 }}>
+                        {(100-(Number(contract_info.balance)/(Number(contract_info.base_contract_value)+Number(contract_info.co_value))*100)).toFixed(2)} %
+                    </h2>
+
+                </div>
+                <h3> 
+                    Payment Applications Completed: 
+                </h3>
+                {contract_info.app_count}
+                <h3> 
+                    Your next application is due: 
+                </h3>
+                {deadlines.days == 1 ? 'Tomorrow': null} {deadlines.days ==0 ? 'Today' : null} {deadlines.days >1 ? 'in '+ deadlines.days : null} {deadlines.days > 1 ? 'days': null} {deadlines.days < 0 ? deadlines.next_date : null}
+            
+
+                
             </>
         );
 
     }
 
     const recent_activity = () =>{
-        //TODO
-
         return(
-            <Paper>
-                <h3> Activity Log</h3>
-            
-            </Paper>
-
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>
+                            <h3> Task </h3>
+                        </TableCell>
+                        <TableCell>
+                            <h3>Date</h3>
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {activity_list.map(recent_task_table)} 
+                </TableBody>
+            </Table>
         )
-
-
-
     }
 
     
     return (
         <>
 
-            <Grid container spacing={2}>
-                <Grid item xs = {6} >
-                    <Grid container spacing={2}>
-                        <Grid item xs={6} >
-                            {job_info()}
-                        </Grid>
-                        <Grid item xs={6}>
-                            {loading ? <CircularProgress/> : job_summary()}
-                        </Grid>
+            <Grid container spacing={2} sx={{height:500}}>
+                <Grid item xs = {3} sx={{height:'100%'}}>
+                    <Paper elevation={8} sx={{height:'100%'}}>
+                        <h2>Project Summary</h2>
+                        {loading ? <CircularProgress/> : job_info()}
+                    </Paper>
 
-                    </Grid>
                 </Grid>
 
-
-                <Grid item xs = {3}>
-                    <Paper>
-                        <h3>Billing</h3>
+                <Grid item xs = {3} sx={{height:'100%'}}>
+                    <Paper elevation={8} sx={{height:'100%'}}>
+                        <h2>Billing Progress</h2>
                         {loading ? <CircularProgress/> : chart_draws()}
                     </Paper> 
                     
                 </Grid>
-                <Grid item xs = {3}>
-                    <Paper> 
-                        <h3>Recent Billing</h3>
+                <Grid item xs = {3} sx={{height:'100%'}}>
+                    <Paper elevation={8} sx={{height:'100%'}}> 
+                        <h2>Recent Applications for Payment</h2>
                         {loading? <CircularProgress/> : <Bar_chart data={period_summary} key_name={'cur_draw'} dates={contract_info.pay_app_dates}/>}
                     </Paper> 
                
-                    
-
+                </Grid>
+                <Grid item xs = {3} sx={{height:'100%'}}>
+                    <Paper elevation={8} sx={{height:'100%'}}>
+                        <h2>Recent Activity</h2>
+                        {loading? <CircularProgress/> : recent_activity()}
+                    </Paper>
                 </Grid>
 
 
+
             </Grid>
+
+ 
             <br/> 
             <br/>
-            <Tabs value={tab}  centered>
-                <Tab label={<Button endIcon={<AttachMoneyIcon/>}><h3>Payment Applications</h3></Button>} onClick={()=>set_tab(0)}/>   
-                <Tab label={<Button endIcon={<ReceiptLongIcon/>}><h3>Schedule of Values</h3> </Button>} onClick={()=>set_tab(1)}/>
-                <Tab label={<Button endIcon={<CurrencyExchangeIcon/>}><h3>Change Orders</h3></Button>} onClick={()=>set_tab(2)}/>
+            <Paper elevation={8}>
+                <Tabs value={tab}  centered>
+                    <Tab label={<Button endIcon={<AttachMoneyIcon/>}><h3>Payment Applications</h3></Button>} onClick={()=>set_tab(0)}/>   
+                    <Tab label={<Button endIcon={<ReceiptLongIcon/>}><h3>Schedule of Values</h3> </Button>} onClick={()=>set_tab(1)}/>
+                    <Tab label={<Button endIcon={<CurrencyExchangeIcon/>}><h3>Change Orders</h3></Button>} onClick={()=>set_tab(2)}/>
+                    
+                </Tabs>
                 
-            </Tabs>
-            
-            {tab==0 ? <Paper>   {pay_apps()}<br/> </Paper>  : <></>  }
-            {tab==1 ? <Paper>   {job_sov()}<br/> </Paper>  : <></>  }
-            {tab==2 ? <Paper>   <Button startIcon= {<AddCircleIcon/>} variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
-            
+                {tab==0 ? <Paper elevation={5}>   {pay_apps()}<br/> </Paper>  : <></>  }
+                {tab==1 ? <Paper elevation={5}>   {job_sov()}<br/> </Paper>  : <></>  }
+                {tab==2 ? <Paper elevation={5}>   <Button startIcon= {<AddCircleIcon/>} variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
+            </Paper>
             
 
     
