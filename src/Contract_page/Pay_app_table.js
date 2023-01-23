@@ -120,7 +120,7 @@ function Pay_app_table(props) {
 
         </Table>
 
-      {!(no_apps)  ? no_app_message() : null}
+      {props.contract_info.app_count == 0 ? no_app_message() : null}
     </div>
   )
 }

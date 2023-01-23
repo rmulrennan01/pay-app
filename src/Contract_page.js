@@ -447,7 +447,7 @@ function Contract_page(props) {
     const recent_task_table = (item) => {
         console.log('TEXT', item); 
         return(
-            <TableRow>
+            <TableRow >
                 <TableCell>
                     {item.description}
                 </TableCell>
@@ -576,21 +576,23 @@ function Contract_page(props) {
 
     const recent_activity = () =>{
         return(
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>
-                            <h3> Task </h3>
-                        </TableCell>
-                        <TableCell>
-                            <h3>Date</h3>
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {activity_list.map(recent_task_table)} 
-                </TableBody>
-            </Table>
+            <TableContainer style={{maxHeight:400}}>
+                <Table stickyHeader>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>
+                                <h3> Task </h3>
+                            </TableCell>
+                            <TableCell>
+                                <h3>Date</h3>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {activity_list.map(recent_task_table)} 
+                    </TableBody>
+                </Table>
+            </TableContainer>
         )
     }
 
