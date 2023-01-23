@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import firebase from "./Firebase.js"; 
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-import { PieChart, PieArcSeries } from 'reaviz';
+import { PieChart, PieArcSeries, PieArcLabel } from 'reaviz';
 import Date_string from './Utilities/Date_string.js'; 
 import Bar_chart from './Utilities/Bar_chart.js'; 
 import Period_totals from './Utilities/Period_totals';
@@ -491,44 +491,87 @@ function Contract_page(props) {
         data.push({ key: 'Billed ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.balance) }); 
                
         return (
-            <>
-                <div
-                style={{
-                position: 'absolute',
-                height: '250px',
-                width: '350px',
-                alignItems: 'center',
-                display: 'flex',
-                justifyContent: 'center'
-                }}
-                >
-                    <div style={{ position: 'absolute', top: 0, left: 0 }}>                
-                        <PieChart
-                            width={450}
-                            height={350}
-                            data={data}
-                            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
-                        />
+
+            <Grid container spacing={0} >
+                <Grid item xs = {12}  >
+                    {/*<div         
+                        style={{
+                            position: 'relative',
+                            alignItems: 'center',
+                            display: 'flex',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <div style={{ margin: '0 5px', padding: 0}}>                
+                            <PieChart
+                                height={400}
+                                data={data}
+                                series={
+                                    <PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} label={null} colorScheme={"cybertron"} 
+                                        label= {<PieArcLabel format={(item)=>item.key + " " + item.data}/>}
+                                    />}
+                                margins={0}
+                            />
+                        </div>
+                        <h2 style={{ margin: '0 5px', padding: 0, color: 'black', position:'absolute' }}>
+                            {(100-(Number(contract_info.balance)/(Number(contract_info.base_contract_value)+Number(contract_info.co_value))*100)).toFixed(2)} %
+                        </h2>
                     </div>
-                    <h2 style={{  color: 'black', position: 'absolute', top: 0, left: 0 }}>
-                        {(100-(Number(contract_info.balance)/(Number(contract_info.base_contract_value)+Number(contract_info.co_value))*100)).toFixed(2)} %
-                    </h2>
-
-                </div>
-                <h3> 
-                    Payment Applications Completed: 
-                </h3>
-                {contract_info.app_count}
-                <h3> 
-                    Your next application is due: 
-                </h3>
-                {deadlines.days == 1 ? 'Tomorrow': null} {deadlines.days ==0 ? 'Today' : null} {deadlines.days >1 ? 'in '+ deadlines.days : null} {deadlines.days > 1 ? 'days': null} {deadlines.days < 0 ? deadlines.next_date : null}
-            
-
+                                */}
+                        
+                    {circle_chart()}
+    
+                </Grid>
+                <Grid item xs = {12} >
+                   
+                    <h3> 
+                        Payment Applications Completed:  {contract_info.app_count}
+                    </h3>
+                    
+                    <h3> 
+                        Your next application is due: {deadlines.days == 1 ? 'Tomorrow': null} {deadlines.days ==0 ? 'Today' : null} {deadlines.days >1 ? 'in '+ deadlines.days : null} {deadlines.days > 1 ? 'days': null} {deadlines.days < 0 ? deadlines.next_date : null}
+                    </h3>
+                    
                 
-            </>
+                </Grid>
+            </Grid>
+      
         );
 
+    }
+
+    const circle_chart = () =>{
+        const data = []
+        data.push({ key: 'Open Balance ($)', data: contract_info.balance });
+        data.push({ key: 'Billed ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.balance) }); 
+               
+    
+        return (
+          <div
+            style={{
+              position: 'relative',
+              height: '300px',
+              width: '500px',
+              alignItems: 'center',
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <div style={{ position: 'absolute', top: 0, left: 0 }}>
+              <PieChart
+                width={500}
+                height={300}
+                data={data}
+                series={
+                  <PieArcSeries doughnut={true} colorScheme={'cybertron'} />
+                }
+              />
+            </div>
+            <h2 style={{ margin: '0 5px', padding: 0, color: 'black' }}>
+                {(100-(Number(contract_info.balance)/(Number(contract_info.base_contract_value)+Number(contract_info.co_value))*100)).toFixed(2)}%
+            </h2>
+          </div>
+        );
     }
 
     const recent_activity = () =>{
