@@ -82,6 +82,8 @@ export const signIn = (email, password) => {
     .then((userCredential) =>{
         const user = userCredential.user;
         console.log(user); 
+        window.location='/';
+
     })
     .catch((error) => {
       throw("mega-error"); 

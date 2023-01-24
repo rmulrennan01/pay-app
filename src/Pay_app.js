@@ -13,6 +13,9 @@ import Pay_app_viewer from './Pay_app_viewer.js';
 //For pay app review modal
 import Modal from '@mui/material/Modal';
 
+//AUTH
+import {useContext} from 'react'; 
+import { UserContext } from "./User_provider";
 
 
 
@@ -87,22 +90,42 @@ function Pay_app() {
         {label: 'Submission' , content: <div></div>}
     ];
     
+     //auth
+     const [uid, set_uid] = useState(0); 
+     const user = useContext(UserContext);
+ 
+     firebase.auth().onAuthStateChanged(function(user) {
+         if (user) {
+             if(uid==0){set_uid(user.uid); }
+             console.log('signed in', user.uid);
+ 
+         } else {
+             console.log('signed out', user);
+             window.location='/login/';
+         }
+     });
+ 
    
     //FETCH THE DATA
     useEffect( () => {
         const fetchData = async () =>{
+            let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
+            let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
 
             //LOAD CONTRACT_INFO
-            const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
+            //const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
+            const dataList = await job_ref.doc(id).get(); //updated
             set_contract_info(dataList.data()); 
             
             //LOAD OWNER_INFO
-            const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+            //const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+            const dataList2 = await owner_ref.doc(dataList.data().owner_id).get(); //updated
             set_owner_info(dataList2.data()); 
 
             //LOAD THE SOV DATA FOR THE CONTRACT
             const tempList = []; 
-            const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
+            //const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
+            const dataList3 = await job_ref.doc(id).collection("sov").get();
             dataList3.forEach((doc) => {
                 let tempDict = doc.data(); 
                 tempDict["id"] = doc.id; 
@@ -114,7 +137,7 @@ function Pay_app() {
             set_loading(false); 
         }
         fetchData(); 
-    }, []);  
+    }, [uid]);  
 
     useEffect(() => {
            set_line_items(contract_info != null && sov !=null ? Sov_item_totals(sov,contract_info.app_count,contract_info.retention) : []); 
@@ -140,7 +163,8 @@ function Pay_app() {
 
     const submit_pay_app = () => {
         let batch = firestoreDB.batch(); 
-        let contract_ref = firestoreDB.collection("contracts").doc(id); 
+        //let contract_ref = firestoreDB.collection("contracts").doc(id); 
+        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
         let sov_ref = contract_ref.collection("sov"); 
         //let temp_sov = [JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
         let draw_total = Number(0);

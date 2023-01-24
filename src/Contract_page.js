@@ -8,6 +8,10 @@ import Date_string from './Utilities/Date_string.js';
 import Bar_chart from './Utilities/Bar_chart.js'; 
 import Period_totals from './Utilities/Period_totals';
 import Divider from '@mui/material/Divider';
+//AUTH
+import {useContext} from 'react'; 
+import { UserContext } from "./User_provider";
+
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
@@ -52,23 +56,41 @@ function Contract_page(props) {
     const [tab, set_tab] = useState(0);   
     const [account, set_account] = useState(); 
 
+    //auth
+    const [uid, set_uid] = useState(0); 
+    const user = useContext(UserContext);
 
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            if(uid==0){set_uid(user.uid); }
+            console.log('signed in', user.uid);
+
+        } else {
+            console.log('signed out', user);
+            window.location='/login/';
+        }
+    });
 
     //FETCH THE CONTRACT AND OWNER INFO FROM THE DATABASE -> PULL ID FROM USEPARAMS()
     useEffect( () => {
         const fetchData = async () =>{
-            const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
+            let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
+            let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
+            //const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
+            const dataList = await job_ref.doc(id).get(); //updated
             set_contract_info(dataList.data()); 
             set_deadlines(get_deadlines(dataList.data().due_date))
 
            
         
-            const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+            //const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+            const dataList2 = await owner_ref.doc(dataList.data().owner_id).get(); 
             set_owner_info(dataList2.data()); 
 
             const tempList = []; 
 
-            const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
+            //const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
+            const dataList3 = await job_ref.doc(id).collection("sov").get();
             dataList3.forEach((doc) => {
                 let tempDict = doc.data(); 
                 tempDict["id"] = doc.id; 
@@ -78,7 +100,7 @@ function Contract_page(props) {
             set_loading(false); 
         }
         fetchData(); 
-    }, []);  
+    }, [uid]);  
 
 
     useEffect( () => {
@@ -94,9 +116,12 @@ function Contract_page(props) {
         let balance = Number(rev_contract) - Number(contract_info.prev_draws) - Number(contract_info.this_draw); 
         
         let batch = firestoreDB.batch(); 
-        let contract_ref = firestoreDB.collection("contracts").doc(id); 
+
+        //let contract_ref = firestoreDB.collection("contracts").doc(id); 
+        //let sov_ref = contract_ref.collection("sov").doc(sov_id);
+        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
         let sov_ref = contract_ref.collection("sov").doc(sov_id);
-    
+
         //BATCH UPDATE WITH THE CO -> MUST UPDATE CO_COUNT; CO_VALUE; BALANCE; CO INSIDE SOV
         batch.update(sov_ref, {"change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: Number(data.value), pay_app: Number(data.pay_app)})});//DONE
         batch.update(contract_ref, {"co_value":Number(contract_info.co_value)+Number(data.value)}); //DONE
@@ -130,7 +155,9 @@ function Contract_page(props) {
     //SUBMIT A REVISION TO A PAY APPLICATION
     const submit_app_changes = (inputs) =>{
         let batch = firestoreDB.batch(); 
-        let contract_ref = firestoreDB.collection("contracts").doc(id);
+        //let contract_ref = firestoreDB.collection("contracts").doc(id);
+        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
+
 
         //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
         let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
@@ -182,7 +209,9 @@ function Contract_page(props) {
 
     const delete_pay_app = () => {
         let batch = firestoreDB.batch(); 
-        let contract_ref = firestoreDB.collection("contracts").doc(id);
+        //let contract_ref = firestoreDB.collection("contracts").doc(id);
+        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
+
 
         //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
         let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
@@ -246,7 +275,8 @@ function Contract_page(props) {
 
     const delete_co = (sov_id,index) =>{
         let batch = firestoreDB.batch(); 
-        let contract_ref = firestoreDB.collection("contracts").doc(id);
+        //let contract_ref = firestoreDB.collection("contracts").doc(id);
+        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
         let sov_ref = contract_ref.collection("sov").doc(sov_id);
         let co_val = Number(0); 
 

@@ -28,12 +28,15 @@ function Home() {
 
     //auth
     const user = useContext(UserContext);
+    const [uid, set_uid] = useState(0); 
+    
 
 
 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            console.log('signed in', user);
+            console.log('signed in', user.uid);
+            set_uid(user.uid); 
 
         } else {
             console.log('signed out', user);
@@ -63,13 +66,21 @@ function Home() {
         }
 
         const fetchData = async () =>{
-            const dataList = await firestoreDB.collection("contracts").get(); //updated
+
+            //const dataList = await firestoreDB.collection("contracts").get(); //updated
+            let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
+            //let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
+            const dataList = await job_ref.get();
+
             dataList.docs.map(build_data);
 
         }
-        fetchData(); 
+        //if(uid != 0){
+            console.log('USER', uid); 
+            fetchData(); 
+        //}
         
-    }, []);
+    }, [uid]);
 
   
 

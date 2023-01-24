@@ -28,7 +28,7 @@ function Job_setup() {
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const [list,set_list] = useState([]); 
      
-    const [loading, setLoading] = useState([]); 
+    //const [loading, setLoading] = useState([]); 
 
     const [current_step, set_current_step] = useState(0); 
     const [sov_data, set_sov_data] = useState([]); 
@@ -85,30 +85,19 @@ function Job_setup() {
         {label: 'Billing Details', content: <Billing_Details billing_info={billing_info} update_billing_info={update_billing_info}/>}
     ];
 
+    const [uid, set_uid] = useState(0); 
     const user = useContext(UserContext);
+
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            console.log('signed in', user);
+            if(uid==0){set_uid(user.uid); }
+            console.log('signed in', user.uid);
 
         } else {
             console.log('signed out', user);
             window.location='/login/';
         }
     });
-
-
-    
-    React.useEffect( () => {
-        const fetchData = async () =>{
-        const dataList = await firestoreDB.collection("contracts").get(); //updated
-        set_list(dataList.docs.map(doc=>doc.data())); 
-        
-        setLoading(false); 
-        }
-        fetchData(); 
-        
-    }, []);
-
 
     
     const get_job_total = (job_sov) => {
@@ -129,8 +118,13 @@ function Job_setup() {
     const submit_db = () =>{
         let temp_project = project_info;
         let job_total = get_job_total(sov_data);
+        let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
+        let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
 
-        firestoreDB.collection("owners").add(owner_info)
+        //firestoreDB.collection("owners").add(owner_info)
+
+        
+        owner_ref.add(owner_info) //UPDATED
         .then((docRef) => {
             console.log("Owner Submission Successful");
             console.log("Owner Info is here: " + docRef.id)
@@ -153,14 +147,16 @@ function Job_setup() {
      
             
 
-            firestoreDB.collection("contracts").add(temp_project)
+            //firestoreDB.collection("contracts").add(temp_project)
+            job_ref.add(temp_project)
             .then((docRef2) => {
                 console.log("Project Submission Successful");
                 console.log("Project Info is here: " + docRef.id)
 
                 let batch = firestoreDB.batch(); 
                 sov_data.forEach((doc) => {
-                    let docRef = firestoreDB.collection("contracts").doc(docRef2.id).collection("sov").doc(); 
+                    //let docRef = firestoreDB.collection("contracts").doc(docRef2.id).collection("sov").doc(); 
+                    docRef = job_ref.doc(docRef2.id).collection("sov").doc(); 
                     batch.set(docRef,doc); 
                 })
 
@@ -270,7 +266,6 @@ function Job_setup() {
                 
             </Paper>
             <Paper> 
-                {console.log(list)}
             </Paper>
         </div> 
     )

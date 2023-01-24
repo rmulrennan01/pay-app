@@ -3,6 +3,11 @@ import React, {useEffect, useState, useRef} from 'react';
 import firebase from "./Firebase.js"; 
 import "./Contract_browser.css"; 
 
+//AUTH
+import {useContext} from 'react'; 
+import { UserContext } from "./User_provider";
+
+
 //Tables
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -48,7 +53,20 @@ function Contract_browser() {
         {label: "Change Orders ($)", key: "co_value"},
         {label: "Revised Contarct ($)", key: "revised_contract"}];
         
-        
+    //auth
+    const [uid, set_uid] = useState(0); 
+    const user = useContext(UserContext);
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            if(uid==0){set_uid(user.uid); }
+            console.log('signed in', user.uid);
+
+        } else {
+            console.log('signed out', user);
+            window.location='/login/';
+        }
+    });
         
 
         //name, address_01, city, state, owner_name, base_contract_value, co_value
@@ -66,13 +84,15 @@ function Contract_browser() {
         }
 
         const fetchData = async () =>{
-            const dataList = await firestoreDB.collection("contracts").get(); //updated
+            let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
+            //const dataList = await firestoreDB.collection("contracts").get(); //updated
+            const dataList = await job_ref.get(); //updated
             dataList.docs.map(build_data);
             set_loading(false); 
         }
         fetchData(); 
         
-    }, []);
+    }, [uid]);
 
     const build_headers = (item, index) =>{
         return(
