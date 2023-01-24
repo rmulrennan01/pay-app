@@ -4,6 +4,7 @@ import "./Navbar.css";
 import {Link, AppBar, List, Toolbar, Button, Container, Avatar, Hidden, SwipeableDrawer, ListItem} from '@material-ui/core';
 import MenuIcon from "@material-ui/icons/Menu";
 import IconButton from "@material-ui/core/IconButton";
+import {logOut} from './Firebase.js'; 
 
 function Navbar() {
     const [showMenu, set_showMenu] = useState(false); 
@@ -21,6 +22,7 @@ function Navbar() {
                         <Link className='Navbar__Button' href="/contract_browser" underline="none"> Contracts </Link> 
                         <Link className='Navbar__Button' href="/job_setup"  underline="none">New Job</Link> 
                         <Link className='Navbar__Button'  underline="none">About</Link> 
+                        <Button onClick={logOut}>Log Out</Button>
                     
                     
                 </Hidden>
@@ -44,6 +46,9 @@ function Navbar() {
                     </ListItem> 
                     <ListItem>
                         <Link className='Navbar__Button' href="/job_setup"  underline="none">Job Setup</Link> 
+                    </ListItem>
+                    <ListItem>
+                        <Button onClick={logOut}>Log Out</Button>
                     </ListItem>
   
        
