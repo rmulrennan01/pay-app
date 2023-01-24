@@ -2,6 +2,7 @@
 import 'firebase/compat/firestore';
 import { initializeApp } from "firebase/app";
 import firebase from 'firebase/compat/app';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 import 'firebase/compat/auth';
 
@@ -34,17 +35,49 @@ firebase.initializeApp(firebaseConfig);
 
 export default firebase; 
 
-
-//SIGN-IN FUNCTION
 export const auth = firebase.default.auth();
+
+
+//SIGN-IN FUNCTION FOR GOOGLE ACCOUNTS
 const googleProvider = new firebase.auth.GoogleAuthProvider()
 export const signInWithGoogle = () => {
   auth.signInWithPopup(googleProvider).then((res) => {
+    /*firebase.collection('users').add({
+
+    })
+    */
+
+
     console.log(res.user)
+
+    window.location='/';
+    
   }).catch((error) => {
     console.log(error.message)
   })
 }
+
+//SIGN IN FUNCTION FOR EMAIL/PASSWORD
+
+
+export const signUp = (email, password) =>{
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    console.log(userCredential); 
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+}
+
+
+
+
 
 //LOG-OUT FUNCTION
 export const logOut = () => {

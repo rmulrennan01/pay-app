@@ -1,6 +1,6 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 //import './Login.css'
-import { signInWithGoogle } from './Firebase';
+import { signInWithGoogle, signUp } from './Firebase';
 import { UserContext } from './User_provider';
 import { Navigate } from 'react-router-dom'; //Navigate in lieu of Redirect
 import TextField from '@mui/material/TextField';
@@ -18,6 +18,47 @@ export default function Login() {
   if (redirect) {
     <Navigate to={redirect}/>
   }
+
+  //signUp
+
+  const new_email = useRef(); 
+  const new_password = useRef(); 
+
+  const create_account = () => {
+    return(
+      <div>
+      <h3>Enter your email:</h3>
+      <TextField 
+          required 
+          inputRef={new_email} 
+          id="outlined-required" 
+          label="Email" 
+          onChange={()=>console.log('user')}
+          defaultValue={''}
+      />
+      <h3>Enter your password:</h3>
+      <TextField 
+          required 
+          inputRef={new_password} 
+          id="outlined-required" 
+          label="password" 
+          onChange={()=>console.log('password')}
+          defaultValue={''}
+      />
+      <br></br>
+      <Button onClick={()=>signUp(new_email.current.value, new_password.current.value)}>Login</Button>
+
+      
+  </div>
+
+
+    )
+
+
+
+  }
+
+
   return (
       <div className="login-buttons">
         <button className="login-provider-button" onClick={signInWithGoogle}>
@@ -49,7 +90,7 @@ export default function Login() {
             
         </div>
 
-
+        {create_account()}
 
       </div>
   );
