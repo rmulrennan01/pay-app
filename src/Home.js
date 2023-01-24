@@ -4,8 +4,7 @@ import "./Home.css"
 //AUTH
 import {useContext} from 'react'; 
 import { UserContext } from "./User_provider";
-import { Navigate } from 'react-router-dom'; 
-import {logOut} from './Firebase.js'; 
+
 
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
@@ -29,29 +28,16 @@ function Home() {
 
     //auth
     const user = useContext(UserContext);
-    const [redirect, setredirect] = useState(false);
 
 
-    useEffect(() => {
-        console.log('USER', user); 
-        if (!user) {
-          //setredirect(true);
-          console.log('USER', user); 
-          //window.location='/login/'
-        }
-      }, [user]);
 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             console.log('signed in', user);
 
-        // User is signed in.
-        // ...
         } else {
             console.log('signed out', user);
             window.location='/login/';
-        // User is signed out.
-        // ...
         }
     });
 

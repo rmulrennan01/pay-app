@@ -18,7 +18,10 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
-
+   
+//AUTH
+import {useContext} from 'react'; 
+import { UserContext } from "./User_provider";
 
 
 function Job_setup() {
@@ -82,6 +85,16 @@ function Job_setup() {
         {label: 'Billing Details', content: <Billing_Details billing_info={billing_info} update_billing_info={update_billing_info}/>}
     ];
 
+    const user = useContext(UserContext);
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            console.log('signed in', user);
+
+        } else {
+            console.log('signed out', user);
+            window.location='/login/';
+        }
+    });
 
 
     

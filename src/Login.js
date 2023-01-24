@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState, useRef } from 'react';
 //import './Login.css'
-import { signInWithGoogle, signUp } from './Firebase';
+import { signInWithGoogle, signUp, signIn} from './Firebase';
 import { UserContext } from './User_provider';
 import { Navigate } from 'react-router-dom'; //Navigate in lieu of Redirect
 import TextField from '@mui/material/TextField';
@@ -19,11 +19,20 @@ export default function Login() {
     <Navigate to={redirect}/>
   }
 
-  //signUp
 
   const new_email = useRef(); 
   const new_password = useRef(); 
+  const new_password_2 = useRef();
 
+  const add_account = () =>{
+    try{
+      signUp(new_email.current.value, new_password.current.value)
+    } catch (e){
+      console.log('failure'); 
+    }
+  }
+
+  //CREAT ACCOUNT FORM
   const create_account = () => {
     return(
       <div>
@@ -42,53 +51,72 @@ export default function Login() {
           inputRef={new_password} 
           id="outlined-required" 
           label="password" 
+          type='password'
+          onChange={()=>console.log('password')}
+          defaultValue={''}
+      />
+      <h3>Enter your password again:</h3>
+      <TextField 
+          required 
+          inputRef={new_password_2} 
+          id="outlined-required" 
+          label="password" 
+          type='password'
           onChange={()=>console.log('password')}
           defaultValue={''}
       />
       <br></br>
-      <Button onClick={()=>signUp(new_email.current.value, new_password.current.value)}>Login</Button>
+      <Button onClick={()=>add_account()}>Create Account</Button>
 
       
   </div>
-
-
     )
+  }
+
+  const email = useRef(); 
+  const pass = useRef();
+  //LOGIN FORM
+  const login_account = () => {
+    return(
+      <div>
+      <h3>Enter your email:</h3>
+      <TextField 
+          required 
+          inputRef={email} 
+          id="outlined-required" 
+          label="Email" 
+          onChange={()=>console.log('user')}
+          defaultValue={''}
+      />
+      <h3>Enter your password:</h3>
+      <TextField 
+          required 
+          inputRef={pass} 
+          id="outlined-required" 
+          label="password" 
+          type='password'
+          onChange={()=>console.log('password')}
+          defaultValue={''}
+      />
+      <Button onClick={()=>signIn(email.current.value, pass.current.value)}>Login</Button>
 
 
 
+      
+  </div>
+    )
   }
 
 
   return (
       <div className="login-buttons">
+        {/*}
         <button className="login-provider-button" onClick={signInWithGoogle}>
         <img src="https://img.icons8.com/ios-filled/50/000000/google-logo.png" alt="google icon"/>
         <span> Continue with Google</span>
-       </button>
-       <div>
-            <h3>Email:</h3>
-            <TextField 
-                required 
-                inputRef={null} 
-                id="outlined-required" 
-                label="Email" 
-                onChange={()=>console.log('user')}
-                defaultValue={''}
-            />
-            <h3>Password</h3>
-            <TextField 
-                required 
-                inputRef={null} 
-                id="outlined-required" 
-                label="password" 
-                onChange={()=>console.log('password')}
-                defaultValue={''}
-            />
-            <br></br>
-            <Button >Login</Button>
-
-            
-        </div>
+        </button>
+  */}
+        {login_account()}
 
         {create_account()}
 

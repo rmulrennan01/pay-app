@@ -2,7 +2,7 @@
 import 'firebase/compat/firestore';
 import { initializeApp } from "firebase/app";
 import firebase from 'firebase/compat/app';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 import 'firebase/compat/auth';
 
@@ -57,22 +57,50 @@ export const signInWithGoogle = () => {
   })
 }
 
-//SIGN IN FUNCTION FOR EMAIL/PASSWORD
-
-
+//SIGN UP FUNCTION FOR EMAIL/PASSWORD
 export const signUp = (email, password) =>{
 createUserWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
     // Signed in 
     const user = userCredential.user;
     console.log(userCredential); 
+    setup_account_info(user.email, user.uid)
     // ...
   })
   .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
+    throw("mega-error"); 
+    //return false; 
     // ..
   });
+}
+
+//SIGN IN FUNCTION FOR EMAIL/PASSWORD
+export const signIn = (email, password) => {
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) =>{
+        const user = userCredential.user;
+        console.log(user); 
+    })
+    .catch((error) => {
+      throw("mega-error"); 
+    })
+}
+
+const setup_account_info = (email, user_id) =>{
+  // Add a new document in collection "cities"
+  firebase.firestore().collection("accounts").doc(user_id).set({
+    email: email
+  })
+  .then(() => {
+    console.log("Document successfully written!");
+  })
+  .catch((error) => {
+    console.error("Error writing document: ", error);
+  });
+ 
+
 }
 
 
