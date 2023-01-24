@@ -235,7 +235,7 @@ function Home() {
 
 
     return (
-        <div>
+        <div style={{margin:"15px"}}>
             <br></br>
             <Button variant="contained">Setup a new project</Button>
             <Paper>

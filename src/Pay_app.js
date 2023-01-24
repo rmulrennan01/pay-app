@@ -306,13 +306,10 @@ function Pay_app() {
 
 
     return (
-        <div>
-            {    console.log('END OF MONTH', new Date(app_date.getFullYear(),app_date.getMonth()+1,0)) }
+        <div style={{margin:"15px"}}>
 
             <Stepper activeStep={current_step} orientation="vertical">
                 {steps.map(build_steps)}
-                
-
             </Stepper>
 
 

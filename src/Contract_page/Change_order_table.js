@@ -5,6 +5,9 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import CurrencyFormat from 'react-currency-format';
+import Tooltip from '@mui/material/Tooltip';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
 
 //Tables
@@ -17,13 +20,13 @@ import TableRow from '@mui/material/TableRow';
 import TableFooter from '@mui/material/TableFooter';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Icon } from '@mui/material';
 
 
 function Change_order_table(props) {
@@ -186,7 +189,11 @@ function Change_order_table(props) {
             
             </TableCell>
             <TableCell>
-                <Button startIcon={<DeleteIcon/>} onClick={()=>handle_delete_click(item.id, item.internal_index)}> </Button>
+                <Tooltip title="Delete">
+                    <IconButton onClick={()=>handle_delete_click(item.id, item.internal_index)}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
             </TableCell>
 
         </TableRow>

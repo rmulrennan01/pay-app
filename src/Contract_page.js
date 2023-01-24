@@ -7,37 +7,28 @@ import { PieChart, PieArcSeries, PieArcLabel } from 'reaviz';
 import Date_string from './Utilities/Date_string.js'; 
 import Bar_chart from './Utilities/Bar_chart.js'; 
 import Period_totals from './Utilities/Period_totals';
-import Skeleton from '@mui/material/Skeleton';
-
-import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
-import Totals_by_key from './Utilities/Totals_by_key.js'; 
+import Divider from '@mui/material/Divider';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import AppBar from '@mui/material/AppBar';
 
 import Grid from '@mui/material/Grid';
-
-
 import Contract_sov from "./Contract_page/Contract_sov.js"; 
 import Change_order_modal from './Contract_page/Change_order_modal.js';
 import Change_order_table from './Contract_page/Change_order_table.js'; 
 import Pay_app_table from './Contract_page/Pay_app_table.js'; 
 import Pay_app_modal from './Contract_page/Pay_app_modal.js'; 
-import { getScopedCssBaselineUtilityClass } from '@mui/material';
 
 import CurrencyFormat from 'react-currency-format';
-import Sov_table from './Pay_app/Sov_table.js';
 
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 import AddCircleIcon from '@mui/icons-material/AddCircle'; 
-import { AccountBalanceWalletOutlined } from '@material-ui/icons';
-import { blue } from '@mui/material/colors';
+
 
 //Tables
 import Table from '@mui/material/Table';
@@ -440,6 +431,7 @@ function Contract_page(props) {
                 data.push({description:contract_info.recent_task[i], date:Date_string(contract_info.update[i])})
             }
         }
+        data.reverse();
         set_activity_list(data); 
     }
 
@@ -598,7 +590,7 @@ function Contract_page(props) {
 
     
     return (
-        <>
+        <div style={{margin:"15px"}}>
 
             <Grid container spacing={2} sx={{height:500}}>
                 <Grid item xs = {3} sx={{height:'100%'}}>
@@ -637,17 +629,18 @@ function Contract_page(props) {
  
             <br/> 
             <br/>
-            <Paper elevation={8}>
+            <Paper elevation={8} >
                 <Tabs value={tab}  centered>
                     <Tab label={<Button endIcon={<AttachMoneyIcon/>}><h3>Payment Applications</h3></Button>} onClick={()=>set_tab(0)}/>   
                     <Tab label={<Button endIcon={<ReceiptLongIcon/>}><h3>Schedule of Values</h3> </Button>} onClick={()=>set_tab(1)}/>
                     <Tab label={<Button endIcon={<CurrencyExchangeIcon/>}><h3>Change Orders</h3></Button>} onClick={()=>set_tab(2)}/>
                     
                 </Tabs>
+                <Divider />
                 
-                {tab==0 ? <Paper elevation={5}>   {pay_apps()}<br/> </Paper>  : <></>  }
-                {tab==1 ? <Paper elevation={5}>   {job_sov()}<br/> </Paper>  : <></>  }
-                {tab==2 ? <Paper elevation={5}>   <Button startIcon= {<AddCircleIcon/>} variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button><br/>  {change_orders()} </Paper>  : <></>  }
+                {tab==0 ?    pay_apps() : <></>  }
+                {tab==1 ? job_sov()  : <></>  }
+                {tab==2 ? <><Button startIcon= {<AddCircleIcon/>} variant="contained" onClick={()=> set_co_modal_open(true)}> Add Change Order </Button> {change_orders()} </>  : <></>  }
             </Paper>
             
 
@@ -671,7 +664,7 @@ function Contract_page(props) {
                     /> }
             </Modal>
 
-        </>
+        </div>
   
     )
 }
