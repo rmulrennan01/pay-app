@@ -86,7 +86,8 @@ export const signIn = (email, password) => {
 
     })
     .catch((error) => {
-      throw("mega-error"); 
+      console.log(error); 
+      throw 'false';  
     })
 }
 

@@ -20,7 +20,7 @@ export default function Login() {
   const [redirect, setredirect] = useState(null);
   const [new_user, set_new_user] = useState(false); 
   const [panel, set_panel] = useState(1); 
-
+  const [pwd_fail, set_pwd_fail] = useState(false); 
 
 /*
   useEffect(() => {
@@ -86,6 +86,20 @@ export default function Login() {
     )
   }
 
+  const login = () =>{
+    try{
+      signIn(email.current.value, pass.current.value)
+    }
+    catch (e){
+      console.log(e); 
+      if(e === 'false'){
+        alert('Wrong Password'); 
+      }
+    }
+
+
+  }
+
   const email = useRef(); 
   const pass = useRef();
   //LOGIN FORM
@@ -112,7 +126,7 @@ export default function Login() {
           defaultValue={''}
       />
       <br></br><br></br>
-      <Button sx={{width:200}} variant='contained' onClick={()=>signIn(email.current.value, pass.current.value)}>Login</Button>
+      <Button sx={{width:200}} variant='contained' onClick={()=>login()}>Login</Button>
       <br></br>
       <Button> Forgot Password? </Button> 
   </div>
