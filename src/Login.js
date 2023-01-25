@@ -6,10 +6,23 @@ import { Navigate } from 'react-router-dom'; //Navigate in lieu of Redirect
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+
+
+
 export default function Login() {
   const user = useContext(UserContext)
-  const [redirect, setredirect] = useState(null)
+  const [redirect, setredirect] = useState(null);
+  const [new_user, set_new_user] = useState(false); 
+  const [panel, set_panel] = useState(1); 
 
+
+/*
   useEffect(() => {
     if (user) {
       setredirect('/dashboard')
@@ -18,7 +31,7 @@ export default function Login() {
   if (redirect) {
     <Navigate to={redirect}/>
   }
-
+*/
 
   const new_email = useRef(); 
   const new_password = useRef(); 
@@ -65,8 +78,8 @@ export default function Login() {
           onChange={()=>console.log('password')}
           defaultValue={''}
       />
-      <br></br>
-      <Button onClick={()=>add_account()}>Create Account</Button>
+      <br></br><br></br>
+      <Button sx={{width:200}} variant='contained' onClick={()=>add_account()}>Create Account</Button>
 
       
   </div>
@@ -79,7 +92,7 @@ export default function Login() {
   const login_account = () => {
     return(
       <div>
-      <h3>Enter your email:</h3>
+      
       <TextField 
           required 
           inputRef={email} 
@@ -88,7 +101,7 @@ export default function Login() {
           onChange={()=>console.log('user')}
           defaultValue={''}
       />
-      <h3>Enter your password:</h3>
+      <br></br><br></br>
       <TextField 
           required 
           inputRef={pass} 
@@ -98,28 +111,44 @@ export default function Login() {
           onChange={()=>console.log('password')}
           defaultValue={''}
       />
-      <Button onClick={()=>signIn(email.current.value, pass.current.value)}>Login</Button>
-
-
-
-      
+      <br></br><br></br>
+      <Button sx={{width:200}} variant='contained' onClick={()=>signIn(email.current.value, pass.current.value)}>Login</Button>
+      <br></br>
+      <Button> Forgot Password? </Button> 
   </div>
     )
   }
 
 
   return (
-      <div className="login-buttons">
+      <Paper sx={{width:400, margin:'10%'}}> 
         {/*}
         <button className="login-provider-button" onClick={signInWithGoogle}>
         <img src="https://img.icons8.com/ios-filled/50/000000/google-logo.png" alt="google icon"/>
         <span> Continue with Google</span>
         </button>
   */}
-        {login_account()}
+        <Accordion sx={{width:400, margin:0}} expanded={panel==1} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <h3>Already have an account?</h3>
+          </AccordionSummary>
+          <AccordionDetails>
+            {login_account()}
+          </AccordionDetails>
+        </Accordion>
+        <Accordion sx={{width:400}} expanded={panel==2} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <h3>Create an account?</h3>
+          </AccordionSummary>
+          <AccordionDetails>
+            {create_account()}
+          </AccordionDetails>
+        </Accordion>
 
-        {create_account()}
-
-      </div>
+      </Paper>
   );
 }

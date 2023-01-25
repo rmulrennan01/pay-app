@@ -23,9 +23,10 @@ function App() {
 
   return (
     <div>
-      <Navbar /> 
+      
       <User_provider>
       <BrowserRouter> 
+      <Navbar /> 
       <Routes>
         
         <Route path="/" element={<Home />} />
