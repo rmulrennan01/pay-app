@@ -12,6 +12,7 @@ import Contract_page from './Contract_page.js';
 import Pay_app_viewer from './Pay_app_viewer.js'; 
 import User_provider from './User_provider.js'; 
 import Login from './Login.js'; 
+import Account from './Account.js'; 
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/contract_browser" element={<Contract_browser /> } /> 
         <Route path="/job_setup" element={<Job_setup />} />
+        <Route path="/account" element={<Account />} />
         <Route path="*" element={<Job_setup />} /> 
         <Route path='/contract/:id' element={<Contract_page />} />
         <Route path='/pay_app/:id' element={<Pay_app />} />

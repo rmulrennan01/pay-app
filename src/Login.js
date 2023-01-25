@@ -11,8 +11,9 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Alert from '@mui/material/Alert'; 
 
-
+import GoogleIcon from '@mui/icons-material/Google';
 
 
 export default function Login() {
@@ -20,7 +21,7 @@ export default function Login() {
   const [redirect, setredirect] = useState(null);
   const [new_user, set_new_user] = useState(false); 
   const [panel, set_panel] = useState(1); 
-  const [pwd_fail, set_pwd_fail] = useState(false); 
+  const [login_fail, set_login_fail] = useState(false); 
 
 /*
   useEffect(() => {
@@ -86,19 +87,38 @@ export default function Login() {
     )
   }
 
+
+  const login_2 = () =>{
+    
+    signIn(email.current.value, pass.current.value)
+    .then(() =>{
+      console.log('login success'); 
+
+  })
+  
+  .catch((error) => {
+    //throw("mega-error"); 
+    console.log(error); 
+    console.log('login fia')
+    set_login_fail(true); 
+   
+  })
+  }
+
   const login = () =>{
     try{
       signIn(email.current.value, pass.current.value)
     }
-    catch (e){
-      console.log(e); 
-      if(e === 'false'){
-        alert('Wrong Password'); 
-      }
+    catch(error){
+      console.log('issues')
     }
-
-
   }
+
+
+
+
+
+
 
   const email = useRef(); 
   const pass = useRef();
@@ -125,17 +145,32 @@ export default function Login() {
           onChange={()=>console.log('password')}
           defaultValue={''}
       />
+      {login_fail ? <Alert variant="outlined" severity="error"> This is an error alert — check it out! </Alert> : <></>}
       <br></br><br></br>
       <Button sx={{width:200}} variant='contained' onClick={()=>login()}>Login</Button>
       <br></br>
-      <Button> Forgot Password? </Button> 
+      <Button vairant='contained'> Forgot Password? </Button> 
+      <br></br>
+        <h3>or</h3>
+      <br></br>
+      {login_google()}
+
   </div>
     )
   }
 
 
+  const login_google = () =>{
+    return(
+      <Button variant={'contained'} startIcon={<GoogleIcon/>} onClick={()=>signInWithGoogle()}> Sign In with Google </Button>
+    )
+
+
+  }
+
+
   return (
-      <Paper sx={{width:400, margin:'10%'}}> 
+      <Paper elevation={8} sx={{width:400, margin:'10%'}}> 
         {/*}
         <button className="login-provider-button" onClick={signInWithGoogle}>
         <img src="https://img.icons8.com/ios-filled/50/000000/google-logo.png" alt="google icon"/>
@@ -156,7 +191,7 @@ export default function Login() {
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
           >
-            <h3>Create an account?</h3>
+            <h3>Need an account?</h3>
           </AccordionSummary>
           <AccordionDetails>
             {create_account()}

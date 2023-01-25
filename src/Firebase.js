@@ -2,7 +2,7 @@
 import 'firebase/compat/firestore';
 import { initializeApp } from "firebase/app";
 import firebase from 'firebase/compat/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 
 import 'firebase/compat/auth';
 
@@ -46,12 +46,8 @@ export const signInWithGoogle = () => {
 
     })
     */
-
-
     console.log(res.user)
-
     window.location='/';
-    
   }).catch((error) => {
     console.log(error.message)
   })
@@ -68,11 +64,8 @@ createUserWithEmailAndPassword(auth, email, password)
     // ...
   })
   .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    throw("mega-error"); 
-    //return false; 
-    // ..
+      //throw("mega-error"); 
+      throw error
   });
 }
 
@@ -84,12 +77,13 @@ export const signIn = (email, password) => {
         console.log(user); 
         window.location='/';
 
-    })
+    }) 
     .catch((error) => {
-      console.log(error); 
-      throw 'false';  
-    })
+      console.log('error occured'); 
+    });
 }
+
+
 
 const setup_account_info = (email, user_id) =>{
   // Add a new document in collection "cities"
@@ -119,4 +113,13 @@ export const logOut = () => {
   })
 }
 
-
+//PASSWORD RESET VIA EMAIL
+const sendPasswordReset = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset link sent!");
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
