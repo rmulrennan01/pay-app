@@ -6,7 +6,9 @@ import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink } fr
 import firebase from "./Firebase.js"; 
 import Pay_app_viewer_g702 from "./Pay_app_viewer/Pay_app_viewer_g702.js"; 
 import Pay_app_viewer_g703 from "./Pay_app_viewer/Pay_app_viewer_g703.js"; 
-
+//AUTH
+import {useContext} from 'react'; 
+import { UserContext } from "./User_provider";
 
 //THIS COMPONENT BUILDS A PDF VERSION OF THE AIA PAYMENT APPLICAITON
 function Pay_app_viewer(props) {
@@ -29,12 +31,32 @@ function Pay_app_viewer(props) {
     const [end_date, set_end_date] = useState(new Date((new Date).getFullYear(),(new Date).getMonth()+1,0)); 
 
 
+    //auth
+    const [uid, set_uid] = useState(0); 
+    const user = useContext(UserContext);
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            if(uid==0){set_uid(user.uid); }
+            console.log('signed in', user.uid);
+
+        } else {
+            console.log('signed out', user);
+            window.location='/login/';
+        }
+    });
+
     //NEED TO EITHER FETCH DATA FROM THE DATABASE IF LOADING AN EXISTING APPLICATION OR USE PROPS PASSED IN FOR VIEWING A DRAFT APPLICATION 
     useEffect( () => {
+
         //FUNCTION TO FETCH FROM DATABASE
         const fetchData = async () =>{
             if(params !== undefined){
-                const dataList = await firestoreDB.collection("contracts").doc(params.id).get(); //updated
+
+                let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
+                let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
+    
+                const dataList = await job_ref.doc(params.id).get(); //updated
                 set_contract_info(dataList.data()); 
                 let date = dataList.data().pay_app_dates[Number(params.app_id)-1];
                 let temp_date = new Date; 
@@ -49,13 +71,13 @@ function Pay_app_viewer(props) {
                 set_end_date(new Date(temp_date.getFullYear(),temp_date.getMonth()+1,0));
 
             
-                const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
+                const dataList2 = await owner_ref.doc(dataList.data().owner_id).get(); //updated
                 set_owner_info(dataList2.data()); 
 
                 const tempList = []; 
 
 
-                const dataList3 = await firestoreDB.collection("contracts").doc(params.id).collection("sov").get();
+                const dataList3 = await job_ref.doc(params.id).collection("sov").get();
                 dataList3.forEach((doc) => {
                     let tempDict = doc.data(); 
                     tempDict["id"] = doc.id; 
@@ -85,7 +107,7 @@ function Pay_app_viewer(props) {
             set_draft(true); 
 
         }
-    }, []);  
+    }, [uid]);  
 
     //TO LIMIT RE-RENDERS WE ONLY NEED TO BUILD THE LINE_ITEMS FOR THE CHILD COMPONENTS ONCE SOV, CONTRACT_INFO, AND OWNER_INFO ARE POPULATED
     useEffect(()=>{
