@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom'; //Navigate in lieu of Redirect
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-
+import Grid from '@mui/material/Grid';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -49,7 +49,7 @@ export default function Login() {
   //CREAT ACCOUNT FORM
   const create_account = () => {
     return(
-      <div>
+      <div >
       <h3>Enter your email:</h3>
       <TextField 
           required 
@@ -58,6 +58,7 @@ export default function Login() {
           label="Email" 
           onChange={()=>console.log('user')}
           defaultValue={''}
+          sx={{width:300}}
       />
       <h3>Enter your password:</h3>
       <TextField 
@@ -68,6 +69,7 @@ export default function Login() {
           type='password'
           onChange={()=>console.log('password')}
           defaultValue={''}
+          sx={{width:300}}
       />
       <h3>Enter your password again:</h3>
       <TextField 
@@ -78,9 +80,10 @@ export default function Login() {
           type='password'
           onChange={()=>console.log('password')}
           defaultValue={''}
+          sx={{width:300}}
       />
       <br></br><br></br>
-      <Button sx={{width:200}} variant='contained' onClick={()=>add_account()}>Create Account</Button>
+      <Button sx={{width:300}} variant='contained' onClick={()=>add_account()}>Create Account</Button>
 
       
   </div>
@@ -134,6 +137,7 @@ export default function Login() {
           label="Email" 
           onChange={()=>console.log('user')}
           defaultValue={''}
+          sx={{width:300}}
       />
       <br></br><br></br>
       <TextField 
@@ -144,16 +148,19 @@ export default function Login() {
           type='password'
           onChange={()=>console.log('password')}
           defaultValue={''}
+          sx={{width:300}}
       />
       {login_fail ? <Alert variant="outlined" severity="error"> This is an error alert — check it out! </Alert> : <></>}
       <br></br><br></br>
-      <Button sx={{width:200}} variant='contained' onClick={()=>login()}>Login</Button>
-      <br></br>
-      <Button vairant='contained'> Forgot Password? </Button> 
-      <br></br>
-        <h3>or</h3>
-      <br></br>
-      {login_google()}
+      <div style={{width:300}}>
+        <Button sx={{width:300}} variant='contained' onClick={()=>login()}>Login</Button>
+        <br></br>
+        <Button sx={{position:'relative', alignItems:'center', justifyContent:'center'}} vairant='contained' > Forgot Password? </Button> 
+        <br></br>
+        <h3 style={{textAlign:'center'}}>or</h3>
+        <br></br>
+        {login_google()}
+      </div>
 
   </div>
     )
@@ -162,7 +169,7 @@ export default function Login() {
 
   const login_google = () =>{
     return(
-      <Button variant={'contained'} startIcon={<GoogleIcon/>} onClick={()=>signInWithGoogle()}> Sign In with Google </Button>
+      <Button sx={{width:300}} variant={'contained'} startIcon={<GoogleIcon/>} onClick={()=>signInWithGoogle()}> Sign In with Google </Button>
     )
 
 
@@ -170,34 +177,41 @@ export default function Login() {
 
 
   return (
-      <Paper elevation={8} sx={{width:400, margin:'10%'}}> 
-        {/*}
-        <button className="login-provider-button" onClick={signInWithGoogle}>
-        <img src="https://img.icons8.com/ios-filled/50/000000/google-logo.png" alt="google icon"/>
-        <span> Continue with Google</span>
-        </button>
-  */}
-        <Accordion sx={{width:400, margin:0}} expanded={panel==1} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-          >
-            <h3>Already have an account?</h3>
-          </AccordionSummary>
-          <AccordionDetails>
-            {login_account()}
-          </AccordionDetails>
-        </Accordion>
-        <Accordion sx={{width:400}} expanded={panel==2} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-          >
-            <h3>Need an account?</h3>
-          </AccordionSummary>
-          <AccordionDetails>
-            {create_account()}
-          </AccordionDetails>
-        </Accordion>
+    <Grid container sx={{paddingTop:'200px'}}> 
+      <Grid item xs={4} ></Grid>
+      <Grid item xs={4}>
+        <Paper elevation={8} sx={{width:400}}> 
+          {/*}
+          <button className="login-provider-button" onClick={signInWithGoogle}>
+          <img src="https://img.icons8.com/ios-filled/50/000000/google-logo.png" alt="google icon"/>
+          <span> Continue with Google</span>
+          </button>
+    */}
+          <Accordion sx={{width:400, margin:0}} expanded={panel==1} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <h3>Already have an account?</h3>
+            </AccordionSummary>
+            <AccordionDetails>
+              {login_account()}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion sx={{width:400}} expanded={panel==2} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <h3>Need an account?</h3>
+            </AccordionSummary>
+            <AccordionDetails>
+              {create_account()}
+            </AccordionDetails>
+          </Accordion>
 
-      </Paper>
+        </Paper>
+        
+      </Grid>
+      <Grid item xs={4}></Grid>
+    </Grid> 
   );
 }
