@@ -136,7 +136,7 @@ return (
     ?
     <></>
     :
-    <AppBar position="static" style={{ background: '#1565C0' }}>
+    <AppBar position="static" color={'primary'}>
         <Container maxWidth="xl">
         <Toolbar disableGutters >
             <Typography
@@ -213,23 +213,29 @@ return (
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-                <div
+                <Button
                     key={page.label}
                     onClick={()=>window.location=page.link}
                     sx={{ my: 2, display: 'block' }}
                     
-                   
+                    color={'inherit'}
                     
                 >
-                    {page.label} 
-                </div>
+                    <Typography
+                        sx={{
+                            fontFamily: 'monospace',
+                            textTransform: ' none'
+                        }}> 
+                         {page.label} 
+                    </Typography>
+                </Button>
             ))}
             </Box>
 
             <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <SettingsIcon />
+                    <SettingsIcon sx={{color:'white'}}/>
                 </IconButton>
             </Tooltip>
             <Menu

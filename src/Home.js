@@ -5,7 +5,7 @@ import "./Home.css"
 import {useContext} from 'react'; 
 import { UserContext } from "./User_provider";
 
-
+import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { PieChart, PieArcSeries } from 'reaviz';
@@ -18,6 +18,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Date_string from './Utilities/Date_string.js'; 
 import Bar_chart from './Utilities/Bar_chart.js'; 
+import Grid from '@mui/material/Grid';
 
 import firebase from "./Firebase.js"; 
 
@@ -201,6 +202,8 @@ function Home() {
     const display_tasks = (item, index) => {
         if(index < 10){
             return(
+                <Tooltip title='Go to Contract' arrow>
+
                 <TableRow key={index+"recent"}  onClick={()=>window.location='/contract/'+ String(item.id)} className="home__row">
                     <TableCell className="home__data">
                         {item.name}
@@ -212,7 +215,7 @@ function Home() {
                         {item.date.toDate().toString()}
                     </TableCell>
                 </TableRow>
-
+                </Tooltip>
             )
         }
     }
@@ -252,75 +255,71 @@ function Home() {
 
 
 
-        
-        
-        //JSON.parse(JSON.stringify(sov[i].change_orders)); 
-
-
-
-    
-
     const display_due_dates = (item,index) => {
         return(
+            <Tooltip title='Go to Contract' arrow>
             <TableRow key={index+"due"}  onClick={()=>window.location='/contract/'+ String(item.id)} className="home__row">
                 <TableCell> {item.name} </TableCell>
                 <TableCell> {item.date} </TableCell>
                 <TableCell> {item.days} </TableCell>
             </TableRow>
+            </Tooltip>
         )
     }
 
 
 
     return (
+
         <div style={{margin:"15px"}}>
             <br></br>
             <Button variant="contained">Setup a new project</Button>
-            <Paper>
+            <Grid container spacing={2} sx={{height:550}}>
+                <Grid item xs = {3} sx={{height:550}}>
+                    <Paper elevation={8} sx={{height:550}}>
+                        <h3>Recent Project Activity</h3>
+                        <Paper>
+                        <TableContainer style={{maxHeight:500}}>
+                            <Table stickyHeader >
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell className="home__data"> <h3>Project</h3></TableCell>
+                                        <TableCell className="home__data"> <h3>Task</h3></TableCell>
+                                        <TableCell className="home__data"> <h3>Date</h3></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {loading ? <CircularProgress /> : task_list.map(display_tasks)}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        </Paper>
+                    </Paper>
+                </Grid>
+                <Grid item xs = {3} sx={{height:550}}>
+                    <Paper elevation={8} sx={{height:550}}>
+                        <h3>Upcoming Applications Due</h3>
+                        <TableContainer style={{maxHeight:500}}>
 
-            </Paper>
-
-            <Paper>
-                <h3>Recent Project Activity</h3>
-                <Paper>
-                <Table>
-                    <TableRow>
-                        <TableCell className="home__data"> <h3>Project</h3></TableCell>
-                        <TableCell className="home__data"> <h3>Task</h3></TableCell>
-                        <TableCell className="home__data"> <h3>Date</h3></TableCell>
-                    </TableRow>
-                    <TableBody>
-                        {loading ? <CircularProgress /> : task_list.map(display_tasks)}
-                    </TableBody>
-                </Table>
-                </Paper>
-            </Paper>
-
-            <Paper>
-                <h3>Upcoming Applications Due</h3>
-                <Paper>
-                <Table>
-                    <TableRow>
-                        <TableCell className="home__data"> <h3>Project</h3></TableCell>
-                        <TableCell className="home__data"> <h3>Due Date</h3></TableCell>
-                        <TableCell className="home__data"> <h3>Days Remaining</h3></TableCell>
-                    </TableRow>
-                    <TableBody>
-                        {loading ? <CircularProgress /> : upcoming_apps.map(display_due_dates)}
-                    </TableBody>
-                </Table>
-                </Paper>
-            </Paper>
-            <Paper>
-            </Paper>
-
-
-           {loading ? null : console.log(contracts)}
-           
-           
+                            <Table stickyHeader>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell className="home__data"> <h3>Project</h3></TableCell>
+                                        <TableCell className="home__data"> <h3>Due Date</h3></TableCell>
+                                        <TableCell className="home__data"> <h3>Days Remaining</h3></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {loading ? <CircularProgress /> : upcoming_apps.map(display_due_dates)}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Paper>
+                </Grid>
+            </Grid>
 
         </div>
-    )
+    );
 }
 
 export default Home

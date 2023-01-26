@@ -159,8 +159,6 @@ function Pay_app() {
 
     const submit_pay_app = () =>{
         Add_app(contract_info, sov, saved_inputs, app_date, uid, id); 
-        
-
     }
 
  

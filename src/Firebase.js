@@ -42,10 +42,7 @@ export const auth = firebase.default.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider()
 export const signInWithGoogle = () => {
   auth.signInWithPopup(googleProvider).then((res) => {
-    /*firebase.collection('users').add({
-
-    })
-    */
+    //TODO SETUP ACCOUNT PROFILE IN DATABSE
     console.log(res.user)
     window.location='/';
   }).catch((error) => {
