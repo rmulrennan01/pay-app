@@ -88,7 +88,8 @@ export const signIn = (email, password) => {
 const setup_account_info = (email, user_id) =>{
   // Add a new document in collection "cities"
   firebase.firestore().collection("accounts").doc(user_id).set({
-    email: email
+    email: email,
+    draws: {}
   })
   .then(() => {
     console.log("Document successfully written!");

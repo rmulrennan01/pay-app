@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import firebase from "./Firebase.js"; 
 import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
 import Totals_by_key from './Utilities/Totals_by_key.js'; 
+import Activity_update from './Utilities/Activity_update.js'
 
 import Sov_table from './Pay_app/Sov_table.js'; 
 import Billing_details from './Pay_app/Billing_details.js'; 
@@ -215,12 +216,21 @@ function Pay_app() {
         batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
          
         batch.commit().then(()=>{
-            submission_success();  
+            //UPDATES THE USER ACCOUNT FOR QUICK ACCESS TO MONTHLY DRAWS
+            Activity_update(uid,app_date,Number(draw_total))
+            .then(()=>{
+                submission_success();
+            })
+            .catch((error) => {
+                console.log('ERROR UPDATING ACCOUNT INTO', error); 
+            });
+
         })
         .catch((error) => {
             console.error("Error adding pay app", error); 
             alert("Failed to submit payment application. Please try again later.")
         });
+
         
 
     }

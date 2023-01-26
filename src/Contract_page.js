@@ -11,6 +11,7 @@ import Divider from '@mui/material/Divider';
 //AUTH
 import {useContext} from 'react'; 
 import { UserContext } from "./User_provider";
+import Activity_update from './Utilities/Activity_update.js'
 
 
 import CircularProgress from '@mui/material/CircularProgress';
@@ -196,9 +197,19 @@ function Contract_page(props) {
         */
         
         batch.commit().then(()=>{
-            console.log("updated app changes successfully"); 
-            alert("Changes to most recent application updated successfully!"); 
-            window.location.reload(false);
+            let app_date= new Date(contract_info.pay_app_dates[contract_info.pay_app_dates.length-1].seconds*1000); 
+            let adjust = Number(rev_draw) - Number(contract_info.this_draw); 
+
+            Activity_update(uid,app_date,Number(adjust))
+            .then(()=>{
+                console.log("updated app changes successfully"); 
+                alert("Changes to most recent application updated successfully!"); 
+                window.location.reload(false);
+            })
+            .catch((error)=>{
+                console.log(error);
+            });
+
         })
         .catch((error) => {
             console.error("Error updating payment applicaiton", error); 
