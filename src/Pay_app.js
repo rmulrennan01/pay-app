@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import firebase from "./Firebase.js"; 
 import Sov_item_totals from './Utilities/Sov_item_totals.js'; 
 import Totals_by_key from './Utilities/Totals_by_key.js'; 
-import Activity_update from './Utilities/Activity_update.js'
+import Activity_update from './Database_util/Activity_update.js'
 
 import Sov_table from './Pay_app/Sov_table.js'; 
 import Billing_details from './Pay_app/Billing_details.js'; 

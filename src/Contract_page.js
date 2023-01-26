@@ -8,11 +8,17 @@ import Date_string from './Utilities/Date_string.js';
 import Bar_chart from './Utilities/Bar_chart.js'; 
 import Period_totals from './Utilities/Period_totals';
 import Divider from '@mui/material/Divider';
+
 //AUTH
 import {useContext} from 'react'; 
 import { UserContext } from "./User_provider";
-import Activity_update from './Utilities/Activity_update.js'
 
+//CUSTOM DATABASE UTILITIES
+import Activity_update from './Database_util/Activity_update.js'
+import Edit_app from './Database_util/Edit_app.js'
+import Delete_app from './Database_util/Delete_app.js'
+import Add_co from './Database_util/Add_co.js'; 
+import Delete_co from './Database_util/Delete_co.js'; 
 
 import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
@@ -110,227 +116,28 @@ function Contract_page(props) {
     }, [contract_info, sov]); 
 
 
-  
-    //SUBMIT A NEW CHANGE ORDER
+    //CALLS DATABASE UTILITY FUNCTION TO SUBMIT THE NEW CHANGE ORDER
     const submit_co = (sov_id, data) => {
-        let rev_contract = Number(contract_info.base_contract_value) + Number(contract_info.co_value) + Number(data.value); 
-        let balance = Number(rev_contract) - Number(contract_info.prev_draws) - Number(contract_info.this_draw); 
-        
-        let batch = firestoreDB.batch(); 
+        Add_co(sov_id,data,contract_info,uid,id); 
+    }
 
-        //let contract_ref = firestoreDB.collection("contracts").doc(id); 
-        //let sov_ref = contract_ref.collection("sov").doc(sov_id);
-        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
-        let sov_ref = contract_ref.collection("sov").doc(sov_id);
+    //CALLS DATABASE UTILITY FUNCTION TO POST CHANGES FROM EDITING THE MOST RECENT PAY APP
+    const submit_app_changes = (inputs) => {
+        Edit_app(inputs, contract_info, sov, uid, id); 
+    }
 
-        //BATCH UPDATE WITH THE CO -> MUST UPDATE CO_COUNT; CO_VALUE; BALANCE; CO INSIDE SOV
-        batch.update(sov_ref, {"change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: Number(data.value), pay_app: Number(data.pay_app)})});//DONE
-        batch.update(contract_ref, {"co_value":Number(contract_info.co_value)+Number(data.value)}); //DONE
-        batch.update(contract_ref, {"co_count":Number(contract_info.co_count)+Number(1)}); //DONE
-        batch.update(contract_ref, {"balance":Number(balance)}); //DONE
-
-        //UPDATE RECENT TASKS
-        let temp_update = [...contract_info.update];
-        temp_update.push(new Date); 
-        let temp_tasks = [...contract_info.recent_task];
-        temp_tasks.push("Added a change order for "+ data.description)
-        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
-            temp_update.shift();
-            temp_tasks.shift();
-        }
-        batch.update(contract_ref, {"update":temp_update}); //DONE
-        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
-
-
-        batch.commit().then(()=>{
-            console.log("updated co total successfully"); 
-            alert("Change Order Added Successfully"); 
-            window.location.reload(false);
-        })
-        .catch((error) => {
-            console.error("Error adding change order", error); 
-            alert("Failed to submit change order. Please try again later or contact support.")
-        });
-    } 
-
-    //SUBMIT A REVISION TO A PAY APPLICATION
-    const submit_app_changes = (inputs) =>{
-        let batch = firestoreDB.batch(); 
-        //let contract_ref = firestoreDB.collection("contracts").doc(id);
-        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
-
-
-        //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
-        let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
-        let rev_draw = Number(0); 
-        for (let i=0; i<temp_sov.length; i++){
-            let temp_sov_ref = contract_ref.collection("sov").doc(temp_sov[i].id);
-            temp_sov[i].pay_apps.pop(); 
-            temp_sov[i].pay_apps.push(Number(inputs[i]));
-            batch.update(temp_sov_ref, {"pay_apps":temp_sov[i].pay_apps});//DONE
-            rev_draw += Number(inputs[i]);
-        }
- 
-        //UPDATE THIS_DRAW & BALANCE IN THE CONTRACT_INFO 
-        let balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.prev_draws) - rev_draw;
-        batch.update(contract_ref, {"balance":balance});//DONE
-        batch.update(contract_ref, {"this_draw":rev_draw});//DONE
-
-        //RECENT TASKS
-        let temp_update = [...contract_info.update];
-        temp_update.push(new Date); 
-        let temp_tasks = [...contract_info.recent_task];
-        temp_tasks.push("Edited the most recent payment application")
-        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
-            temp_update.shift();
-            temp_tasks.shift();
-        }
-        batch.update(contract_ref, {"update":temp_update}); //DONE
-        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
-
-        /*
-        let temp_activity = JSON.parse(JSON.stringify(contract_info.activity)); //DEEP COPY
-        batch.update(contract_ref)
-        if(activity.length > 25){
-            temp_activity.shift();
-        }
-        */
-        
-        batch.commit().then(()=>{
-            let app_date= new Date(contract_info.pay_app_dates[contract_info.pay_app_dates.length-1].seconds*1000); 
-            let adjust = Number(rev_draw) - Number(contract_info.this_draw); 
-
-            Activity_update(uid,app_date,Number(adjust))
-            .then(()=>{
-                console.log("updated app changes successfully"); 
-                alert("Changes to most recent application updated successfully!"); 
-                window.location.reload(false);
-            })
-            .catch((error)=>{
-                console.log(error);
-            });
-
-        })
-        .catch((error) => {
-            console.error("Error updating payment applicaiton", error); 
-            alert("Failed to submit changes to the payment application. Please try again later or contact support.")
-        });
+    //CALLS DATABASE UTILITY FUNCTION TO REMOVE THE MOST RECENT PAY APP
+    const delete_pay_app = () =>{
+        Delete_app(contract_info, sov, uid, id); 
 
     }
 
-    const delete_pay_app = () => {
-        let batch = firestoreDB.batch(); 
-        //let contract_ref = firestoreDB.collection("contracts").doc(id);
-        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
-
-
-        //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
-        let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
-        let app_dates = JSON.parse(JSON.stringify(contract_info.pay_app_dates)); //CREATE A DEEP COPY
-        app_dates.pop(); 
-        let this_draw = Number(0); 
-        let prev_draw = Number(0); 
-        let balance = Number(0); 
-        
-        for (let i=0; i<temp_sov.length; i++){
-            temp_sov[i].pay_apps.pop(); //REMOVE THE LAST APP VALUE
-            let temp_apps = temp_sov[i].pay_apps; 
-            this_draw += Number(temp_apps[temp_apps.length-1]) //NEED TO TOTAL THE LAST APP VALUE
-            
-            //GENERATE BATCH ITEM FOR EACH SOV
-            let temp_sov_ref = contract_ref.collection("sov").doc(temp_sov[i].id);
-            batch.update(temp_sov_ref, {"pay_apps":temp_sov[i].pay_apps});//DONE
-        }
-        if(contract_info.app_count == 1){
-            prev_draw = Number(0); 
-            balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value); 
-            this_draw = Number(0); 
-        }
-        else{
-            prev_draw = Number(contract_info.prev_draws) - Number(this_draw); 
-            balance = Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(this_draw) - Number(prev_draw); 
-        }
-        
-        //UPDATE THIS_DRAW & BALANCE IN THE CONTRACT_INFO 
-        batch.update(contract_ref, {"balance":balance});//DONE
-        batch.update(contract_ref, {"this_draw":this_draw});//DONE
-        batch.update(contract_ref, {"prev_draws":prev_draw});//DONE
-        batch.update(contract_ref, {"app_count": Number(contract_info.app_count)-1}); 
-        batch.update(contract_ref, {"pay_app_dates": app_dates}); 
-
-
-        //RECENT TASKS
-        let temp_update = [...contract_info.update];
-        temp_update.push(new Date); 
-        let temp_tasks = [...contract_info.recent_task];
-        temp_tasks.push("Deleted the most recent payment application")
-        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
-            temp_update.shift();
-            temp_tasks.shift();
-        }
-        batch.update(contract_ref, {"update":temp_update}); //DONE
-        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
-
-        
-        batch.commit().then(()=>{
-            console.log("Payment application deleted successfully"); 
-            alert("Payment application deleted successfully."); 
-            window.location.reload(false);
-        })
-        .catch((error) => {
-            console.error("Error deleting payment applicaiton", error); 
-            alert("Failed to delete payment application. Please try again later or contact support.")
-        });
-    }
-
-
+    //CALLS DATABASE UTILITY FUNCTION TO DELETE THE CHANGE ORDER OF A SPECIFIC INDEX
     const delete_co = (sov_id,index) =>{
-        let batch = firestoreDB.batch(); 
-        //let contract_ref = firestoreDB.collection("contracts").doc(id);
-        let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(id); //updated
-        let sov_ref = contract_ref.collection("sov").doc(sov_id);
-        let co_val = Number(0); 
-
-        let co_list = [];
-        for (let i=0; i<sov.length; i++){
-            if(sov[i].id == sov_id){
-                co_list = JSON.parse(JSON.stringify(sov[i].change_orders)); //CREATE DEEP COPY
-                console.log('INDEX', index)
-                co_val = co_list[index].value; 
-                break;
-            }
-        }
-
-        co_list.splice(index,1); 
-        batch.update(sov_ref, {"change_orders":co_list});//DONE
-        batch.update(contract_ref, {"co_value":Number(contract_info.co_value)-Number(co_val)}); //DONE
-        batch.update(contract_ref, {"co_count":Number(contract_info.co_count)-Number(1)}); //DONE
-        batch.update(contract_ref, {"balance":Number(contract_info.balance)-Number(co_val)}); //DONE
-
-
-        //RECENT TASKS
-        let temp_update = [...contract_info.update];
-        temp_update.push(new Date); 
-        let temp_tasks = [...contract_info.recent_task];
-        temp_tasks.push("Deleted a change order.")
-        if(temp_update.length > 10){ //CAN'T EXCEED FIVE ITEMS
-            temp_update.shift();
-            temp_tasks.shift();
-        }
-        batch.update(contract_ref, {"update":temp_update}); //DONE
-        batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
-
-
-        batch.commit().then(()=>{
-            console.log("Change Order deleted successfully"); 
-            alert("Change order deleted successfully."); 
-            window.location.reload(false);
-        })
-        .catch((error) => {
-            console.error("Error deleting change order.", error); 
-            alert("Failed to delete change order. Please try again later or contact support.")
-        });
+        Delete_co(contract_info, sov, sov_id, index, uid, id);
     }
+
+
 
     const currency = (val) =>{
         return(

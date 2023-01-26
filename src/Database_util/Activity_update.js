@@ -1,7 +1,6 @@
 
 
 import firebase from "../Firebase.js"; 
-import { UpdateSharp } from "@material-ui/icons";
 
 const fetchData = async (id) =>{
     let account_ref = firebase.firestore().collection('accounts').doc(id); 
