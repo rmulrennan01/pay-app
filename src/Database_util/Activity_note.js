@@ -10,26 +10,21 @@ const fetchData = async (id) =>{
 
 
 //HELPER FUNCTION FOR UPDATING THE RECENT DRAW ACTIVITY
-
-
-const Activity_update =  async (uid, date, value) =>{
+const Activity_update =  async (uid, name, task, date) =>{
     let account = await fetchData(uid);
     
     let account_ref = firebase.firestore().collection('accounts').doc(uid); 
-    let updates = account.draws
-    let date_key = String(date.getMonth()) + '/' + String(date.getFullYear());
-    console.log('date', date); 
-    if(updates[date_key] === undefined){
-        updates[date_key] = Number(value);
-    }
-    else{
-        updates[date_key] += Number(value); 
+    let updates = account.activity
+    updates.push({
+        name: name, 
+        recent_task: task, 
+        date: date
 
-    }
+    })
     
     
     account_ref.update({
-        draws: updates
+        activity: updates
     })
     .then(()=>{
         console.log('UPDATE SUCCESS')
@@ -46,4 +41,4 @@ const Activity_update =  async (uid, date, value) =>{
 }
 
 
-export default Activity_update; 
+export default Activity_note; 

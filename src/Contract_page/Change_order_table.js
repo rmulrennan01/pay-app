@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 
 
 import Button from '@mui/material/Button';
@@ -27,7 +28,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Icon } from '@mui/material';
-
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 function Change_order_table(props) {
     const [table_content, set_table_content] = useState([]);
@@ -36,7 +37,7 @@ function Change_order_table(props) {
     const [direction, set_direction] = useState('desc'); 
     const [active_column, set_active_column] = useState(0); 
     const [triggered, set_triggered] = useState(false); 
-
+    const [edit_index, set_edit_index] = useState(Number(-1)); 
 
 
     useEffect(() => {
@@ -172,21 +173,57 @@ function Change_order_table(props) {
         return(
         <TableRow key= {index}> 
             <TableCell>
+                <Tooltip title="Edit" color='primary'>
+                    <IconButton onClick={()=>edit_index < 0 ? set_edit_index(index) : set_edit_index(Number(-1))}>
+                        <ModeEditIcon />
+                    </IconButton>
+                </Tooltip>
+            </TableCell>
+            <TableCell> 
                 {item.pay_app}
             </TableCell>
             <TableCell>
                 {item.cost_code}
             </TableCell>
             <TableCell>
-                {item.cost_code_description}
+
+                <>{item.cost_code_description}</>
+              
             </TableCell>
             <TableCell>
-                {item.description}
+              
+                {edit_index === index ?
+                <TextField 
+                    inputRef={null} 
+                    onChange={()=>console.log('hi')}
+                    defaultValue={item.description}
+                />
+                    :
+                    <>{item.description}</>
+                }
                 
             </TableCell>
             <TableCell>
-                <CurrencyFormat value={item.value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
-            
+                {edit_index === index ?
+                                    
+                    <CurrencyTextField
+                    label="Amount"
+                    variant="outlined"
+                    value={item.value}
+                    currencySymbol="$"
+                    //minimumValue="0"
+                    outputFormat="string"
+                    decimalCharacter="."
+                    digitGroupSeparator=","
+                    
+                    leadingZero={"deny"}
+                    onChange={()=>console.log('test')}
+                  
+                    />  
+                    :
+                    <CurrencyFormat value={item.value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+
+                }
             </TableCell>
             <TableCell>
                 <Tooltip title="Delete">
@@ -204,16 +241,17 @@ function Change_order_table(props) {
 
     //HEADER LABELS AND ASSOCIATED JSON KEYS FROM THE CHANGE ORDER OBJECT IN EACH SOV ITEM
     const headers = [
-        {label:"Pay Period", key:"pay_app"},
-        {label: "Cost Code", key:"cost_code"},
-        {label: "Cost Code Description", key: "cost_code_description"},
-        {label: "Change Order Description", key:"description"},
-        {label: "Value", key: "value"},
+       
+        {label:"Pay Period", key:"pay_app", width:100},
+        {label: "Cost Code", key:"cost_code", width:150},
+        {label: "Cost Code Description", key: "cost_code_description", width:150},
+        {label: "Change Order Description", key:"description", width:350},
+        {label: "Value", key: "value", width:150},
         ];
 
     const build_headers = (item, index) =>{
         return(
-            <TableCell >
+            <TableCell sx={{width:item.width}}>
                 <TableSortLabel active={active_column == index ? true : false} direction={direction} onClick={()=>handle_sort(index,item.key)} className="Contract_browser__header_text">
                     <h3 style={{color:"black"}}> {item.label} </h3> 
 
@@ -234,12 +272,13 @@ function Change_order_table(props) {
         
         {delete_dialog()}
      
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 100 }} aria-label="simple table">
+        <TableContainer component={Paper} sx={{ minWidth: 100, maxWidth:1400 }}>
+            <Table  aria-label="simple table">
                 <TableHead> 
                     <TableRow>
+                        <TableCell sx={{width:25}}></TableCell>
                         {headers.map(build_headers)}
-                        <TableCell></TableCell>
+                        <TableCell sx={{width:25}}></TableCell>
 
                     </TableRow>
                 </TableHead>
@@ -268,7 +307,6 @@ function Change_order_table(props) {
 
         </TableContainer>
         
-        Change Order Total: $ {total}
 
         </div>
     )

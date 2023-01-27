@@ -290,6 +290,8 @@ function Home() {
                 result.push(Number(0)); 
             }
         }); 
+
+        result.reverse();
         console.log('draws', draws)
         console.log('result', result); 
         
@@ -328,7 +330,7 @@ function Home() {
 
         <div style={{margin:"15px"}}>
             <br></br>
-            <Button variant="contained">Setup a new project</Button>
+            <Button variant="contained" onClick={()=>window.location ="/job_setup" } >Setup a new project</Button>
             <Grid container spacing={2} sx={{height:550}}>
                 <Grid item xs = {3} sx={{height:550}}>
                     <Paper elevation={8} sx={{height:550}}>

@@ -4,6 +4,7 @@ import Date_string from '../Utilities/Date_string.js';
 import "./Pay_app_table.css"; 
 import Sov_item_totals from "../Utilities/Sov_item_totals.js"; 
 import Paper from '@mui/material/Paper';
+import Tooltip from '@mui/material/Tooltip';
 
 
 //Tables
@@ -68,38 +69,40 @@ function Pay_app_table(props) {
     
     
     return(
+      <Tooltip title='Click to view more' arrow>
 
-    <TableRow className="Pay_app_table__row" onClick={()=>open_modal(index)}>
-      <TableCell>
-        {index+1}
-      </TableCell>
-      <TableCell> 
-        {currency(item.base_contract)}
-      </TableCell>
-      <TableCell>
-        {currency(item.co)}
-      </TableCell>
-      <TableCell> 
-        {currency(item.revised_value)}
-      </TableCell>
-      <TableCell> 
-        {currency(item.prev_draws)}
-      </TableCell>
-      <TableCell> 
-        {currency(item.cur_draw)}
-      </TableCell>
-      <TableCell> 
-        {currency(item.payment)}
-      </TableCell>
+        <TableRow className="Pay_app_table__row" onClick={()=>open_modal(index)}>
+          <TableCell>
+            {index+1}
+          </TableCell>
+          <TableCell> 
+            {currency(item.base_contract)}
+          </TableCell>
+          <TableCell>
+            {currency(item.co)}
+          </TableCell>
+          <TableCell> 
+            {currency(item.revised_value)}
+          </TableCell>
+          <TableCell> 
+            {currency(item.prev_draws)}
+          </TableCell>
+          <TableCell> 
+            {currency(item.cur_draw)}
+          </TableCell>
+          <TableCell> 
+            {currency(item.payment)}
+          </TableCell>
 
-      <TableCell>
-        {currency(item.balance)} 
-      </TableCell>
-      <TableCell>
-        {Date_string(props.contract_info.pay_app_dates[index])} 
-      </TableCell>
-      
-    </TableRow>
+          <TableCell>
+            {currency(item.balance)} 
+          </TableCell>
+          <TableCell>
+            {Date_string(props.contract_info.pay_app_dates[index])} 
+          </TableCell>
+          
+        </TableRow>
+      </Tooltip>
     )
   }
 

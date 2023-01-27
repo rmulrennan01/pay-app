@@ -13,12 +13,15 @@ const Delete_app = (contract_info, sov, uid, id) => {
     //UPDATE THE LAST INDEX OF EACH PAY APP IN THE SOV TO BE THE USER INPUTS
     let temp_sov = JSON.parse(JSON.stringify(sov)); //CREATE A DEEP COPY
     let app_dates = JSON.parse(JSON.stringify(contract_info.pay_app_dates)); //CREATE A DEEP COPY
+    let old_date = new Date(app_dates[app_dates.length-1].seconds*1000);
     app_dates.pop(); 
     let this_draw = Number(0); 
     let prev_draw = Number(0); 
     let balance = Number(0); 
     let old_draw = contract_info.this_draw;
     
+    
+
     for (let i=0; i<temp_sov.length; i++){
         temp_sov[i].pay_apps.pop(); //REMOVE THE LAST APP VALUE
         let temp_apps = temp_sov[i].pay_apps; 
@@ -62,7 +65,7 @@ const Delete_app = (contract_info, sov, uid, id) => {
     batch.commit().then(()=>{
         let app_date= new Date(contract_info.pay_app_dates[contract_info.pay_app_dates.length-1].seconds*1000); 
 
-        Activity_update(uid,app_date,-Number(old_draw))
+        Activity_update(uid,old_date,-Number(old_draw))
         .then(()=>{
             console.log("Payment application deleted successfully"); 
             alert("Payment application deleted successfully."); 

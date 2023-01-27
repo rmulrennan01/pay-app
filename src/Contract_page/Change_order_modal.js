@@ -7,7 +7,7 @@ import Slider from '@mui/material/Slider';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-
+import Box from '@mui/material/Box';
 
 function Change_order_modal(props) {
   const [cost_codes, set_cost_codes] = useState(props.sov_data); 
@@ -44,58 +44,73 @@ function Change_order_modal(props) {
 
 }
 
+/*
+<div style="display:table;">
+  <div style="display:table-cell;vertical-align:middle;">
+    <div style="margin-left:auto;margin-right:auto;"></div>
+  </div>
+</div>
+
+*/
+
   return (
-    <Paper> 
-      <h3> Add a Change Order</h3>
-      <br/> 
-      What's the net change in contract value?<br/> 
-      <br/> 
-      <CurrencyTextField
-        label="Amount"
-        variant="outlined"
-        value={value}
-        currencySymbol="$"
-        //minimumValue="0"
-        outputFormat="string"
-        decimalCharacter="."
-        digitGroupSeparator=","
-        
-        leadingZero={"deny"}
-        ref={valueRef}
-        onChange={(event, value)=> set_value(value)}
+    <Box   display="flex"
+    justifyContent="center"
+    alignItems="center"
+    minHeight="100vh"
+    >
+      <Paper  sx={{width:600, padding:2}}> 
 
-      />
+          <h3> Add a Change Order</h3>
+          <br/> 
+          What's the net change in contract value?<br/> 
+          <br/> 
+          <CurrencyTextField
+            label="Amount"
+            variant="outlined"
+            value={value}
+            currencySymbol="$"
+            //minimumValue="0"
+            outputFormat="string"
+            decimalCharacter="."
+            digitGroupSeparator=","
+            
+            leadingZero={"deny"}
+            ref={valueRef}
+            onChange={(event, value)=> set_value(value)}
 
-      <br/> <br/> 
-      Apply the change order to this cost item:<br/> 
-      <br/> 
-      <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                defaultValue= "-----"
-                value={cost_code_selection}
-                onChange={update_cost_code}
-                ref={selectionRef}
-            >
-                {cost_codes.map(buildList)}
-      </Select>
-      <br/> 
-      What's the brief description for this change order?<br/> 
-      <br/> 
-      <TextField 
-                required 
-                inputRef={descripRef} 
-                id="outlined-required" 
-                label="" 
-                
-                defaultValue={""}
-      />
-      <br/> <br/> 
-      <Button variant="contained" onClick={()=>submit_change_order()}>Add to Contract</Button> <Button variant="outlined" onClick={()=>props.close_modal()}>Cancel</Button> 
+          />
+
+          <br/> <br/> 
+          Apply the change order to this cost item:<br/> 
+          <br/> 
+          <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    defaultValue= "-----"
+                    value={cost_code_selection}
+                    onChange={update_cost_code}
+                    ref={selectionRef}
+                >
+                    {cost_codes.map(buildList)}
+          </Select>
+          <br/> 
+          What's the brief description for this change order?<br/> 
+          <br/> 
+          <TextField 
+                    required 
+                    inputRef={descripRef} 
+                    id="outlined-required" 
+                    label="" 
+                    
+                    defaultValue={""}
+          />
+          <br/> <br/> 
+          <Button variant="contained" onClick={()=>submit_change_order()}>Add to Contract</Button> <Button variant="outlined" onClick={()=>props.close_modal()}>Cancel</Button> 
 
 
-
-    </Paper>
+      </Paper>
+    </Box>
   )
 }
 

@@ -40,6 +40,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 import AddCircleIcon from '@mui/icons-material/AddCircle'; 
 
+import Box from '@mui/material/Box';
 
 //Tables
 import Table from '@mui/material/Table';
@@ -494,9 +495,23 @@ function Contract_page(props) {
 
     
 
-            <Modal open={co_modal_open} onClose={()=>set_co_modal_open(false)}  >
-                {loading? <Paper> <CircularProgress/> </Paper> : <Change_order_modal contract_info={contract_info} sov_data={sov} close_modal={()=>set_co_modal_open(false)} submit={submit_co}/> }
-            </Modal>
+                <Modal open={co_modal_open} onClose={()=>set_co_modal_open(false) } >
+
+                    {loading? 
+                    <Paper> <CircularProgress/> </Paper> 
+                    : 
+           
+                    <Change_order_modal 
+                        contract_info={contract_info} 
+                        sov_data={sov} 
+                        close_modal={()=>set_co_modal_open(false)} 
+                        submit={submit_co}
+                        onClose={()=>set_co_modal_open(false)}/> 
+                  
+                        }
+  
+                </Modal>
+        
             <Modal open={pay_modal_open} onClose={()=>set_pay_modal_open(false)}  >
                 {
                     loading ? 

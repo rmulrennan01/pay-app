@@ -235,11 +235,12 @@ function Pay_app_modal(props) {
 
     return (
             //path='/pay_app/pdf/:id/:app_id' 
-            <div>
+       
+            <div >
                 {submit_dialog()}
                 {delete_dialog()}
                 {edit_dialog()}
-                <Paper> 
+                <Paper sx={{padding:2}}> 
                     <h2>Pay App # {app_id+1} </h2> 
                     <h2>Application Date: {Date_string(contract_info.pay_app_dates[app_id])}</h2> 
                     
@@ -261,6 +262,7 @@ function Pay_app_modal(props) {
                 </Paper>
                 
             </div>
+            
         
         
     )

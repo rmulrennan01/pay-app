@@ -86,7 +86,15 @@ const setup_account_info = (email, user_id) =>{
   // Add a new document in collection "cities"
   firebase.firestore().collection("accounts").doc(user_id).set({
     email: email,
-    draws: {}
+    draws: {},
+    activity: [],
+    company: '', 
+    address_01: '',
+    address_02: '',
+    City: '', 
+    state: '', 
+    zip: '',
+    phone: '' 
   })
   .then(() => {
     console.log("Document successfully written!");
