@@ -17,7 +17,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Date_string from './Utilities/Date_string.js'; 
-import Bar_chart from './Utilities/Bar_chart.js'; 
+import { BarChart, BarSeries, Bar } from 'reaviz';
 import Grid from '@mui/material/Grid';
 
 import firebase from "./Firebase.js"; 
@@ -25,6 +25,7 @@ import firebase from "./Firebase.js";
 function Home() {
     const [contracts, set_contracts] = useState([]); 
     const [loading, set_loading] = useState(true);     
+    const [draws, set_draws] = useState({}); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
 
     //auth
@@ -72,8 +73,10 @@ function Home() {
             let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
             //let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
             const dataList = await job_ref.get();
-
             dataList.docs.map(build_data);
+            let account_ref = firebase.firestore().collection('accounts').doc(uid); 
+            const account = await account_ref.get();
+            set_draws(account.data().draws);
 
         }
         //if(uid != 0){
@@ -163,6 +166,7 @@ function Home() {
         return {days:remaining_days, date:Date_string(due)}; 
     }
 
+    //HELPER FUNCTION TO CREATE AN ARRAY OF UPCOMING DEADLINES FOR ALL CONTRACTS.
     const [upcoming_apps, set_upcoming_apps] = useState([]); 
     const build_deadlines = () => {
         let upcoming = [];
@@ -174,10 +178,8 @@ function Home() {
                 days: deadline.days,
                 id: item.id,
                 date: deadline.date
-
             }
             )
-
         })
         //SORT DAYS
         upcoming = upcoming.sort(function(a,b){
@@ -193,7 +195,6 @@ function Home() {
             return 0;
         }
         )   
-        
         set_upcoming_apps(upcoming); 
     }
 
@@ -222,7 +223,7 @@ function Home() {
     
 
 
-
+    //HELPER FUNCTION TO BUILD A LIST OF RECENT TASKS THAT WILL BE DISPLAYED
     const [task_list, set_task_list] = useState([]); 
     const get_tasks = (contract_list) => {
         let tasks = []; 
@@ -236,7 +237,6 @@ function Home() {
                 tasks.push(temp);      
             }
         }
-
         //SORT
         tasks = tasks.sort(function(a,b){
             let x = a["date"];
@@ -266,6 +266,61 @@ function Home() {
             </Tooltip>
         )
     }
+
+
+    const bar_chart = () => {
+        let today = new Date(); 
+        let prev_mo_1 = new Date(today.getFullYear(),today.getMonth()-1);
+        let prev_mo_2 = new Date(prev_mo_1.getFullYear(),prev_mo_1.getMonth()-1);
+        let prev_mo_3 = new Date(prev_mo_2.getFullYear(),prev_mo_2.getMonth()-1);
+
+        let date_keys = [
+            String(today.getMonth()) + '/' + String(today.getFullYear()),
+            String(prev_mo_1.getMonth()) + '/' + String(prev_mo_1.getFullYear()),
+            String(prev_mo_2.getMonth()) + '/' + String(prev_mo_2.getFullYear()),
+            String(prev_mo_3.getMonth()) + '/' + String(prev_mo_3.getFullYear())
+        ]
+
+        let result = []
+        date_keys.map( (item) =>{
+            if(draws[item] != undefined){
+                result.push(draws[item])
+            }
+            else{
+                result.push(Number(0)); 
+            }
+        }); 
+        console.log('draws', draws)
+        console.log('result', result); 
+        
+
+
+        let data=[
+            { key: prev_mo_3.toDateString().split(" ")[1] + ' ($)', data: result[0]},
+            { key: prev_mo_2.toDateString().split(" ")[1] + ' ($)', data: result[1] },
+            { key: prev_mo_1.toDateString().split(" ")[1] + ' ($)', data: result[2]},
+            { key: today.toDateString().split(" ")[1] + ' ($)', data: result[3] }
+          ]; 
+    
+        
+    
+        return (
+          <BarChart
+            width={400}
+            height={350}
+            data={data}
+            series={
+              <BarSeries
+                colorScheme={'cybertron'}
+                padding={0.1}
+              
+              />
+            }
+          />
+        );
+    }
+
+
 
 
 
@@ -314,6 +369,12 @@ function Home() {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                    </Paper>
+                </Grid>
+                <Grid item xs = {3} sx={{height:550}}>
+                    <Paper elevation={8} sx={{height:550}}>
+                        <h3>Recent Billing</h3>
+                        {bar_chart()}
                     </Paper>
                 </Grid>
             </Grid>

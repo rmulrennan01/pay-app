@@ -86,8 +86,8 @@ function Navbar() {
 //const pages = ['Dashboard', 'Contract Browser', 'Add Contract'];
 const pages = [
     {label: 'Dashboard', link:'/'},
-    {label:'Contract Browser', link:'/contract_browser'},
-    {label: 'New Contract', link: '/job_setup' }];
+    {label:'Contract-Browser', link:'/contract_browser'},
+    {label: 'New-Contract', link: '/job_setup' }];
 
 
 const settings = ['Account', 'Logout'];
@@ -118,14 +118,6 @@ const theme = createTheme({
   });
 */
 
-const theme = createMuiTheme({
-    overrides: {
-      MuiButton: {
-        label: {
-          color: "#ffffff",
-        },
-      },
-    }});
   
 
 return (
