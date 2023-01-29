@@ -372,7 +372,7 @@ function Home() {
 
     return (
 
-        <div style={{margin:"15px"}}>
+        <div style={{padding:'25px', height: '1100px'}}>
             <br></br>
             <Button variant="contained" onClick={()=>window.location ="/job_setup" } >Setup a new project</Button>
             <Grid container spacing={3} rowSpacing={20} sx={{height:550}}>

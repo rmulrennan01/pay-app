@@ -52,39 +52,51 @@ export default function Login() {
   const create_account = () => {
     return(
       <div >
-      <h3>Enter your email:</h3>
-      <TextField 
+        <TextField 
           required 
-          inputRef={new_email} 
+          inputRef={null} 
           id="outlined-required" 
-          label="Email" 
-          onChange={()=>console.log('user')}
-          defaultValue={''}
-          sx={{width:300}}
-      />
-      <h3>Enter your password:</h3>
-      <TextField 
-          required 
-          inputRef={new_password} 
-          id="outlined-required" 
-          label="password" 
-          type='password'
+          label="Company Name" 
           onChange={()=>console.log('password')}
           defaultValue={''}
           sx={{width:300}}
       />
-      <h3>Enter your password again:</h3>
+      <br></br><br></br>
       <TextField 
           required 
-          inputRef={new_password_2} 
+          inputRef={new_email} 
           id="outlined-required" 
-          label="password" 
+          label="Your Email" 
+          onChange={()=>console.log('user')}
+          defaultValue={''}
+          sx={{width:300}}
+      />
+      <br></br><br></br>
+
+      <TextField 
+          required 
+          inputRef={new_password} 
+          id="outlined-required" 
+          label="Password" 
           type='password'
           onChange={()=>console.log('password')}
           defaultValue={''}
           sx={{width:300}}
       />
       <br></br><br></br>
+
+      <TextField 
+          required 
+          inputRef={new_password_2} 
+          id="outlined-required" 
+          label="Re-Enter Password" 
+          type='password'
+          onChange={()=>console.log('password')}
+          defaultValue={''}
+          sx={{width:300}}
+      />
+      <br></br><br></br>
+
       <Button sx={{width:300}} variant='contained' onClick={()=>add_account()}>Create Account</Button>
 
       
@@ -220,14 +232,14 @@ export default function Login() {
 
             
       <Grid item xs={12}>
-        <Paper elevation={8} sx={{width:400}}> 
+        <Paper elevation={8} sx={{width:350}}> 
           {/*}
           <button className="login-provider-button" onClick={signInWithGoogle}>
           <img src="https://img.icons8.com/ios-filled/50/000000/google-logo.png" alt="google icon"/>
           <span> Continue with Google</span>
           </button>
     */}
-          <Accordion sx={{width:400, margin:0}} expanded={panel==1} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
+          <Accordion sx={{width:350, margin:0}} expanded={panel==1} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
             >
@@ -237,7 +249,7 @@ export default function Login() {
               {login_account()}
             </AccordionDetails>
           </Accordion>
-          <Accordion sx={{width:400}} expanded={panel==2} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
+          <Accordion sx={{width:350}} expanded={panel==2} onChange={()=> panel==1 ? set_panel(2) : set_panel(1)}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
             >

@@ -36,6 +36,7 @@ function Contract_browser() {
 
     const [contracts, set_contracts] = useState([]); 
     const [filtered_contracts, set_filtered_contracts] = useState([]); 
+    const [search, set_search] = useState(''); 
    
     const [loading, set_loading] = useState([]); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
@@ -51,7 +52,8 @@ function Contract_browser() {
         {label: "Owner", key: "owner_name"},
         {label: "Base Contract ($)", key:"base_contract_value"},
         {label: "Change Orders ($)", key: "co_value"},
-        {label: "Revised Contarct ($)", key: "revised_contract"}];
+        {label: "Revised Contarct ($)", key: "revised_contract"},
+        {label: "Balance ($)", key:"balance"}];
         
     //auth
     const [uid, set_uid] = useState(0); 
@@ -97,7 +99,9 @@ function Contract_browser() {
     const build_headers = (item, index) =>{
         return(
             <TableCell >
-                <TableSortLabel active={active_column == index ? true : false} direction={direction} onClick={()=>handle_sort(index,item.key)} className="Contract_browser__header_text">
+                <TableSortLabel active={active_column == index ? true : false} direction={direction} onClick={()=>handle_sort(index,item.key)} className="Contract_browser__header_text" sx={{'& .MuiTableSortLabel-icon': {
+            color: 'white !important',
+        }}}>
                     <h3> {item.label} </h3> 
 
                 </TableSortLabel>
@@ -138,18 +142,7 @@ function Contract_browser() {
                 
                 </TableCell>
                 <TableCell>
-                    {/*
-                    <IconButton
-                        aria-label="more"
-                        id="long-button"
-                        aria-controls={open ? 'long-menu' : undefined}
-                        aria-expanded={open ? 'true' : undefined}
-                        aria-haspopup="true"
-                        onClick={handleClick}
-                    >
-                        <MoreVertIcon />
-                    </IconButton>
-                */}
+                    <CurrencyFormat value={Number(item.balance)} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
 
                 </TableCell>
 
@@ -227,12 +220,17 @@ function Contract_browser() {
         }); 
         set_filtered_contracts(temp_array); 
     }
+
+    const clear_search = () =>{
+        set_search(''); 
+        filter(''); 
+    }
     
 
 
 
     return (
-        <div style={{margin:"15px"}}>
+        <div style={{padding:"15px", mb:'25px'}}>
             <br/> 
             <Button variant="contained" href="/job_setup"> + Add a Contract </Button> 
             <br/> <br/> 
@@ -241,16 +239,20 @@ function Contract_browser() {
                     label="Search" 
                     inputRef={filterRef}
                     defaultValue={""}
+                    size='small'
+                    value={search}
+                    sx={{width:'350px'}}
+                    onChange={()=>set_search(filterRef.current.value)}
             />
-            <Button variant="contained" onClick={()=>filter(filterRef.current.value)}> Go </Button> 
+            <Button variant="contained" onClick={()=>filter(search)} sx={{ml:'20px'}}> Search </Button> 
+            <Button variant="outlined" onClick={()=>clear_search()} sx={{ml:'20px'}}> Clear </Button> 
+
             <br/> <br/>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table" size={'small'}>
                     <TableHead> 
                         <TableRow className="Contract_browser__header">
                             {headers.map(build_headers)}
-                            <TableCell className="Contract_browser__header_text"> <h3>Edit</h3> </TableCell>
-
     
                         </TableRow>
                     </TableHead>

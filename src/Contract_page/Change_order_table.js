@@ -164,6 +164,8 @@ function Change_order_table(props) {
 
     //BUILDS LIST ITEMS FOR EDIT DROP DOWN
     const build_desc_list = (item) => {
+
+        //TODO - FIX TO INCLUDE ALL COST - CODES THAT AREN'T CURRENTLY USED FOR A CO
         return(
             <MenuItem value={item.id}>{item.cost_code_description}</MenuItem>
         )
@@ -197,7 +199,7 @@ function Change_order_table(props) {
     //BUILDS LIST ITEMS FOR EDIT DROP DOWN
     const build_app_list = () => {
         let list = []; 
-        for (let i=0; i<props.contract_info.app_count; i++){
+        for (let i=0; i<=props.contract_info.app_count; i++){
             list.push(String(i+1)); 
         }
 
@@ -242,25 +244,7 @@ function Change_order_table(props) {
         console.log("line item added", item); 
         return(
         <TableRow key= {index}> 
-            <TableCell>
-                {edit_index === index ?
-                    <Tooltip title="Save Changes" color='primary'>
-                        <IconButton onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
 
-                                <SaveIcon />
-                            
-                        </IconButton>
-                    </Tooltip>
-                        :
-                    <Tooltip title="Edit" color='primary'>
-                        <IconButton onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
-
-                                <ModeEditIcon />
-                            
-                        </IconButton>
-                    </Tooltip>
-                }
-            </TableCell>
             <TableCell> 
                 {edit_index === index ?
                     <>{app_drop_down(index)}</>
@@ -314,6 +298,25 @@ function Change_order_table(props) {
                 }
             </TableCell>
             <TableCell>
+                {edit_index === index ?
+                    <Tooltip title="Save Changes" color='primary'>
+                        <IconButton onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
+
+                                <SaveIcon />
+                            
+                        </IconButton>
+                    </Tooltip>
+                        :
+                    <Tooltip title="Edit" color='primary'>
+                        <IconButton onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
+
+                                <ModeEditIcon />
+                            
+                        </IconButton>
+                    </Tooltip>
+                }
+            </TableCell>
+            <TableCell>
                 <Tooltip title="Delete">
                     <IconButton onClick={()=>handle_delete_click(item.id, item.internal_index)}>
                         <DeleteIcon />
@@ -359,8 +362,9 @@ function Change_order_table(props) {
             <Table  aria-label="simple table">
                 <TableHead> 
                     <TableRow>
-                        <TableCell sx={{width:25}}></TableCell>
+                        
                         {headers.map(build_headers)}
+                        <TableCell sx={{width:25}}></TableCell>
                         <TableCell sx={{width:25}}></TableCell>
 
                     </TableRow>
@@ -374,7 +378,7 @@ function Change_order_table(props) {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell></TableCell>
+                        
                         <TableCell></TableCell>
                         <TableCell></TableCell>
                         <TableCell></TableCell>

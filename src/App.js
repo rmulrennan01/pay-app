@@ -13,6 +13,7 @@ import Pay_app_viewer from './Pay_app_viewer.js';
 import User_provider from './User_provider.js'; 
 import Login from './Login.js'; 
 import Account from './Account.js'; 
+import Footer from './Footer.js';
 
 function App() {
 
@@ -40,13 +41,9 @@ function App() {
         <Route path='/pay_app/:id' element={<Pay_app />} />
         <Route path='/pdf/:id/:app_id/:draft' element={<Pay_app_viewer />} />
         
-       
-        
-
-
-        
 
       </Routes>
+      <Footer />
       </BrowserRouter>
       </User_provider>
     
