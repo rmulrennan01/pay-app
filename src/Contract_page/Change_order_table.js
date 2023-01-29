@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 
 
@@ -21,6 +21,8 @@ import TableRow from '@mui/material/TableRow';
 import TableFooter from '@mui/material/TableFooter';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -29,6 +31,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Icon } from '@mui/material';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import SaveIcon from '@mui/icons-material/Save';
+
 
 function Change_order_table(props) {
     const [table_content, set_table_content] = useState([]);
@@ -38,26 +42,18 @@ function Change_order_table(props) {
     const [active_column, set_active_column] = useState(0); 
     const [triggered, set_triggered] = useState(false); 
     const [edit_index, set_edit_index] = useState(Number(-1)); 
+    const [select_app, set_select_app] = useState('');
+    const [select_desc, set_select_desc] = useState('');
 
 
     useEffect(() => {
         compile_co(); 
-        
-       
-     
-        //handle_sort(0,"pay_app");
-        //Default Sort by Pay Period
-       // set_triggered(!triggered); 
-        //set_triggered(!triggered); 
+        console.log('this is the sov', props.sov); 
+
 
     }, [])
 
-
     
-    
-   
-    
-
     //BUILD JSON OBJECT FOR CO INFORMATION TO DISPLAY IN THE TABLE
     const compile_co = () => {
         let temp_co_list = []; 
@@ -166,6 +162,80 @@ function Change_order_table(props) {
 
     }
 
+    //BUILDS LIST ITEMS FOR EDIT DROP DOWN
+    const build_desc_list = (item) => {
+        return(
+            <MenuItem value={item.id}>{item.cost_code_description}</MenuItem>
+        )
+    
+    }
+
+    const update_cost_code = (event: SelectChangeEvent) =>{
+        set_select_desc(event.target.value); 
+    }
+
+    const select_desc_ref = useRef(); 
+    const desc_drop_down = (index) =>{
+        console.log('item', table_content[index])
+        return(
+        <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        defaultValue= {select_desc}
+        value={select_desc}
+        onChange={update_cost_code}
+        ref={select_desc_ref}
+        sx={{width:140}}
+        >
+            {table_content.map(build_desc_list)}
+        </Select>
+        )
+    }
+
+
+
+    //BUILDS LIST ITEMS FOR EDIT DROP DOWN
+    const build_app_list = () => {
+        let list = []; 
+        for (let i=0; i<props.contract_info.app_count; i++){
+            list.push(String(i+1)); 
+        }
+
+        return list; 
+
+    }
+
+
+    const update_select_app = (event: SelectChangeEvent) =>{
+        set_select_app(event.target.value); 
+    }
+
+    const select_app_ref = useRef(); 
+    const app_drop_down = (index) =>{
+        console.log('item', table_content[index])
+        return(
+        <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        defaultValue= {select_app}
+        value={select_app}
+        onChange={update_select_app}
+        ref={select_app_ref}
+        sx={{width:140}}
+        >
+            {build_app_list().map((item)=>{return(<MenuItem value={item}>{item}</MenuItem> )})}
+        </Select>
+        )
+    }
+
+    
+   
+    const handle_edit_click = (index) =>{
+        set_select_app(table_content[index].pay_app)
+        set_select_desc(table_content[index].cost_code_description)
+        set_edit_index(index);
+    }
+
 
     //CONSTRUCTS TABLE ROWS
     const build_table_body = (item, index) => {
@@ -173,22 +243,40 @@ function Change_order_table(props) {
         return(
         <TableRow key= {index}> 
             <TableCell>
-                <Tooltip title="Edit" color='primary'>
-                    <IconButton onClick={()=>edit_index < 0 ? set_edit_index(index) : set_edit_index(Number(-1))}>
-                        <ModeEditIcon />
-                    </IconButton>
-                </Tooltip>
+                {edit_index === index ?
+                    <Tooltip title="Save Changes" color='primary'>
+                        <IconButton onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
+
+                                <SaveIcon />
+                            
+                        </IconButton>
+                    </Tooltip>
+                        :
+                    <Tooltip title="Edit" color='primary'>
+                        <IconButton onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
+
+                                <ModeEditIcon />
+                            
+                        </IconButton>
+                    </Tooltip>
+                }
             </TableCell>
             <TableCell> 
-                {item.pay_app}
+                {edit_index === index ?
+                    <>{app_drop_down(index)}</>
+                    :
+                    <>{item.pay_app} </>
+                }
             </TableCell>
             <TableCell>
                 {item.cost_code}
             </TableCell>
             <TableCell>
-
-                <>{item.cost_code_description}</>
-              
+                {edit_index === index ? 
+                    <>{desc_drop_down(index)}</>
+                    :
+                    <>{item.description}</>
+                }
             </TableCell>
             <TableCell>
               
@@ -235,15 +323,13 @@ function Change_order_table(props) {
 
         </TableRow>
         )
-
-
     }
 
     //HEADER LABELS AND ASSOCIATED JSON KEYS FROM THE CHANGE ORDER OBJECT IN EACH SOV ITEM
     const headers = [
        
         {label:"Pay Period", key:"pay_app", width:100},
-        {label: "Cost Code", key:"cost_code", width:150},
+        {label: "Cost Code", key:"cost_code", width:200},
         {label: "Cost Code Description", key: "cost_code_description", width:150},
         {label: "Change Order Description", key:"description", width:350},
         {label: "Value", key: "value", width:150},
@@ -261,9 +347,6 @@ function Change_order_table(props) {
         )
     }
 
-
-
- 
 
 
 
@@ -291,6 +374,8 @@ function Change_order_table(props) {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
                         <TableCell></TableCell>
                         <TableCell></TableCell>
                         <TableCell> <h3>Total</h3></TableCell>

@@ -27,6 +27,7 @@ function Home() {
     const [loading, set_loading] = useState(true);     
     const [draws, set_draws] = useState({}); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
+    const [totals, set_totals] = useState({}); 
 
     //auth
     const user = useContext(UserContext);
@@ -62,6 +63,7 @@ function Home() {
             sort_dates(contracts); 
             build_deadlines();
             get_tasks(temp_array); 
+            build_contract_totals(); 
             set_loading(false);         
     
              
@@ -118,16 +120,7 @@ function Home() {
         set_contracts(temp_contracts); 
     }
 
-    const pie_chart = (data) => {
-        return(
-        <PieChart
-            width={450}
-            height={350}
-            data={data}
-            series={<PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} colorScheme={"cybertron"} />}
-        />
-        )
-    }
+
 
     //RETURNS REMAINING DAYS UNTIL THE SUPPLIED DUE_DATE
     const get_deadlines = (due_date) => {
@@ -323,6 +316,57 @@ function Home() {
     }
 
 
+    const build_contract_totals = () =>{
+        let draws = Number(0); 
+        let base_val = Number(0); 
+        let co_val = Number(0); 
+        for (let i=0; i<contracts.length; i++){
+            draws += Number(contracts[i].prev_draws) + Number(contracts[i].this_draw)
+            base_val += Number(contracts[i].base_contract_value);
+            co_val += Number(contracts[i].co_value); 
+        }
+
+        let bal = base_val + co_val - draws;
+        set_totals(
+            [
+                {key:'Base Contract ($)', data: base_val},
+                {key:'Change Orders ($)', data: co_val},
+                {key:'Draws ($)', data: draws},
+                {key:'Balance ($)', data: bal}
+            ]
+        )
+    }
+
+
+    const circle_chart = () =>{
+        const data = totals;    
+        return (
+          <div
+            style={{
+              position: 'relative',
+              height: '300px',
+              width: '500px',
+              alignItems: 'center',
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <div style={{ position: 'absolute', top: 0, left: 0 }}>
+              <PieChart
+                width={500}
+                height={300}
+                data={data}
+                series={
+                  <PieArcSeries doughnut={true} colorScheme={'cybertron'} />
+                }
+              />
+            </div>
+
+          </div>
+        );
+    }
+
+
 
 
 
@@ -331,8 +375,15 @@ function Home() {
         <div style={{margin:"15px"}}>
             <br></br>
             <Button variant="contained" onClick={()=>window.location ="/job_setup" } >Setup a new project</Button>
-            <Grid container spacing={2} sx={{height:550}}>
-                <Grid item xs = {3} sx={{height:550}}>
+            <Grid container spacing={3} rowSpacing={20} sx={{height:550}}>
+
+                <Grid item xs = {4} sx={{height:550}}>
+                    <Paper elevation={8} sx={{height:550}}>
+                        <h3>Recent Billing</h3>
+                        {bar_chart()}
+                    </Paper>
+                </Grid>
+                <Grid item xs = {4} sx={{height:550}}>
                     <Paper elevation={8} sx={{height:550}}>
                         <h3>Recent Project Activity</h3>
                         <Paper>
@@ -353,7 +404,7 @@ function Home() {
                         </Paper>
                     </Paper>
                 </Grid>
-                <Grid item xs = {3} sx={{height:550}}>
+                <Grid item xs = {4} sx={{height:550}}>
                     <Paper elevation={8} sx={{height:550}}>
                         <h3>Upcoming Applications Due</h3>
                         <TableContainer style={{maxHeight:500}}>
@@ -373,12 +424,13 @@ function Home() {
                         </TableContainer>
                     </Paper>
                 </Grid>
-                <Grid item xs = {3} sx={{height:550}}>
+                <Grid item xs = {4} sx={{height:550, mt:'12px'}}>
                     <Paper elevation={8} sx={{height:550}}>
-                        <h3>Recent Billing</h3>
-                        {bar_chart()}
+                        <h3>Contract Progress</h3>
+                        {circle_chart()}
                     </Paper>
                 </Grid>
+
             </Grid>
 
         </div>

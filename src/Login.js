@@ -12,8 +12,10 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Alert from '@mui/material/Alert'; 
+import Typography from '@mui/material/Typography';
 
 import GoogleIcon from '@mui/icons-material/Google';
+import { fontSize } from '@mui/system';
 
 
 export default function Login() {
@@ -155,7 +157,7 @@ export default function Login() {
       <div style={{width:300}}>
         <Button sx={{width:300}} variant='contained' onClick={()=>login()}>Login</Button>
         <br></br>
-        <Button sx={{position:'relative', alignItems:'center', justifyContent:'center'}} vairant='contained' > Forgot Password? </Button> 
+        <Button sx={{position:'relative', alignItems:'center', ml:'60px'}} vairant='contained' > Forgot Password? </Button> 
         <br></br>
         <h3 style={{textAlign:'center'}}>or</h3>
         <br></br>
@@ -177,9 +179,47 @@ export default function Login() {
 
 
   return (
-    <Grid container sx={{paddingTop:'200px'}}> 
-      <Grid item xs={4} ></Grid>
-      <Grid item xs={4}>
+    <Grid container sx={{paddingTop:'50px'}} spacing={0} direction='column' alignItems='center' justifyContent='center'> 
+  
+
+      <Grid item xs={12} sx={{padding:10, textAlign:'center'}}>
+        <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            align='center'
+            sx={{
+                mr: 2,
+                fontFamily: 'monospace',
+                fontWeight: 800,
+                letterSpacing: '.3rem',
+                color: 'primary',
+                textDecoration: 'none',
+                fontSize:56,
+                                    
+
+            }}
+            >
+            Appster
+      
+          </Typography>
+          <br></br>
+          No more spreadsheets. 
+          <br></br> <br></br>
+          No more missed application dates.
+          <br></br>  <br></br>
+          Your contracts all in one place.
+
+          
+
+
+    
+
+
+      </Grid>
+
+            
+      <Grid item xs={12}>
         <Paper elevation={8} sx={{width:400}}> 
           {/*}
           <button className="login-provider-button" onClick={signInWithGoogle}>
@@ -211,7 +251,6 @@ export default function Login() {
         </Paper>
         
       </Grid>
-      <Grid item xs={4}></Grid>
     </Grid> 
   );
 }
