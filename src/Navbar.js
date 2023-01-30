@@ -91,7 +91,7 @@ return (
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleOpenNavMenu}
-                color="white"
+                sx= {{color:"white !important"}}
             >
                 <MenuIcon />
             </IconButton>
@@ -142,16 +142,15 @@ return (
             {pages.map((page) => (
                 <Button
                     key={page.label}
-                    onClick={()=>window.location=page.link}
-                    sx={{ my: 2, display: 'block' }}
-                    
+                    onClick={()=>window.location=page.link}                    
                     color={'inherit'}
                     
                 >
                     <Typography
                         sx={{
                             fontFamily: 'monospace',
-                            textTransform: ' none'
+                            textTransform: ' none',
+                            ml: '25px'
                         }}> 
                          {page.label} 
                     </Typography>

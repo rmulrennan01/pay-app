@@ -262,56 +262,40 @@ function Home() {
 
 
     const bar_chart = () => {
-        let today = new Date(); 
-        let prev_mo_1 = new Date(today.getFullYear(),today.getMonth()-1);
-        let prev_mo_2 = new Date(prev_mo_1.getFullYear(),prev_mo_1.getMonth()-1);
-        let prev_mo_3 = new Date(prev_mo_2.getFullYear(),prev_mo_2.getMonth()-1);
+        let temp_date = new Date(); 
+        let date_keys = [];
+        let data = []
 
-        let date_keys = [
-            String(today.getMonth()) + '/' + String(today.getFullYear()),
-            String(prev_mo_1.getMonth()) + '/' + String(prev_mo_1.getFullYear()),
-            String(prev_mo_2.getMonth()) + '/' + String(prev_mo_2.getFullYear()),
-            String(prev_mo_3.getMonth()) + '/' + String(prev_mo_3.getFullYear())
-        ]
-
-        let result = []
-        date_keys.map( (item) =>{
-            if(draws[item] != undefined){
-                result.push(draws[item])
+        for (let i = 0; i<12; i++){
+            temp_date = new Date(temp_date.getFullYear(),temp_date.getMonth()-1);
+            let temp_string = String(temp_date.getMonth()) + '/' + String(temp_date.getFullYear())
+            date_keys.push(temp_string);
+            console.log('date_string', temp_string); 
+            if(draws[temp_string] != undefined){
+                data.push({ key: temp_date.toDateString().split(" ")[1] + ' ($)', data: Number(draws[temp_string])})
             }
             else{
-                result.push(Number(0)); 
+                data.push({ key: temp_date.toDateString().split(" ")[1] + ' ($)', data: Number(0)})
             }
-        }); 
-
-        result.reverse();
-        console.log('draws', draws)
-        console.log('result', result); 
-        
-
-
-        let data=[
-            { key: prev_mo_3.toDateString().split(" ")[1] + ' ($)', data: result[0]},
-            { key: prev_mo_2.toDateString().split(" ")[1] + ' ($)', data: result[1] },
-            { key: prev_mo_1.toDateString().split(" ")[1] + ' ($)', data: result[2]},
-            { key: today.toDateString().split(" ")[1] + ' ($)', data: result[3] }
-          ]; 
-    
-        
-    
+        }
+ 
+        data.reverse();
+          
         return (
-          <BarChart
-            width={400}
-            height={350}
-            data={data}
-            series={
-              <BarSeries
-                colorScheme={'cybertron'}
-                padding={0.1}
-              
-              />
-            }
-          />
+        <div sx={{padding:20}}>
+            <BarChart
+                width={'auto'}
+                height={350}
+                data={data}
+                series={
+                <BarSeries
+                    colorScheme={'cybertron'}
+                    padding={0.1}
+                />
+                }
+            />
+            
+        </div>
         );
     }
 
@@ -377,13 +361,34 @@ function Home() {
             <Button variant="contained" onClick={()=>window.location ="/job_setup" } >Setup a new project</Button>
             <Grid container spacing={3} rowSpacing={20} sx={{height:550}}>
 
-                <Grid item xs = {4} sx={{height:550}}>
+
+                <Grid item xs = {4} sx={{height:550 , mt:'20px'}}>
+                    <Paper elevation={8} sx={{height:550}}>
+                        <h3>Upcoming Applications Due</h3>
+                        <TableContainer style={{maxHeight:500}}>
+
+                            <Table stickyHeader>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell className="home__data"> <h3>Project</h3></TableCell>
+                                        <TableCell className="home__data"> <h3>Due Date</h3></TableCell>
+                                        <TableCell className="home__data"> <h3>Days Remaining</h3></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {loading ? <CircularProgress /> : upcoming_apps.map(display_due_dates)}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Paper>
+                </Grid>
+                <Grid item xs = {8} sx={{height:550, mt:'20px'}}>
                     <Paper elevation={8} sx={{height:550}}>
                         <h3>Recent Billing</h3>
                         {bar_chart()}
                     </Paper>
                 </Grid>
-                <Grid item xs = {4} sx={{height:550}}>
+                <Grid item xs = {8} sx={{height:550, mt:'20px'}}>
                     <Paper elevation={8} sx={{height:550}}>
                         <h3>Recent Project Activity</h3>
                         <Paper>
@@ -404,32 +409,14 @@ function Home() {
                         </Paper>
                     </Paper>
                 </Grid>
-                <Grid item xs = {4} sx={{height:550}}>
-                    <Paper elevation={8} sx={{height:550}}>
-                        <h3>Upcoming Applications Due</h3>
-                        <TableContainer style={{maxHeight:500}}>
-
-                            <Table stickyHeader>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell className="home__data"> <h3>Project</h3></TableCell>
-                                        <TableCell className="home__data"> <h3>Due Date</h3></TableCell>
-                                        <TableCell className="home__data"> <h3>Days Remaining</h3></TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {loading ? <CircularProgress /> : upcoming_apps.map(display_due_dates)}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Paper>
-                </Grid>
-                <Grid item xs = {4} sx={{height:550, mt:'12px'}}>
+                <Grid item xs = {4} sx={{height:550, mt:'20px'}}>
                     <Paper elevation={8} sx={{height:550}}>
                         <h3>Contract Progress</h3>
                         {circle_chart()}
                     </Paper>
                 </Grid>
+
+
 
             </Grid>
 
