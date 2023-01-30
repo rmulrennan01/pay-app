@@ -17,7 +17,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Date_string from './Utilities/Date_string.js'; 
-import { BarChart, BarSeries, Bar } from 'reaviz';
+import { BarChart, BarSeries, Bar, GridlineSeries, Gridline } from 'reaviz';
 import Grid from '@mui/material/Grid';
 
 import firebase from "./Firebase.js"; 
@@ -90,15 +90,6 @@ function Home() {
 
   
 
- 
-
-    /*
-    useEffect(() => {
-        sort_dates(contracts); 
-        set_loading(false);         
-
-    }, [contracts])
-    */
 
     const sort_dates = () => {
         let temp_contracts = contracts;
@@ -251,10 +242,15 @@ function Home() {
     const display_due_dates = (item,index) => {
         return(
             <Tooltip title='Go to Contract' arrow>
-            <TableRow key={index+"due"}  onClick={()=>window.location='/contract/'+ String(item.id)} className="home__row">
-                <TableCell> {item.name} </TableCell>
-                <TableCell> {item.date} </TableCell>
-                <TableCell> {item.days} </TableCell>
+            <TableRow key={index+"due"} className="home__row">
+                <TableCell  onClick={()=>window.location='/contract/'+ String(item.id)} > {item.name} </TableCell>
+                <TableCell  onClick={()=>window.location='/contract/'+ String(item.id)} > {item.date} </TableCell>
+                <TableCell  onClick={()=>window.location='/contract/'+ String(item.id)} > {item.days} </TableCell>
+                <TableCell>
+                    <Button variant='contained' onClick={()=>window.location='/pay_app/'+ String(item.id)} sx={{zIndex:1200}}>
+                        Start App
+                    </Button>
+                </TableCell>
             </TableRow>
             </Tooltip>
         )
@@ -267,7 +263,10 @@ function Home() {
         let data = []
 
         for (let i = 0; i<12; i++){
-            temp_date = new Date(temp_date.getFullYear(),temp_date.getMonth()-1);
+            if(i!=0){
+                temp_date = new Date(temp_date.getFullYear(),temp_date.getMonth()-1);
+
+            }
             let temp_string = String(temp_date.getMonth()) + '/' + String(temp_date.getFullYear())
             date_keys.push(temp_string);
             console.log('date_string', temp_string); 
@@ -282,11 +281,14 @@ function Home() {
         data.reverse();
           
         return (
-        <div sx={{padding:20}}>
+        <div sx={{padding:5}}>
+            
+            <h3 sx={{transform: 'rotate(180deg)'}}>Total Draw Amount ($)</h3>
             <BarChart
                 width={'auto'}
                 height={350}
                 data={data}
+                gridlines={<GridlineSeries line={<Gridline direction="y" />} />}
                 series={
                 <BarSeries
                     colorScheme={'cybertron'}
@@ -294,12 +296,13 @@ function Home() {
                 />
                 }
             />
+            <h3>Month</h3>
             
         </div>
         );
     }
 
-
+    //BUILDS DATA TO BE USED IN CIRCLE CHART
     const build_contract_totals = () =>{
         let draws = Number(0); 
         let base_val = Number(0); 
@@ -321,7 +324,7 @@ function Home() {
         )
     }
 
-
+    //
     const circle_chart = () =>{
         const data = totals;    
         return (
@@ -356,16 +359,16 @@ function Home() {
 
     return (
 
-        <div style={{padding:'25px', height: '1100px'}}>
+        <div style={{padding:'25px', height: '1400px'}}>
             <br></br>
             <Button variant="contained" onClick={()=>window.location ="/job_setup" } >Setup a new project</Button>
             <Grid container spacing={3} rowSpacing={20} sx={{height:550}}>
 
 
                 <Grid item xs = {4} sx={{height:550 , mt:'20px'}}>
-                    <Paper elevation={8} sx={{height:550}}>
+                    <Paper elevation={8} sx={{height:550, padding:5}}>
                         <h3>Upcoming Applications Due</h3>
-                        <TableContainer style={{maxHeight:500}}>
+                        <TableContainer style={{maxHeight:400}}>
 
                             <Table stickyHeader>
                                 <TableHead>
@@ -373,6 +376,7 @@ function Home() {
                                         <TableCell className="home__data"> <h3>Project</h3></TableCell>
                                         <TableCell className="home__data"> <h3>Due Date</h3></TableCell>
                                         <TableCell className="home__data"> <h3>Days Remaining</h3></TableCell>
+                                        <TableCell></TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -383,13 +387,13 @@ function Home() {
                     </Paper>
                 </Grid>
                 <Grid item xs = {8} sx={{height:550, mt:'20px'}}>
-                    <Paper elevation={8} sx={{height:550}}>
-                        <h3>Recent Billing</h3>
+                    <Paper elevation={8} sx={{height:550, padding:5}}>
+                        <h3>Last 12 Months of Payment Applications</h3><br></br>
                         {bar_chart()}
                     </Paper>
                 </Grid>
                 <Grid item xs = {8} sx={{height:550, mt:'20px'}}>
-                    <Paper elevation={8} sx={{height:550}}>
+                    <Paper elevation={8} sx={{height:550, padding:5, mt:10}}>
                         <h3>Recent Project Activity</h3>
                         <Paper>
                         <TableContainer style={{maxHeight:500}}>
@@ -410,7 +414,7 @@ function Home() {
                     </Paper>
                 </Grid>
                 <Grid item xs = {4} sx={{height:550, mt:'20px'}}>
-                    <Paper elevation={8} sx={{height:550}}>
+                    <Paper elevation={8} sx={{height:550, padding:5, mt:10}}>
                         <h3>Contract Progress</h3>
                         {circle_chart()}
                     </Paper>

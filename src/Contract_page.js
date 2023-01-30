@@ -302,11 +302,6 @@ function Contract_page(props) {
 
     const [deadlines, set_deadlines] = useState({}); 
     const get_deadlines = (due_date) => {
-        /*
-        ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th",
-        "13th","14th", "15th", "16th", "17th", "18th", "19th", "20th", "21st", "22nd", "23rd", "24th", "25th", "26th",
-        "27th", "28th", "Last"]; 
-        */
         let temp_date = due_date;
         let due = new Date; 
         if(temp_date === "Last"){
@@ -330,38 +325,10 @@ function Contract_page(props) {
         const data = []
         data.push({ key: 'Open Balance ($)', data: contract_info.balance });
         data.push({ key: 'Billed ($)', data: Number(contract_info.base_contract_value) + Number(contract_info.co_value) - Number(contract_info.balance) }); 
-               
         return (
-
             <Grid container spacing={0} >
-                <Grid item xs = {12}  >
-                    {/*<div         
-                        style={{
-                            position: 'relative',
-                            alignItems: 'center',
-                            display: 'flex',
-                            justifyContent: 'center'
-                        }}
-                    >
-                        <div style={{ margin: '0 5px', padding: 0}}>                
-                            <PieChart
-                                height={400}
-                                data={data}
-                                series={
-                                    <PieArcSeries cornerRadius={4} padAngle={0.02} padRadius={200} doughnut={true} label={null} colorScheme={"cybertron"} 
-                                        label= {<PieArcLabel format={(item)=>item.key + " " + item.data}/>}
-                                    />}
-                                margins={0}
-                            />
-                        </div>
-                        <h2 style={{ margin: '0 5px', padding: 0, color: 'black', position:'absolute' }}>
-                            {(100-(Number(contract_info.balance)/(Number(contract_info.base_contract_value)+Number(contract_info.co_value))*100)).toFixed(2)} %
-                        </h2>
-                    </div>
-                                */}
-                        
+                <Grid item xs = {12}  >                        
                     {circle_chart()}
-    
                 </Grid>
                 <Grid item xs = {12} >
                    
@@ -376,9 +343,7 @@ function Contract_page(props) {
                 
                 </Grid>
             </Grid>
-      
         );
-
     }
 
     const circle_chart = () =>{
@@ -443,7 +408,7 @@ function Contract_page(props) {
 
             <Grid container spacing={2} sx={{height:500}}>
                 <Grid item xs = {3} sx={{height:'100%'}}>
-                    <Paper elevation={8} sx={{height:'100%'}}>
+                    <Paper elevation={8} sx={{height:'100%', padding:2}}>
                         <h2>Project Summary</h2>
                         {loading ? <CircularProgress/> : job_info()}
                     </Paper>
@@ -451,21 +416,21 @@ function Contract_page(props) {
                 </Grid>
 
                 <Grid item xs = {3} sx={{height:'100%'}}>
-                    <Paper elevation={8} sx={{height:'100%'}}>
+                    <Paper elevation={8} sx={{height:'100%', padding:2}}>
                         <h2>Billing Progress</h2>
                         {loading ? <CircularProgress/> : chart_draws()}
                     </Paper> 
                     
                 </Grid>
                 <Grid item xs = {3} sx={{height:'100%'}}>
-                    <Paper elevation={8} sx={{height:'100%'}}> 
+                    <Paper elevation={8} sx={{height:'100%', padding:2}}> 
                         <h2>Recent Applications for Payment</h2>
                         {loading? <CircularProgress/> : <Bar_chart data={period_summary} key_name={'cur_draw'} dates={contract_info.pay_app_dates}/>}
                     </Paper> 
                
                 </Grid>
                 <Grid item xs = {3} sx={{height:'100%'}}>
-                    <Paper elevation={8} sx={{height:'100%'}}>
+                    <Paper elevation={8} sx={{height:'100%', padding:2}}>
                         <h2>Recent Activity</h2>
                         {loading? <CircularProgress/> : recent_activity()}
                     </Paper>

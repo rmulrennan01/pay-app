@@ -230,7 +230,7 @@ function Contract_browser() {
 
 
     return (
-        <div style={{padding:"15px", mb:'25px'}}>
+        <div style={{margin:'25px'}}>
             <br/> 
             <Button variant="contained" href="/job_setup"> + Add a Contract </Button> 
             <br/> <br/> 

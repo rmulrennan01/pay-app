@@ -21,6 +21,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TableFooter from '@mui/material/TableFooter';
 
 
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
@@ -166,6 +167,28 @@ function Schedule_of_Values(props) {
                     </TableRow>
         
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell></TableCell>
+                        <TableCell>Total: </TableCell>
+                        <TableCell>
+                            <CurrencyFormat 
+                                value={total+Number(value)}
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}
+                            />
+                        </TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+
+
+                        
+
+                    </TableRow>
+                </TableFooter>
             </Table>
 
         </TableContainer>

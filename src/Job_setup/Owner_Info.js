@@ -1,14 +1,9 @@
 import React, {useState, useRef} from 'react';
 import TextField from '@mui/material/TextField';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
-/*
-owner_name: "", 
-owner_address_01: "", 
-owner_address_02: "",
-owner_city:"",
-owner_state:"",
-owner_zip:"",
-*/
+
 
 
 function Owner_Info(props) {
@@ -17,8 +12,8 @@ function Owner_Info(props) {
     const ref_address_01 = useRef(); 
     const ref_address_02 = useRef(); 
     const ref_city = useRef(); 
-    const ref_state = useRef(); 
     const ref_zip = useRef(); 
+    //const [state, set_state] = useState(props.owner_info.state); 
 
     const update_data = () => {
         let temp_data=
@@ -27,13 +22,47 @@ function Owner_Info(props) {
                 address_01: ref_address_01.current.value, 
                 address_02: ref_address_02.current.value,
                 city:ref_city.current.value,
-                state:ref_state.current.value,
+                state:props.owner_info.state,
                 zip:ref_zip.current.value
             }; 
-        
+        console.log('UPDATE', temp_data); 
+
         set_owner_data(temp_data); 
         props.update_owner_info(temp_data); 
     }
+
+    const states = [ 'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA',
+           'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME',
+           'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM',
+           'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX',
+           'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
+
+
+    const update_data_select = (event: SelectChangeEvent) => {
+        let temp_data=
+            {
+                name: ref_company_name.current.value, 
+                address_01: ref_address_01.current.value, 
+                address_02: ref_address_02.current.value,
+                city:ref_city.current.value,
+                state:event.target.value,
+                zip:ref_zip.current.value
+            }; 
+        console.log('UPDATE', temp_data); 
+
+        set_owner_data(temp_data); 
+        props.update_owner_info(temp_data); 
+    }
+
+    
+
+    const buildList = (item) => {
+        return(
+            <MenuItem value={item}>{item}</MenuItem>
+        )
+
+    }
+
 
     return (
         <div>
@@ -46,6 +75,7 @@ function Owner_Info(props) {
                 label="Company Name" 
                 onChange={()=>update_data()}
                 defaultValue={owner_data.name}
+                sx={{width:'600px'}}
             />
             <br/><br/>
             <TextField 
@@ -55,6 +85,7 @@ function Owner_Info(props) {
                 label="Address" 
                 onChange={()=>update_data()}
                 defaultValue={owner_data.address_01}
+                sx={{width:'400px'}}
             />
             <TextField 
                 required 
@@ -72,15 +103,19 @@ function Owner_Info(props) {
                 label="City" 
                 onChange={()=>update_data()}
                 defaultValue={owner_data.city}
+                sx={{width:'300px'}}
+
             />
-            <TextField 
-                required 
-                inputRef={ref_state} 
-                id="outlined-required" 
-                label="State" 
-                onChange={()=>update_data()}
-                defaultValue={owner_data.state}
-            />
+            <Select
+                labelId="state"
+                id="outlined-required"
+                defaultValue= {owner_data.state}
+                onChange={update_data_select}
+                sx={{width:'75px'}}
+            >
+                {states.map(buildList)}
+            </Select>
+
             <TextField 
                 required 
                 inputRef={ref_zip} 
@@ -88,6 +123,7 @@ function Owner_Info(props) {
                 label="Zip" 
                 onChange={()=>update_data()}
                 defaultValue={owner_data.zip}
+                sx={{width:'225px'}}
             />
             
         </div>

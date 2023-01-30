@@ -48,7 +48,8 @@ function Pay_app() {
     const [preview_contract_info, set_preview_contract_info] = useState({}); 
     const [current_step, set_current_step] = useState(0); 
     const [line_items, set_line_items] = useState([]); 
-    const [app_date, set_app_date] = useState(new Date)
+    const [app_date, set_app_date] = useState(new Date);
+  
 
     //FUNCTION TO LIFT STATE OF USER INPUTS IN THE SOV STEP UP. 
     const update_billed_to_date = (inputs) =>{
@@ -215,7 +216,7 @@ function Pay_app() {
         const button_builder = () => {
             if (index==0){
                 return(
-                    <Button onClick={()=>set_current_step(current_step+1)}> 
+                    <Button variant="contained" onClick={()=>set_current_step(current_step+1)} sx={{mt:2}}> 
                         Continue
                     </Button> 
                 );
@@ -225,10 +226,10 @@ function Pay_app() {
                     <>
                     <div> By clicking the generate application button below, the user acknolwdges responsiblity in verfiying the accuracy
                         of the content. </div>
-                    <Button onClick={()=>submit_pay_app()}> 
+                    <Button variant="contained" onClick={()=>submit_pay_app()} sx={{mt:2}}> 
                         Save & Submit
                     </Button> 
-                    <Button onClick={()=>set_current_step(current_step-1)}> 
+                    <Button onClick={()=>set_current_step(current_step-1)} sx={{mt:2}}>  
                         Back
                     </Button> 
                     </>
@@ -237,10 +238,10 @@ function Pay_app() {
             else{
                 return(
                     <>
-                    <Button onClick={()=>set_current_step(current_step+1)}> 
+                    <Button variant="contained" onClick={()=>set_current_step(current_step+1)} sx={{mt:2}}> 
                         Continue
                     </Button> 
-                    <Button onClick={()=>set_current_step(current_step-1)}> 
+                    <Button onClick={()=>set_current_step(current_step-1)} sx={{mt:2}}> 
                         Back
                     </Button> 
                     </>
@@ -251,7 +252,7 @@ function Pay_app() {
         return(
             <Step key={index}> 
                 <StepLabel onClick={()=>set_current_step(index)}> 
-                    {item.label}
+                    <h4>{item.label}</h4>
                 </StepLabel>
                 <StepContent> 
                     <div> 

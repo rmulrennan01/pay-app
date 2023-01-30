@@ -7,7 +7,7 @@ import { flexbox } from '@mui/system';
 
 function Footer() {
   return (
-    <Box sx={{width:'100%', height:'300px', mt:'100px', backgroundColor:'#939496', padding:'30px'}}>
+    <Box sx={{width:'100%', height:'350px', mt:'100px', backgroundColor:'#939496', padding:'20px'}}>
         <Grid container>
             <Grid item xs={12}>
                 <Typography
