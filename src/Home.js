@@ -19,8 +19,9 @@ import TableRow from '@mui/material/TableRow';
 import Date_string from './Utilities/Date_string.js'; 
 import { BarChart, BarSeries, Bar, GridlineSeries, Gridline } from 'reaviz';
 import Grid from '@mui/material/Grid';
-
+import IconButton from '@mui/material/IconButton';
 import firebase from "./Firebase.js"; 
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 function Home() {
     const [contracts, set_contracts] = useState([]); 
@@ -247,9 +248,13 @@ function Home() {
                 <TableCell  onClick={()=>window.location='/contract/'+ String(item.id)} > {item.date} </TableCell>
                 <TableCell  onClick={()=>window.location='/contract/'+ String(item.id)} > {item.days} </TableCell>
                 <TableCell>
-                    <Button variant='contained' onClick={()=>window.location='/pay_app/'+ String(item.id)} sx={{zIndex:1200}}>
-                        Start App
-                    </Button>
+                    <Tooltip title="Start Application" color='primary'>
+                        <IconButton onClick={()=>window.location='/pay_app/'+ String(item.id)} sx={{zIndex:1200}}>
+
+                                <ArrowForwardIcon />
+                            
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
             </TableRow>
             </Tooltip>
@@ -282,21 +287,29 @@ function Home() {
           
         return (
         <div sx={{padding:5}}>
-            
-            <h3 sx={{transform: 'rotate(180deg)'}}>Total Draw Amount ($)</h3>
-            <BarChart
-                width={'auto'}
-                height={350}
-                data={data}
-                gridlines={<GridlineSeries line={<Gridline direction="y" />} />}
-                series={
-                <BarSeries
-                    colorScheme={'cybertron'}
-                    padding={0.1}
-                />
-                }
-            />
-            <h3>Month</h3>
+            <Grid container>
+                <Grid item xs={.5} sx={{height:350}}>
+                    <h4 className='home__graph_y_axis'>Total Draw Amount ($)</h4>
+                </Grid>
+                <Grid item xs={11.5}>
+                    <BarChart
+                        width={'auto'}
+                        height={350}
+                        data={data}
+                        gridlines={<GridlineSeries line={<Gridline direction="y" />} />}
+                        series={
+                        <BarSeries
+                            colorScheme={'cybertron'}
+                            padding={0.1}
+                        />
+                        }
+                    />
+                </Grid>
+                <Grid xs={12} item>
+                    <h4 style={{width:'100%', textAlign: 'center'}}> Month of Application Submission</h4>
+                </Grid>
+                
+            </Grid>
             
         </div>
         );
@@ -331,8 +344,8 @@ function Home() {
           <div
             style={{
               position: 'relative',
-              height: '300px',
-              width: '500px',
+              height: 'auto',
+              width: 'auto',
               alignItems: 'center',
               display: 'flex',
               justifyContent: 'center'
@@ -372,10 +385,10 @@ function Home() {
 
                             <Table stickyHeader>
                                 <TableHead>
-                                    <TableRow>
+                                    <TableRow >
                                         <TableCell className="home__data"> <h3>Project</h3></TableCell>
                                         <TableCell className="home__data"> <h3>Due Date</h3></TableCell>
-                                        <TableCell className="home__data"> <h3>Days Remaining</h3></TableCell>
+                                        <TableCell className="home__data" sx={{width:20}}> <h3>Days Remaining</h3></TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
                                 </TableHead>

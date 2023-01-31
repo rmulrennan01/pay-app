@@ -158,7 +158,7 @@ export default function Login() {
           required 
           inputRef={pass} 
           id="outlined-required" 
-          label="password" 
+          label="Password" 
           type='password'
           onChange={()=>console.log('password')}
           defaultValue={''}
