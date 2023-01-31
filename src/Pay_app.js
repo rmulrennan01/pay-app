@@ -279,8 +279,8 @@ function Pay_app() {
             {loading ? null :
             <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
    
-                <Paper > 
-                    <Paper sx={{width:400}}> 
+                <Paper sx={{margin:5, padding: 10, width:'auto'}}> 
+                    <Paper > 
                         
                         {preview_sov == [] ? null : 
                             <Pay_app_viewer 

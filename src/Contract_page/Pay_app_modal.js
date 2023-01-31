@@ -236,7 +236,7 @@ function Pay_app_modal(props) {
     return (
             //path='/pay_app/pdf/:id/:app_id' 
        
-            <div >
+            <div style={{margin:'40px'}} >
                 {submit_dialog()}
                 {delete_dialog()}
                 {edit_dialog()}

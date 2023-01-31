@@ -37,14 +37,14 @@ import SaveIcon from '@mui/icons-material/Save';
 function Change_order_table(props) {
     const [table_content, set_table_content] = useState([]);
     const [update, set_update] = useState(1); 
-    const [total, set_total] = useState(0); 
+    const [total, set_total] = useState(props.contract_info.co_value); 
     const [direction, set_direction] = useState('desc'); 
     const [active_column, set_active_column] = useState(0); 
     const [triggered, set_triggered] = useState(false); 
     const [edit_index, set_edit_index] = useState(Number(-1)); 
     const [select_app, set_select_app] = useState('');
     const [select_desc, set_select_desc] = useState('');
-
+    const currency_ref = useRef(); 
 
     useEffect(() => {
         compile_co(); 
@@ -287,9 +287,9 @@ function Change_order_table(props) {
                     outputFormat="string"
                     decimalCharacter="."
                     digitGroupSeparator=","
-                    
+                    ref = {currency_ref}
                     leadingZero={"deny"}
-                    onChange={()=>console.log('test')}
+                    onChange={()=>set_total(Number(currency_ref.current.getValue()) + Number(props.contract_info.co_value) -Number(item.value))}
                   
                     />  
                     :
@@ -389,7 +389,14 @@ function Change_order_table(props) {
                         <TableCell> <h3>Total</h3></TableCell>
                         <TableCell>
                             <h3>
-                            <CurrencyFormat value={props.contract_info.co_value} displayType={'text'} thousandSeparator={true} prefix={'$'} fixedDecimalScale={true} decimalScale={2}/>
+                            {console.log('ref', currency_ref.current)}
+                            <CurrencyFormat 
+                                value={total} 
+                                displayType={'text'} 
+                                thousandSeparator={true} 
+                                prefix={'$'} 
+                                fixedDecimalScale={true} 
+                                decimalScale={2}/>
                             </h3>
 
                         </TableCell>

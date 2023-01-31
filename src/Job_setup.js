@@ -255,7 +255,7 @@ function Job_setup() {
     return (
         <div> 
             <Modal open={modal_open} onClose={()=>set_modal_open(false)} >
-                <Confirmation_Modal sov={sov_data} owner_info={owner_info} project_info={project_info} billing={billing_info} submit_db={submit_db}/> 
+                <Confirmation_Modal sov={sov_data} owner_info={owner_info} project_info={project_info} billing={billing_info} submit_db={submit_db} close={()=>set_modal_open(false)}/> 
             </Modal>
             <Paper>
                 <h1> Setup a new contract</h1>
