@@ -33,7 +33,7 @@ import CurrencyFormat from 'react-currency-format';
 function Schedule_of_Values(props) {
     const [table_content, set_table_content] = useState(props.sov_data);
     const [update, set_update] = useState(1); 
-    const [total, set_total] = useState(0); 
+    const [total, set_total] = useState(props.total); 
     const [value, set_value] = useState(0); 
 
 
@@ -87,6 +87,7 @@ function Schedule_of_Values(props) {
         props.update_sov(temp_data); 
         set_total(Number(total)+Number(value)); 
         console.log("Added :" + temp_data[0]);
+        props.set_total(Number(total)+Number(value)); 
         
     }
 
@@ -97,7 +98,8 @@ function Schedule_of_Values(props) {
         set_table_content(temp_data); 
         props.update_sov(temp_data); 
         //set_update(update*-1); 
-        set_total(Number(total)-Number(temp_val));
+        //set_total(Number(total)-Number(temp_val));
+        props.set_total(Number(total)-Number(temp_val)); 
 
 
     }
@@ -173,7 +175,7 @@ function Schedule_of_Values(props) {
                         <TableCell>Total: </TableCell>
                         <TableCell>
                             <CurrencyFormat 
-                                value={total+Number(value)}
+                                value={props.total+Number(value)}
                                 displayType={'text'} 
                                 thousandSeparator={true} 
                                 prefix={'$'} 
@@ -193,10 +195,6 @@ function Schedule_of_Values(props) {
 
         </TableContainer>
         
-        Contract Total: $ {total}
-
-       
-
      
 
 

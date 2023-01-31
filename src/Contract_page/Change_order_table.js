@@ -300,11 +300,11 @@ function Change_order_table(props) {
             <TableCell>
                 {edit_index === index ?
                     <Tooltip title="Save Changes" color='primary'>
-                        <IconButton onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
+                        <Button onClick={()=>edit_index < 0 ? handle_edit_click(index) : set_edit_index(Number(-1))}>
 
-                                <SaveIcon />
+                            Save Changes
                             
-                        </IconButton>
+                        </Button>
                     </Tooltip>
                         :
                     <Tooltip title="Edit" color='primary'>
@@ -317,11 +317,15 @@ function Change_order_table(props) {
                 }
             </TableCell>
             <TableCell>
-                <Tooltip title="Delete">
-                    <IconButton onClick={()=>handle_delete_click(item.id, item.internal_index)}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
+                {edit_index === index ?
+                    <Button onClick={()=>set_edit_index(-1)}> Cancel </Button>
+                :
+                    <Tooltip title="Delete">
+                        <IconButton onClick={()=>handle_delete_click(item.id, item.internal_index)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
             </TableCell>
 
         </TableRow>

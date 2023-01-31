@@ -33,6 +33,7 @@ function Job_setup() {
     const [current_step, set_current_step] = useState(0); 
     const [sov_data, set_sov_data] = useState([]); 
     const [modal_open, set_modal_open] = useState(false); 
+    const [total, set_total] = useState(Number(0)); 
 
     const [owner_info, set_owner_info] = useState({
         name: "", 
@@ -81,7 +82,7 @@ function Job_setup() {
     const steps = [
         {label: 'Owner Information', content: <Owner_Info owner_info={owner_info} update_owner_info={update_owner_info}/> },
         {label: 'Project Info', content: <Project_Info project_info={project_info} update_project_info={update_project_info} />},
-        {label: 'Schedule of Values', content: <Schedule_of_Values sov_data={sov_data} update_sov={update_sov}/>},
+        {label: 'Schedule of Values', content: <Schedule_of_Values sov_data={sov_data} update_sov={update_sov} total={total} set_total={(item)=>set_total(item)}/>},
         {label: 'Billing Details', content: <Billing_Details billing_info={billing_info} update_billing_info={update_billing_info}/>}
     ];
 
