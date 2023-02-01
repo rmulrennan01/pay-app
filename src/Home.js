@@ -29,6 +29,7 @@ function Home() {
     const [draws, set_draws] = useState({}); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
     const [totals, set_totals] = useState({}); 
+    const [activity, set_activity] = useState([]);
 
     //auth
     const user = useContext(UserContext);
@@ -63,7 +64,6 @@ function Home() {
             set_contracts(temp_array); 
             sort_dates(contracts); 
             build_deadlines();
-            get_tasks(temp_array); 
             build_contract_totals(); 
             set_loading(false);         
     
@@ -72,14 +72,15 @@ function Home() {
 
         const fetchData = async () =>{
 
-            //const dataList = await firestoreDB.collection("contracts").get(); //updated
+            //RETRIEVE CONTRACT INFO
             let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
-            //let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
             const dataList = await job_ref.get();
             dataList.docs.map(build_data);
+
             let account_ref = firebase.firestore().collection('accounts').doc(uid); 
             const account = await account_ref.get();
             set_draws(account.data().draws);
+            set_activity(account.data().activity.reverse());
 
         }
         //if(uid != 0){
@@ -186,19 +187,21 @@ function Home() {
     
     //BUILDS TASKS TABLE
     const display_tasks = (item, index) => {
-        if(index < 10){
+        if(index < 30){
+            let date = new Date(item.date.seconds*1000);
+            console.log('task', item); 
             return(
                 <Tooltip title='Go to Contract' arrow>
 
-                <TableRow key={index+"recent"}  onClick={()=>window.location='/contract/'+ String(item.id)} className="home__row">
+                <TableRow key={index+"recent"}  onClick={()=>window.location='/contract/'+ String(item.contract_id)} className="home__row">
                     <TableCell className="home__data">
-                        {item.name}
+                        {item.contract_name}
                     </TableCell>
                     <TableCell className="home__data">
-                        {item.recent_task}
+                        {item.activity}
                     </TableCell>
                     <TableCell className="home__data">
-                        {item.date.toDate().toString()}
+                        {String(date)}
                     </TableCell>
                 </TableRow>
                 </Tooltip>
@@ -206,37 +209,6 @@ function Home() {
         }
     }
     
-
-
-    //HELPER FUNCTION TO BUILD A LIST OF RECENT TASKS THAT WILL BE DISPLAYED
-    const [task_list, set_task_list] = useState([]); 
-    const get_tasks = (contract_list) => {
-        let tasks = []; 
-        for (let i = 0; i< contract_list.length; i++){
-            for (let k = 0; k < contract_list[i].recent_task.length; k++){
-                let temp = {}
-                temp.recent_task = contract_list[i].recent_task[k]; 
-                temp.date = contract_list[i].update[k]; 
-                temp.id = contract_list[i].id;    
-                temp.name = contract_list[i].name;  
-                tasks.push(temp);      
-            }
-        }
-        //SORT
-        tasks = tasks.sort(function(a,b){
-            let x = a["date"];
-            let y = b["date"];
-            if (x<y){
-                return -1;
-            }
-            if (x>y){
-                return 1; 
-            }
-            
-        return 0;
-        });
-        set_task_list(tasks); 
-    }
 
 
 
@@ -419,7 +391,7 @@ function Home() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {loading ? <CircularProgress /> : task_list.map(display_tasks)}
+                                    {loading ? <CircularProgress /> : activity.map(display_tasks)}
                                 </TableBody>
                             </Table>
                         </TableContainer>

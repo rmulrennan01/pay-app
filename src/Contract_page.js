@@ -53,6 +53,7 @@ import TableRow from '@mui/material/TableRow';
 function Contract_page(props) {
     const [contract_info, set_contract_info] = useState([]); 
     const [owner_info, set_owner_info] = useState([]); 
+    const [user_info, set_user_info] = useState([]); 
     const [sov, set_sov] = useState([]); 
     const [loading, set_loading] = useState(true); 
     const [firestoreDB, setFirestoreDB] = useState(firebase.firestore()); 
@@ -84,6 +85,7 @@ function Contract_page(props) {
         const fetchData = async () =>{
             let job_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts');
             let owner_ref = firestoreDB.collection('contacts').doc(uid).collection('owners'); 
+            let user_ref = firestoreDB.collection('accounts').doc(uid);
             //const dataList = await firestoreDB.collection("contracts").doc(id).get(); //updated
             const dataList = await job_ref.doc(id).get(); //updated
             set_contract_info(dataList.data()); 
@@ -91,19 +93,21 @@ function Contract_page(props) {
 
            
         
-            //const dataList2 = await firestoreDB.collection("owners").doc(dataList.data().owner_id).get(); //updated
             const dataList2 = await owner_ref.doc(dataList.data().owner_id).get(); 
             set_owner_info(dataList2.data()); 
 
             const tempList = []; 
 
-            //const dataList3 = await firestoreDB.collection("contracts").doc(id).collection("sov").get();
             const dataList3 = await job_ref.doc(id).collection("sov").get();
             dataList3.forEach((doc) => {
                 let tempDict = doc.data(); 
                 tempDict["id"] = doc.id; 
                 tempList.push(tempDict); 
             });
+
+            const dataList4 = await user_ref.get();
+            set_user_info(dataList4);
+
             set_sov(tempList); 
             set_loading(false); 
         }

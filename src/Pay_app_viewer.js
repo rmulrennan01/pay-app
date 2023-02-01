@@ -160,7 +160,7 @@ function Pay_app_viewer(props) {
     //GENERATES THE PDF DOCUMENT. CONSISTS OF TWO PDF PAGES -> G702 (1) AND G703 (1)
     const doc = () => {
         return(
-        <PDFViewer showToolbar={true} height={800} width={1600}>
+        <PDFViewer showToolbar={true} height={800} width={1200}>
         <Document>
             <Pay_app_viewer_g702
                 contract_info={contract_info}

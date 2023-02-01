@@ -33,7 +33,7 @@ function Pay_app_modal_table(props) {
 
 
     useEffect(() => {
-        set_line_items(Sov_item_totals(sov,props.pay_app_id,0.05)); 
+        set_line_items(Sov_item_totals(sov,props.pay_app_id,props.retention)); 
 
     }, [])
     
@@ -49,9 +49,11 @@ function Pay_app_modal_table(props) {
         if(props.edit_mode){
             adjust_totals();
         }
+        else{
+            set_line_items(Sov_item_totals(sov,props.pay_app_id,props.retention)); 
+        }
     }, [props.edit_mode])
 
- 
  
   
 

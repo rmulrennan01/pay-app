@@ -53,7 +53,7 @@ function Confirmation_Modal(props) {
 
 
     return (
-        <Paper sx={{mt:5, mb:20, mr:20, ml:20, padding: 5}} elevation={8}>
+        <Paper sx={{mt:5, mb:30, mr:20, ml:20, padding: 2}} elevation={8}>
             <h3>Please verify the information below prior to submission. </h3>
             <Paper elevation={8} sx={{padding:2}}> 
                 <Grid container>
@@ -79,8 +79,8 @@ function Confirmation_Modal(props) {
                     </Grid>
                 </Grid>
             </Paper>
-            <br/> 
-            <Paper sx={{padding:2}} elevation={8}> 
+            
+            <Paper sx={{padding:2, mt:1}} elevation={8}> 
                 <h4> Schedule of Values </h4>
                 
                 <TableContainer component={Paper}>
@@ -128,8 +128,7 @@ function Confirmation_Modal(props) {
 
                 
             </Paper>
-            <br></br>
-            <Paper sx={{padding:2}} elevation={8}> 
+            <Paper sx={{padding:2, mt:1}} elevation={8}> 
                 <h4> Billing </h4>
                 Draw Requests are due on the <span>{props.billing.due_date}</span> day of the month <br/> 
                 Retainage will be: <span>{props.billing.retention}</span>%

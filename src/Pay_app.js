@@ -279,8 +279,8 @@ function Pay_app() {
             {loading ? null :
             <Modal open={modal_open} onClose={()=>set_modal_open(false)}  >
    
-                <Paper sx={{margin:5, padding: 10, width:'auto'}}> 
-                    <Paper > 
+                <Paper sx={{mt:5, mb:40, ml:40, padding: 2, width:1220}}> 
+                    < > 
                         
                         {preview_sov == [] ? null : 
                             <Pay_app_viewer 
@@ -293,9 +293,8 @@ function Pay_app() {
                             end_date={new Date(app_date.getFullYear(),app_date.getMonth()+1,0)}
                             />
                         }
-                    </Paper>
-                    : 
-                    <> </>
+                        <Button variant="contained" onClick={()=>set_modal_open(false)}> Close </Button>
+                   </>
                 
                 </Paper> 
                     

@@ -22,9 +22,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
 
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 
 
 function Pay_app_modal(props) {
@@ -88,12 +88,23 @@ function Pay_app_modal(props) {
 
     }
 
+    const cancel_edit = () => {
+        set_edit_mode(false); 
+        set_saved_inputs([]); 
+    }
+
     const delete_btn = () => {
-        if(Number(app_id)+1 == contract_info.app_count){
+        if(edit_mode){
+            return(
+                <Button variant='contained' onClick={()=>cancel_edit()}>Cancel Edit</Button>
+            )
+        }
+        else if(Number(app_id)+1 == contract_info.app_count){
             return (
                 <Button variant='contained' startIcon={<DeleteIcon />} onClick={()=>set_delete_dialog_open(true)}> Delete </Button>
             )
         }
+
         else {
             return(
                 <Button variant='contained' startIcon={<DeleteIcon />} disabled={true} > Delete </Button>
@@ -207,6 +218,7 @@ function Pay_app_modal(props) {
     const [delete_dialog_open, set_delete_dialog_open] = useState(false); 
     //DIALOG MODAL TO VERIFY THAT USER WANTS TO DELETE THE PAY APP FROM THE DATABASE
     const delete_dialog = () => {
+
         return(
             <Dialog
             open={delete_dialog_open}
@@ -236,17 +248,20 @@ function Pay_app_modal(props) {
     return (
             //path='/pay_app/pdf/:id/:app_id' 
        
-            <div style={{margin:'40px'}} >
+            <div style={{margin:'60px'}} >
                 {submit_dialog()}
                 {delete_dialog()}
                 {edit_dialog()}
                 <Paper sx={{padding:2}}> 
-                    <h2>Pay App # {app_id+1} </h2> 
-                    <h2>Application Date: {Date_string(contract_info.pay_app_dates[app_id])}</h2> 
+                    <div style={{display:'flex', justifyContent:'flex-end', width:'100%', padding:'0px'}}>
+                        <IconButton  onClick={()=>props.close_modal()}><CloseIcon></CloseIcon></IconButton>
+                    </div>
+                    <h3>Pay App # {app_id+1} </h3>  
                     
-                    <br></br>
+                    <h3>Application Date: {Date_string(contract_info.pay_app_dates[app_id])}</h3> 
                     <Button variant='contained' startIcon={<PictureAsPdfIcon/>} onClick={()=>open_pdf()}>View PDF</Button> {edit_button()} {delete_btn()}      
-                            
+                    <br></br>
+    
                     <Pay_app_modal_table
                         key = {app_id}
                         sov_data={sov} 
@@ -255,6 +270,7 @@ function Pay_app_modal(props) {
                         contract_info={contract_info}
                         saved_inputs={(item)=>set_saved_inputs(item)}
                         submit_changes = {submit_changes}
+                        retention = {contract_info.retention}
                     /> 
                     <br></br>
                     {prev_btn()} {next_btn()} 
