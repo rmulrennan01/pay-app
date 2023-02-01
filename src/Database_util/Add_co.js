@@ -1,5 +1,5 @@
 import firebase from "../Firebase.js"; 
-    
+import Activity_note from "./Activity_note.js";
     
 //SUBMIT A NEW CHANGE ORDER
 const Add_co = (sov_id, data, contract_info, uid, id) => {
@@ -38,7 +38,15 @@ const Add_co = (sov_id, data, contract_info, uid, id) => {
     batch.commit().then(()=>{
         console.log("updated co total successfully"); 
         alert("Change Order Added Successfully"); 
-        window.location.reload(false);
+        Activity_note(uid, "Added a change order", id, contract_info.name)
+        .then(()=>{
+            window.location.reload(false);
+
+        })
+        .catch((error) =>{
+        console.error("Error updating activites", error);
+        alert("Failed to submit change order. Please try again later or contact support."); 
+        })
     })
     .catch((error) => {
         console.error("Error adding change order", error); 

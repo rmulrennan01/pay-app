@@ -2,7 +2,7 @@
 
 
 import firebase from "../Firebase.js"; 
-
+import Activity_note from "./Activity_note.js";
 
 
 const Delete_co = (contract_info, sov, sov_id, index, uid, id) => {
@@ -46,7 +46,15 @@ const Delete_co = (contract_info, sov, sov_id, index, uid, id) => {
     batch.commit().then(()=>{
         console.log("Change Order deleted successfully"); 
         alert("Change order deleted successfully."); 
-        window.location.reload(false);
+        Activity_note(uid, "Deleted a change order", id, contract_info.name)
+        .then(()=>{
+            window.location.reload(false);
+
+        })
+        .catch((error) =>{
+        console.error("Error updating activites", error);
+        alert("Failed to delete change order. Please try again later or contact support."); 
+        })
     })
     .catch((error) => {
         console.error("Error deleting change order.", error); 

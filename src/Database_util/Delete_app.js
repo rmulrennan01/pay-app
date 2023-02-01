@@ -1,6 +1,6 @@
 import firebase from "../Firebase.js"; 
 import Activity_update from "./Activity_update.js";
-
+import Activity_note from "./Activity_note.js";
 
 const Delete_app = (contract_info, sov, uid, id) => {
     const firestoreDB = firebase.firestore();
@@ -69,7 +69,15 @@ const Delete_app = (contract_info, sov, uid, id) => {
         .then(()=>{
             console.log("Payment application deleted successfully"); 
             alert("Payment application deleted successfully."); 
-            window.location.reload(false);
+            Activity_note(uid, "Deleted a payment application", id, contract_info.name)
+            .then(()=>{
+                window.location.reload(false);
+    
+            })
+            .catch((error) =>{
+            console.error("Error updating activites", error);
+            alert("Failed to delete payment application. Please try again later or contact support."); 
+            })
         })
         .catch((error)=>{
             console.log(error);

@@ -1,6 +1,6 @@
 import firebase from "../Firebase.js"; 
 import Activity_update from './Activity_update.js'
-
+import Activity_note from "./Activity_note.js";
 
 
 const Add_app = (contract_info, sov, saved_inputs, app_date, uid, id) =>{
@@ -68,7 +68,15 @@ const Add_app = (contract_info, sov, saved_inputs, app_date, uid, id) =>{
         //UPDATES THE USER ACCOUNT FOR QUICK ACCESS TO MONTHLY DRAWS
         Activity_update(uid,app_date,Number(draw_total))
         .then(()=>{
-            submission_success();
+            Activity_note(uid, "Added a payment application", id, contract_info.name)
+            .then(()=>{
+                submission_success();    
+            })
+            .catch((error) =>{
+            console.error("Error updating activites", error);
+            alert("Failed to submit payment application. Please try again later or contact support."); 
+            })
+            
         })
         .catch((error) => {
             console.log('ERROR UPDATING ACCOUNT INTO', error); 

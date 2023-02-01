@@ -2,29 +2,24 @@
 
 import firebase from "../Firebase.js"; 
 
-const fetchData = async (id) =>{
-    let account_ref = firebase.firestore().collection('accounts').doc(id); 
-    const account = await account_ref.get();
-    return account.data(); 
-}
 
 
 //HELPER FUNCTION FOR UPDATING THE RECENT DRAW ACTIVITY
-const Activity_update =  async (uid, name, task, date) =>{
-    let account = await fetchData(uid);
+
+
+const Activity_note =  async (uid, activity, contract_id, contract_name) =>{
     
     let account_ref = firebase.firestore().collection('accounts').doc(uid); 
-    let updates = account.activity
-    updates.push({
-        name: name, 
-        recent_task: task, 
-        date: date
+    let data = {
+        activity: activity,
+        contract_id: contract_id,
+        contract_name: contract_name,
+        date: new Date()
+    }
 
-    })
-    
-    
+
     account_ref.update({
-        activity: updates
+        activity: firebase.firestore.FieldValue.arrayUnion(data)
     })
     .then(()=>{
         console.log('UPDATE SUCCESS')

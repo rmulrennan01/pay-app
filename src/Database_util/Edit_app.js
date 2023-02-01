@@ -1,7 +1,7 @@
  
 import firebase from "../Firebase.js"; 
 import Activity_update from "./Activity_update.js";
-
+import Activity_note from "./Activity_note.js";
  
  
  //SUBMIT A REVISION TO A PAY APPLICATION
@@ -57,7 +57,15 @@ import Activity_update from "./Activity_update.js";
         .then(()=>{
             console.log("updated app changes successfully"); 
             alert("Changes to most recent application updated successfully!"); 
-            window.location.reload(false);
+            Activity_note(uid, "Edited a payment application", id, contract_info.name)
+            .then(()=>{
+                window.location.reload(false);
+    
+            })
+            .catch((error) =>{
+            console.error("Error updating activites", error);
+            alert("Failed to edit payment application. Please try again later or contact support."); 
+            })
         })
         .catch((error)=>{
             console.log(error);
