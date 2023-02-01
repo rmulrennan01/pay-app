@@ -44,6 +44,7 @@ function Change_order_table(props) {
     const [edit_index, set_edit_index] = useState(Number(-1)); 
     const [select_app, set_select_app] = useState('');
     const [select_desc, set_select_desc] = useState('');
+    const [select_cost_code, set_select_cost_code] = useState('-'); 
     const currency_ref = useRef(); 
 
     useEffect(() => {
@@ -164,16 +165,31 @@ function Change_order_table(props) {
 
     //BUILDS LIST ITEMS FOR EDIT DROP DOWN
     const build_desc_list = (item) => {
-
         //TODO - FIX TO INCLUDE ALL COST - CODES THAT AREN'T CURRENTLY USED FOR A CO
         return(
-            <MenuItem value={item.id}>{item.cost_code_description}</MenuItem>
+            <MenuItem value={item.id}>{item.description}</MenuItem>
         )
-    
     }
 
+    const get_cost_code = (item) =>{
+        console.log('item to review', item); 
+        for (let i = 0; i<props.sov.length; i++){
+            if(props.sov[i].id === item)
+            {
+                console.log('cc', item); 
+                set_select_cost_code(props.sov[i].cost_code);
+                break; 
+            }
+
+        }
+    }
+
+
     const update_cost_code = (event: SelectChangeEvent) =>{
+        console.log('here', event.target.value); 
+        get_cost_code(String(event.target.value));
         set_select_desc(event.target.value); 
+        
     }
 
     const select_desc_ref = useRef(); 
@@ -189,7 +205,7 @@ function Change_order_table(props) {
         ref={select_desc_ref}
         sx={{width:140}}
         >
-            {table_content.map(build_desc_list)}
+            {props.sov.map(build_desc_list)}
         </Select>
         )
     }
@@ -253,7 +269,11 @@ function Change_order_table(props) {
                 }
             </TableCell>
             <TableCell>
-                {item.cost_code}
+                {edit_index === index ?
+                    <>{select_cost_code}</>
+                    :
+                    <>{item.cost_code} </>
+                }
             </TableCell>
             <TableCell>
                 {edit_index === index ? 

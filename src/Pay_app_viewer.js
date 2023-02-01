@@ -9,6 +9,7 @@ import Pay_app_viewer_g703 from "./Pay_app_viewer/Pay_app_viewer_g703.js";
 //AUTH
 import {useContext} from 'react'; 
 import { UserContext } from "./User_provider";
+import CircularProgress from '@mui/material/CircularProgress';
 
 //THIS COMPONENT BUILDS A PDF VERSION OF THE AIA PAYMENT APPLICAITON
 function Pay_app_viewer(props) {
@@ -191,7 +192,7 @@ function Pay_app_viewer(props) {
 
     return (
         <div>
-            {loading ? null: doc()}
+            {loading ? <CircularProgress />: doc()}
         </div>
     )
 }

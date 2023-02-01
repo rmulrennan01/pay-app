@@ -2,24 +2,38 @@ import firebase from "../Firebase.js";
     
     
 //SUBMIT A NEW CHANGE ORDER
-const Add_co = (sov_id, sov, contract_info, uid, doc_id, co_index) => {
+const Add_co = (uid, contract_id, contract_info, sov_id, sov, rev_co) => {
+
     const firestoreDB = firebase.firestore();
-
-
-    let rev_contract = Number(contract_info.base_contract_value) + Number(contract_info.co_value) + Number(data.value); 
-    let balance = Number(rev_contract) - Number(contract_info.prev_draws) - Number(contract_info.this_draw); 
-    
-    let batch = firestoreDB.batch(); 
-    let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(doc_id); //updated
+    let contract_ref = firestoreDB.collection('jobs').doc(uid).collection('contracts').doc(contract_id); //updated
     let sov_ref = contract_ref.collection("sov").doc(sov_id);
 
-    //let temp_co_list = sov[sov_id].
+    let batch = firestoreDB.batch(); 
+   
+    
+    //UPDATE CO LIST INSIDE THE SPECIFIC SOV
+    let new_co_list = []
+    let co_difference = Number(0); 
+    let sov_item = [];
 
-    //BATCH UPDATE WITH THE CO -> MUST UPDATE CO_COUNT; CO_VALUE; BALANCE; CO INSIDE SOV
-    batch.update(sov_ref, {"change_orders": firebase.firestore.FieldValue.arrayUnion({description: data.description, value: Number(data.value), pay_app: Number(data.pay_app)})});//DONE
+    for(let i = 0; i<sov.length; i++){
+        if(sov[i].id == sov_id){
+            sov_item = sov[i]
+            break;
+        }
+    }
+
+    
+
+    batch.update(sov_ref, {"change_orders": new_co_list});//DONE
+
+
+    //UPDATE BALANCE && CO AMOUNT IN CONTRACT INFO
     batch.update(contract_ref, {"co_value":Number(contract_info.co_value)+Number(data.value)}); //DONE
-    batch.update(contract_ref, {"co_count":Number(contract_info.co_count)+Number(1)}); //DONE
     batch.update(contract_ref, {"balance":Number(balance)}); //DONE
+
+
+
 
     //UPDATE RECENT TASKS
     let temp_update = [...contract_info.update];
@@ -34,15 +48,6 @@ const Add_co = (sov_id, sov, contract_info, uid, doc_id, co_index) => {
     batch.update(contract_ref, {"recent_task":temp_tasks}); //DONE
 
 
-    batch.commit().then(()=>{
-        console.log("updated co total successfully"); 
-        alert("Change Order Added Successfully"); 
-        window.location.reload(false);
-    })
-    .catch((error) => {
-        console.error("Error adding change order", error); 
-        alert("Failed to submit change order. Please try again later or contact support.")
-    });
 } 
 
-export default Add_co; 
+export default Edit_co; 

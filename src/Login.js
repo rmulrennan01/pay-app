@@ -105,28 +105,14 @@ export default function Login() {
   }
 
 
-  const login_2 = () =>{
-    
-    signIn(email.current.value, pass.current.value)
-    .then(() =>{
-      console.log('login success'); 
 
-  })
-  
-  .catch((error) => {
-    //throw("mega-error"); 
-    console.log(error); 
-    console.log('login fia')
-    set_login_fail(true); 
-   
-  })
-  }
-
+  const [error, set_error] = useState(false); 
   const login = () =>{
     try{
       signIn(email.current.value, pass.current.value)
     }
     catch(error){
+      set_error(true);
       console.log('issues')
     }
   }
@@ -152,6 +138,7 @@ export default function Login() {
           onChange={()=>console.log('user')}
           defaultValue={''}
           sx={{width:300}}
+          error={error}
       />
       <br></br><br></br>
       <TextField 
@@ -164,7 +151,6 @@ export default function Login() {
           defaultValue={''}
           sx={{width:300}}
       />
-      {login_fail ? <Alert variant="outlined" severity="error"> This is an error alert — check it out! </Alert> : <></>}
       <br></br><br></br>
       <div style={{width:300}}>
         <Button sx={{width:300}} variant='contained' onClick={()=>login()}>Login</Button>
