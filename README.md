@@ -17,7 +17,7 @@ This website is a fully functioning contract management tool for handeling comme
 
 ## Dashboard:
 
-<img src="./Examples/dashboard.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/dashboard.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Contract Page:
 
