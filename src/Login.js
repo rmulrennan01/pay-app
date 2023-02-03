@@ -178,7 +178,7 @@ export default function Login() {
 
   return (
     <Grid container sx={{paddingTop:'50px'}} spacing={0} direction='column' alignItems='center' justifyContent='center'> 
-  
+      {console.log( process.env.REACT_APP_API_KEY)}
 
       <Grid item xs={12} sx={{padding:10, textAlign:'center'}}>
         <Typography
