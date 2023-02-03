@@ -12,7 +12,7 @@ This website is a fully functioning contract management tool for handeling comme
 -Manage change orders for individual contracts
 
 ![Login Page](./Examples/login.png)
-
+<img src="./Examples/login.png" style=" border:solid; "  >
 
 ## Available Scripts
 
