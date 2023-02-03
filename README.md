@@ -1,8 +1,24 @@
-# Getting Started with Create React App
+## Appster
+This website is a fully functioning contract management tool for handeling commercial payment applications in a more streamlined way. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Features
+-Unique User Login via Firebase Authentication with protected data
+-Setup and Manage commercial contracts all in one place
+-Draft, generate, and manage AIA Payment Applications as a subcontractor
+-Export & print the standardized AIA Payment Application form for any payment application
+-Reminder system for upcoming application dates
+-Dashboard pages for contracts to show billing progress, recent activity, and more
+-Manage change orders for individual contracts
+
+![Login Page](./Examples/login.png)
+
 
 ## Available Scripts
+
+This project was built using React, MUI, Google Firebase, and Reaviz. 
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 In the project directory, you can run:
 
