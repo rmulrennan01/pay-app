@@ -13,7 +13,7 @@ This website is a fully functioning contract management tool for handeling comme
 
 ## Login Page:
 
-<img src="./Examples/login.png" style=" border-style:solid; border-color:black"  >
+<kbd><img src="./Examples/login.png" style=" border-style:solid; border-color:black"  ></kbd>
 
 ## Dashboard:
 
