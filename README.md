@@ -13,7 +13,7 @@ This website is a fully functioning contract management tool for handeling comme
 
 ## Login Page:
 
-<kbd><img src="./Examples/login.png" style=" border-style:solid; border-color:black"  ></kbd>
+<table><tr><td><img src="./Examples/login.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Dashboard:
 
@@ -21,35 +21,35 @@ This website is a fully functioning contract management tool for handeling comme
 
 ## Contract Page:
 
-<img src="./Examples/contract_page.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/contract_page.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Payment Application Modal:
 
-<img src="./Examples/pay_app_modal.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/pay_app_modal.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Change Order Modal:
 
-<img src="./Examples/change_order_modal.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/change_order_modal.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## AIA Payment Application Viewer:
 
-<img src="./Examples/pay_app_preview.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/pay_app_preview.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Payment Application Form:
 
-<img src="./Examples/pay_app.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/pay_app.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Contract Form:
 
-<img src="./Examples/contract_setup.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/contract_setup.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Contract Verification Modal:
 
-<img src="./Examples/contract_verification.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/contract_verification.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 ## Contract Browser:
 
-<img src="./Examples/contract_browser.png" style=" border-style:solid; border-color:black"  >
+<table><tr><td><img src="./Examples/contract_browser.png" style=" border-style:solid; border-color:black"  ></td></tr></table>
 
 
 
