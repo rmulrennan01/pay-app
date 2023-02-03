@@ -3,31 +3,51 @@ This website is a fully functioning contract management tool for handeling comme
 
 
 ## Features
--Unique User Login via Firebase Authentication with protected data
--Setup and Manage commercial contracts all in one place
--Draft, generate, and manage AIA Payment Applications as a subcontractor
--Export & print the standardized AIA Payment Application form for any payment application
--Reminder system for upcoming application dates
--Dashboard pages for contracts to show billing progress, recent activity, and more
--Manage change orders for individual contracts
+-Unique User Login via Firebase Authentication with protected data <br />
+-Setup and Manage commercial contracts all in one place <br />
+-Draft, generate, and manage AIA Payment Applications as a subcontractor <br />
+-Export & print the standardized AIA Payment Application form for any payment application <br />
+-Reminder system for upcoming application dates <br />
+-Dashboard pages for contracts to show billing progress, recent activity, and more <br />
+-Manage change orders for individual contracts <br />
+
+## Login Page:
 
 <img src="./Examples/login.png" style=" border-style:solid; border-color:black"  >
 
+## Dashboard:
+
 <img src="./Examples/dashboard.png" style=" border-style:solid; border-color:black"  >
+
+## Contract Page:
 
 <img src="./Examples/contract_page.png" style=" border-style:solid; border-color:black"  >
 
+## Payment Application Modal:
+
 <img src="./Examples/pay_app_modal.png" style=" border-style:solid; border-color:black"  >
+
+## Change Order Modal:
 
 <img src="./Examples/change_order_modal.png" style=" border-style:solid; border-color:black"  >
 
+## AIA Payment Application Viewer:
+
 <img src="./Examples/pay_app_preview.png" style=" border-style:solid; border-color:black"  >
+
+## Payment Application Form:
 
 <img src="./Examples/pay_app.png" style=" border-style:solid; border-color:black"  >
 
+## Contract Form:
+
 <img src="./Examples/contract_setup.png" style=" border-style:solid; border-color:black"  >
 
+## Contract Verification Modal:
+
 <img src="./Examples/contract_verification.png" style=" border-style:solid; border-color:black"  >
+
+## Contract Browser:
 
 <img src="./Examples/contract_browser.png" style=" border-style:solid; border-color:black"  >
 
