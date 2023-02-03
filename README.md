@@ -11,8 +11,27 @@ This website is a fully functioning contract management tool for handeling comme
 -Dashboard pages for contracts to show billing progress, recent activity, and more
 -Manage change orders for individual contracts
 
-![Login Page](./Examples/login.png)
-<img src="./Examples/login.png" style=" border:solid; "  >
+<img src="./Examples/login.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/dashboard.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/contract_page.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/pay_app_modal.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/change_order_modal.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/pay_app_preview.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/pay_app.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/contract_setup.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/contract_verification.png" style=" border-style:solid; border-color:black"  >
+
+<img src="./Examples/contract_browser.png" style=" border-style:solid; border-color:black"  >
+
+
 
 ## Available Scripts
 
